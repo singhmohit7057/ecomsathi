@@ -8,9 +8,17 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
+
+# Install ALL deps (including dev) for build
 COPY package*.json ./
-RUN npm ci --omit=dev
-COPY dist/ ./dist/
+RUN npm ci
+
+# Copy source and build TypeScript
+COPY . .
+RUN npm run build
+
+# Remove dev deps after build
+RUN npm prune --omit=dev
 
 EXPOSE 3001
 CMD ["node", "dist/server/index.js"]

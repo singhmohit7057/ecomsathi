@@ -66,11 +66,11 @@ const FAQ_DATA: FAQCategory[] = [
     items: [
       {
         q: 'What is a SKU and why do I need one?',
-        a: 'A SKU (Stock Keeping Unit) is a unique identifier you assign to each product variant in your inventory. A well-structured SKU helps you track stock levels, process orders quickly, avoid mis-shipments, and reconcile marketplace payouts. EcomSathi's SKU Generator creates structured, human-readable SKUs following marketplace best practices.',
+        a: "A SKU (Stock Keeping Unit) is a unique identifier you assign to each product variant in your inventory. A well-structured SKU helps you track stock levels, process orders quickly, avoid mis-shipments, and reconcile marketplace payouts. EcomSathi's SKU Generator creates structured, human-readable SKUs following marketplace best practices.",
       },
       {
         q: 'What barcode formats does EcomSathi support?',
-        a: 'EcomSathi's Barcode Printer supports Code 128 (most common for retail), EAN-13 (standard for Indian FMCG), EAN-8, UPC-A, UPC-E, Code 39, ITF-14 (for carton/shipping barcodes), QR Code, and Data Matrix. You can export barcodes as PNG, SVG, or directly to a printable PDF label sheet.',
+        a: "EcomSathi's Barcode Printer supports Code 128 (most common for retail), EAN-13 (standard for Indian FMCG), EAN-8, UPC-A, UPC-E, Code 39, ITF-14 (for carton/shipping barcodes), QR Code, and Data Matrix. You can export barcodes as PNG, SVG, or directly to a printable PDF label sheet.",
       },
       {
         q: 'Can I bulk generate SKUs from a CSV file?',
@@ -112,7 +112,7 @@ const FAQ_DATA: FAQCategory[] = [
       },
       {
         q: 'What image formats are supported?',
-        a: 'EcomSathi's image tools accept JPEG, PNG, WebP, AVIF, GIF (first frame), and HEIC (on supported browsers). Output formats include JPEG, PNG, and WebP. For marketplace uploads, we recommend JPEG at 85–90% quality for the best balance of file size and visual quality.',
+        a: "EcomSathi's image tools accept JPEG, PNG, WebP, AVIF, GIF (first frame), and HEIC (on supported browsers). Output formats include JPEG, PNG, and WebP. For marketplace uploads, we recommend JPEG at 85-90% quality for the best balance of file size and visual quality.",
       },
       {
         q: 'What is the Product Image Optimizer?',

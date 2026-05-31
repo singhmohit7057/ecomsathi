@@ -3,8 +3,8 @@ import { Suspense, lazy } from 'react'
 
 // Navbar and Footer are shared components — lazily loaded to keep the
 // initial bundle tight while still code-splitting the heavy pages.
-const Navbar = lazy(() => import('@/components/Navbar'))
-const Footer = lazy(() => import('@/components/Footer'))
+const Navbar = lazy(() => import('@/components/common/Navbar'))
+const Footer = lazy(() => import('@/components/common/Footer'))
 
 // ============================================================
 // PublicLayout

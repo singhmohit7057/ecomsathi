@@ -3,8 +3,8 @@ import { Outlet, Link, useMatches } from 'react-router-dom'
 import { ChevronRight, CheckCircle2, ChevronDown, ChevronUp } from 'lucide-react'
 import { clsx } from 'clsx'
 
-const Navbar = lazy(() => import('@/components/Navbar'))
-const Footer = lazy(() => import('@/components/Footer'))
+const Navbar = lazy(() => import('@/components/common/Navbar'))
+const Footer = lazy(() => import('@/components/common/Footer'))
 
 // ============================================================
 // Types
