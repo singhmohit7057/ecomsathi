@@ -1,0 +1,45 @@
+export const MARKETPLACE_SCHEMAS = {
+  amazon: {
+    orderIdCol: 'order-id',
+    dateCol: 'order-date',
+    amountCol: 'item-price',
+    settlementAmountCol: 'total-amount',
+    feeCol: 'item-related-fee-amount',
+    skuCol: 'sku',
+    statusCol: 'order-status',
+    settlementIdCol: 'settlement-id',
+    settlementDateCol: 'settlement-end-date',
+  },
+  flipkart: {
+    orderIdCol: 'Order ID',
+    dateCol: 'Order Date',
+    amountCol: 'Gross Amount',
+    settlementAmountCol: 'Settlement Amount',
+    feeCol: 'Commission',
+    skuCol: 'FSN',
+    statusCol: 'Status',
+    settlementDateCol: 'Settlement Date',
+  },
+  myntra: {
+    orderIdCol: 'Order No',
+    dateCol: 'Order Date',
+    amountCol: 'Selling Price',
+    settlementAmountCol: 'Settlement Amount',
+    feeCol: 'Commission Amount',
+    skuCol: 'SKU',
+    statusCol: 'Return Status',
+    settlementDateCol: 'Settlement Date',
+  },
+  meesho: {
+    orderIdCol: 'order id',
+    dateCol: 'order date',
+    amountCol: 'selling price',
+    settlementAmountCol: 'total payment',
+    feeCol: 'commission',
+    skuCol: 'sku',
+    statusCol: 'status',
+    settlementDateCol: 'payment date',
+  },
+} as const
+
+export type MarketplaceSlug = keyof typeof MARKETPLACE_SCHEMAS

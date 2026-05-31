@@ -1,0 +1,399 @@
+# EcomSathi — Full Documentation
+
+> One Place for All Your Ecommerce Needs
+
+EcomSathi is a free, browser-based ecommerce tools platform built for Indian sellers. All free tools work without login. No software installation required.
+
+Website: https://ecomsathi.vercel.app
+Contact: hello@ecomsathi.in
+
+---
+
+## FREE TOOLS
+
+### SKU TOOLS
+
+#### 1. SKU Generator
+- URL: /tools/sku-generator
+- Input: Product name, category, prefix, numbering start
+- Output: SKU code (e.g. ELEC-LAMP-001)
+- Use case: Create unique product identifiers for inventory and listings
+
+#### 2. Bulk SKU Generator
+- URL: /tools/bulk-sku
+- Input: CSV file with product names, categories; or manual entry for multiple products
+- Output: CSV file with generated SKU codes
+- Use case: Generate SKUs for hundreds of products in one operation
+
+#### 3. Barcode Generator
+- URL: /tools/barcode
+- Input: Product code or text, barcode type (EAN-13, Code 128, QR, UPC-A), size settings
+- Output: PNG or SVG barcode image; printable label
+- Use case: Print barcodes for physical product stickering
+
+#### 4. SKU Label Printer
+- URL: /tools/sku-label
+- Input: SKU code, product name, price, barcode type, label dimensions
+- Output: Printable label PDF (single or sheet)
+- Use case: Print professional product stickers with barcode and SKU
+
+#### 5. SKU Validator
+- URL: /tools/sku-validator
+- Input: CSV file or pasted list of SKU codes
+- Output: Validation report — duplicates, invalid characters, length violations
+- Use case: Audit existing SKU database before uploading to marketplace
+
+#### 6. SKU to Barcode Converter
+- URL: /tools/sku-to-barcode
+- Input: SKU codes (manual or CSV), target barcode type
+- Output: Barcode images (PNG/SVG) per SKU; downloadable ZIP
+- Use case: Convert existing product SKUs to printable barcodes
+
+#### 7. Bulk SKU to Barcode
+- URL: /tools/sku-bulk-barcode
+- Input: CSV with SKUs and product details, barcode type, label template
+- Output: PDF sheets of barcode labels ready for printing
+- Use case: Print an entire product catalogue's labels in one go
+
+---
+
+### PDF TOOLS
+
+#### 1. PDF Merge
+- URL: /tools/pdf-merge
+- Input: 2–20 PDF files (max 50MB each)
+- Output: Single merged PDF
+- Processing: PDF-Lib in browser (no server upload for small files); Railway for large batches
+
+#### 2. PDF Split
+- URL: /tools/pdf-split
+- Input: Single PDF, page ranges or "every page"
+- Output: Individual PDF files (downloaded as ZIP if multiple)
+
+#### 3. PDF Compress
+- URL: /tools/pdf-compress
+- Input: PDF file (up to 50MB)
+- Output: Compressed PDF; shows original vs compressed size
+- Processing: Ghostscript-equivalent via Railway backend
+
+#### 4. PDF OCR
+- URL: /tools/pdf-ocr
+- Input: Scanned PDF or image PDF
+- Output: Searchable PDF with embedded text layer; optionally plain text export
+- Processing: Tesseract OCR on Railway; supports English, Hindi
+
+#### 5. PDF Rotate
+- URL: /tools/pdf-rotate
+- Input: PDF; select pages and rotation angle (90°, 180°, 270°)
+- Output: Rotated PDF
+
+#### 6. PDF Watermark
+- URL: /tools/pdf-watermark
+- Input: PDF; watermark text or image; opacity, position, rotation settings
+- Output: Watermarked PDF
+
+#### 7. PDF to Image
+- URL: /tools/pdf-to-image
+- Input: PDF file, output format (PNG or JPG), resolution (72–300 DPI)
+- Output: Image files (ZIP download if multiple pages)
+- Processing: pdf2pic + Sharp on Railway
+
+#### 8. Image to PDF
+- URL: /tools/image-to-pdf
+- Input: JPG, PNG, or WebP images (up to 20 per batch)
+- Output: Single PDF with one image per page
+
+#### 9. PDF Reorder Pages
+- URL: /tools/pdf-reorder
+- Input: PDF; drag-and-drop thumbnail reordering interface
+- Output: PDF with pages in new order
+
+#### 10. Extract PDF Pages
+- URL: /tools/pdf-extract-pages
+- Input: PDF; page selection (individual pages or ranges)
+- Output: New PDF containing only selected pages
+
+#### 11. Delete PDF Pages
+- URL: /tools/pdf-delete-pages
+- Input: PDF; page selection to remove
+- Output: PDF with selected pages removed
+
+#### 12. PDF Unlock
+- URL: /tools/pdf-unlock
+- Input: Password-protected PDF; password
+- Output: Unlocked PDF (user must own the document)
+
+#### 13. PDF Protect
+- URL: /tools/pdf-protect
+- Input: PDF; user password; owner password (optional); permissions (print, copy, edit)
+- Output: Password-protected PDF
+
+---
+
+### IMAGE TOOLS
+
+#### 1. Background Remover
+- URL: /tools/background-remover
+- Input: JPG or PNG product image (up to 20MB)
+- Output: PNG with transparent background; optionally add white or coloured background
+- Processing: AI background removal via Railway (ONNX model or rembg)
+- Use case: Marketplace product photos require white background
+
+#### 2. Product Image Optimizer
+- URL: /tools/product-optimizer
+- Input: Product images; target marketplace (Amazon, Flipkart, Meesho, etc.)
+- Output: Resized and optimised images meeting marketplace spec (e.g. Amazon: 2000×2000px JPG < 10MB)
+- Processing: Sharp on Railway
+
+#### 3. Image Resize
+- URL: /tools/image-resize
+- Input: Image; target width and/or height in pixels; maintain aspect ratio toggle
+- Output: Resized image in original format
+
+#### 4. Image Compress
+- URL: /tools/image-compress
+- Input: JPG, PNG, or WebP; quality slider (1–100)
+- Output: Compressed image; size comparison shown
+
+#### 5. Image Format Converter
+- URL: /tools/image-convert
+- Input: Image in any format; target format (JPG, PNG, WebP, AVIF, BMP)
+- Output: Converted image
+
+#### 6. Image Crop
+- URL: /tools/image-crop
+- Input: Image; crop area (drag to select); or preset ratios (1:1, 4:3, 16:9)
+- Output: Cropped image
+
+#### 7. Image Watermark
+- URL: /tools/image-watermark
+- Input: Image; watermark text or logo PNG; position, opacity, size settings
+- Output: Watermarked image
+
+#### 8. Bulk Image Resize
+- URL: /tools/image-bulk-resize
+- Input: Multiple images (ZIP or individual); target dimensions
+- Output: ZIP of resized images
+
+#### 9. Background Colour Changer
+- URL: /tools/image-background-colour
+- Input: Image with transparent or removed background; target colour (hex, white, gradient)
+- Output: Image with new background applied
+
+#### 10. Flip and Rotate
+- URL: /tools/image-flip-rotate
+- Input: Image; flip direction (horizontal/vertical); rotation angle (custom degrees)
+- Output: Transformed image
+
+#### 11. Image Metadata Viewer
+- URL: /tools/image-metadata
+- Input: JPG, PNG, TIFF image
+- Output: EXIF data table (camera, GPS, date, dimensions); option to strip metadata and download clean image
+
+---
+
+### VIDEO TOOLS
+
+#### 1. Video to GIF
+- URL: /tools/video-to-gif
+- Input: MP4, MOV, AVI, WebM (up to 500MB); start/end time selection; FPS and size settings
+- Output: Animated GIF
+- Processing: FFmpeg on Railway
+- Use case: Product showcase animations for marketplace listings
+
+#### 2. Video Compress
+- URL: /tools/video-compress
+- Input: Video file; quality preset (high/medium/low) or CRF value
+- Output: Compressed MP4; size comparison
+- Processing: FFmpeg H.264 on Railway
+
+#### 3. Video Resize
+- URL: /tools/video-resize
+- Input: Video file; target resolution (480p, 720p, 1080p or custom)
+- Output: Resized video
+
+#### 4. Video Trim
+- URL: /tools/video-trim
+- Input: Video file; start and end timestamps
+- Output: Trimmed video clip
+
+#### 5. Extract Frames
+- URL: /tools/video-to-frames
+- Input: Video file; frame interval (every N seconds) or specific timestamps
+- Output: PNG images (ZIP download)
+- Use case: Grab product thumbnail from a video
+
+#### 6. GIF to Video
+- URL: /tools/gif-to-video
+- Input: Animated GIF
+- Output: MP4 video
+
+---
+
+### LABEL CROP TOOL
+
+- URL: /label-crop
+- Input: PDF file containing shipping labels (from any supported marketplace)
+- Supported marketplaces:
+  - Amazon — detects label area, crops thermal-style label
+  - Flipkart — standard label format with order and item details
+  - Myntra — cropped from packing slip/label combo
+  - Meesho — label extraction from bulk print PDF
+  - AJIO — supply chain label format
+  - Nykaa — B2C shipping label
+  - Snapdeal — legacy format supported
+- Output options: PNG per label, or compiled PDF with one label per page, or A4 sheet with 2/4 labels per page
+- Processing: PDF.js (browser) for rendering; Sharp on Railway for cropping
+- Use case: Sellers receive multi-page PDFs from marketplaces. This tool extracts and formats labels for printing on thermal or A4 printers.
+
+---
+
+### GST TOOLS
+
+#### 1. GSTIN Search and Verification
+- URL: /tools/gst-search
+- Input: 15-digit GSTIN
+- Output: Business name, legal name, address, registration date, filing status, taxpayer type
+- Data source: GST portal API (real-time)
+
+#### 2. GST Calculator
+- URL: /tools/gst-calculator
+- Input: Amount, GST rate (5%, 12%, 18%, 28%), inclusive or exclusive
+- Output: Base amount, GST amount (CGST + SGST or IGST), final amount
+
+#### 3. HSN / SAC Code Search
+- URL: /tools/hsn-search
+- Input: Product description or HSN code
+- Output: Matching HSN codes, product description, applicable GST rate
+- Data source: GST council HSN master database
+
+#### 4. GST Return Filing Status Checker
+- URL: /tools/gst-return-checker
+- Input: GSTIN, financial year, return type (GSTR-1, GSTR-3B)
+- Output: Filing status per period (filed / not filed / late filed)
+- Use case: Verify supplier compliance before claiming input tax credit
+
+#### 5. PAN Card Validator
+- URL: /tools/pan-validator
+- Input: 10-character PAN number
+- Output: Format validity, PAN type (P=Individual, C=Company, H=HUF, F=Firm, etc.), name structure check
+
+#### 6. TDS Calculator (Ecommerce)
+- URL: /tools/tds-calculator
+- Input: Gross sale amount, seller category (individual/company), marketplace
+- Output: TDS deductible under Section 194-O, net payout amount
+- Supports: Amazon, Flipkart, Meesho, Myntra
+
+#### 7. GST Invoice Generator
+- URL: /tools/invoice-generator
+- Input: Seller GSTIN, buyer details, line items with HSN codes and quantities
+- Output: PDF GST invoice conforming to CGST rules
+
+#### 8. E-Way Bill Checker
+- URL: /tools/eway-bill
+- Input: Consignment value, transport mode, distance, goods type
+- Output: Whether e-way bill is required; generation instructions
+
+#### 9. Composition Scheme Calculator
+- URL: /tools/composition-scheme
+- Input: Business type, annual turnover, goods/services mix
+- Output: Tax under composition scheme vs regular scheme comparison; eligibility check
+
+#### 10. Reverse Charge Mechanism Calculator
+- URL: /tools/reverse-charge
+- Input: Service/goods type, supply details, supplier type (registered/unregistered)
+- Output: Whether RCM applies, tax payable by recipient
+
+---
+
+## PREMIUM MODULES (Login Required)
+
+### Ecommerce Reconciliation
+
+Match marketplace settlement reports against order data to identify discrepancies.
+
+Features:
+- Upload settlement reports (CSV, Excel) from Amazon, Flipkart, Myntra, Meesho
+- Automatic column mapping and data parsing
+- Match orders to settlement lines by order ID
+- Flag missing settlements (order shipped but no payment received)
+- Flag incorrect deductions (commission, returns, penalties)
+- Export reconciliation report as Excel
+- Dashboard with summary stats: total orders, reconciled, pending, disputed
+
+Supported reports:
+- Amazon: Payment report, Order report
+- Flipkart: Settlement statement, Returns report
+- Myntra: Settlement file
+- Meesho: Payment report
+
+### Inventory Management
+
+Track product stock across multiple warehouses and channels.
+
+Features:
+- Product master — SKU, name, category, HSN code, dimensions, weight
+- Variant support — size, colour combinations with individual SKUs
+- Multi-warehouse stock levels (own warehouse, 3PL, marketplace FBA/FBS)
+- Purchase order management — raise PO, receive goods, update stock
+- Stock movement history — every inbound and outbound tracked
+- Low stock alerts — configurable minimum stock thresholds
+- Stock valuation — weighted average cost method
+- Export stock report to Excel
+- Bulk product import via CSV
+
+---
+
+## PROCESSING ARCHITECTURE
+
+### File Flow for Large Files
+1. User selects file in browser
+2. Browser uploads directly to Supabase Storage (bypasses Railway)
+3. Frontend sends storage path to Railway processing API
+4. Railway downloads file from Supabase, processes (FFmpeg/Sharp/Tesseract)
+5. Railway uploads result to Supabase Storage
+6. Frontend fetches signed download URL from Supabase
+7. User downloads processed file
+
+This keeps Railway memory low and leverages Supabase CDN for delivery.
+
+### Small File Processing (PDF, Image < 5MB)
+Processed entirely in the browser using:
+- PDF-Lib (PDF manipulation)
+- pdf.js (PDF rendering)
+- Canvas API (image operations)
+- WASM modules for OCR (Tesseract.js)
+
+---
+
+## DATA PRIVACY
+
+- Files are deleted from Supabase Storage within 1 hour of processing
+- Anonymous use is allowed for all free tools (no account required)
+- File contents are never logged or stored in any database
+- No personal data is collected during free tool use
+- Premium modules require account but only store metadata, not file contents
+
+---
+
+## API / INTEGRATION
+
+EcomSathi does not currently offer a public API. All tools are web-only.
+
+---
+
+## LEGAL
+
+- Platform: India
+- GST: Not registered (free platform, no transactions)
+- Copyright: EcomSathi, 2025
+- License: All tools provided "as is". Not liable for data loss.
+
+---
+
+## LANGUAGE AND LOCALE
+
+- Interface language: English
+- Target users: India
+- Currency: INR (in calculator tools)
+- Number format: Indian numbering system (lakhs, crores) in relevant tools

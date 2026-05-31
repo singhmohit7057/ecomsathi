@@ -1,0 +1,60 @@
+# =============================================================
+# EcomSathi — Supabase CLI local development configuration
+# docs: https://supabase.com/docs/guides/cli/config
+# =============================================================
+
+project_id = "ecomsathi"
+
+# -------------------------------------------------------------
+# PostgREST API
+# -------------------------------------------------------------
+[api]
+port               = 54321
+schemas            = ["public", "storage", "graphql_public"]
+extra_search_path  = ["public", "extensions"]
+max_rows           = 1000
+
+# -------------------------------------------------------------
+# PostgreSQL database
+# -------------------------------------------------------------
+[db]
+port         = 54322
+shadow_port  = 54320
+major_version = 15
+
+# -------------------------------------------------------------
+# Supabase Studio (local dashboard)
+# -------------------------------------------------------------
+[studio]
+port = 54323
+
+# -------------------------------------------------------------
+# Inbucket — local SMTP / email testing
+# Visit http://localhost:54324 to inspect outbound emails
+# -------------------------------------------------------------
+[inbucket]
+port = 54324
+
+# -------------------------------------------------------------
+# Storage
+# -------------------------------------------------------------
+[storage]
+file_size_limit = "500MiB"
+
+# -------------------------------------------------------------
+# Auth
+# -------------------------------------------------------------
+[auth]
+site_url                  = "http://localhost:5173"
+additional_redirect_urls  = ["https://ecomsathi.vercel.app"]
+jwt_expiry                = 3600
+enable_signup             = true
+enable_confirmations      = true
+
+[auth.email]
+enable_signup           = true
+double_confirm_changes  = true
+enable_confirmations    = true
+
+[auth.sms]
+enable_signup = false

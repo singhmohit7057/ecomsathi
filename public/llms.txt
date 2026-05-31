@@ -1,0 +1,86 @@
+# EcomSathi
+
+> One Place for All Your Ecommerce Needs
+
+EcomSathi is a free ecommerce tools platform for Indian sellers on Amazon, Flipkart, Meesho, Myntra, AJIO, Nykaa, and Snapdeal. All tools are browser-based — no software download required.
+
+## Free Tools (no login required)
+
+### SKU Generator
+Generate professional SKU codes for products. Supports custom prefix, category codes, and sequential numbering. Also bulk SKU generation via CSV upload, SKU validation (duplicate check, format check), and SKU-to-barcode conversion.
+
+### Barcode Generator
+Generate EAN-13, Code 128, QR codes, and UPC-A barcodes. Download as PNG or SVG. Print barcode labels with customisable sizes.
+
+### PDF Tools
+- Merge multiple PDFs into one
+- Split PDF by page range or individual pages
+- Compress PDFs to reduce file size
+- OCR — extract text from scanned PDFs
+- Rotate pages (90°, 180°, 270°)
+- Add text or image watermarks
+- Convert PDF pages to PNG/JPG images
+- Convert images to PDF
+- Reorder pages (drag and drop)
+- Extract specific pages
+- Delete unwanted pages
+- Unlock password-protected PDFs
+- Add password protection to PDFs
+
+### Image Tools
+- Background remover — AI-powered, no registration needed
+- Product image optimizer — resize and compress for marketplace requirements
+- Image resize (exact pixels or percentage)
+- Image compress (JPG, PNG, WebP)
+- Image format converter (JPG ↔ PNG ↔ WebP ↔ AVIF ↔ BMP)
+- Crop with custom dimensions or preset ratios
+- Add text or logo watermark
+- Bulk resize (multiple images at once)
+- Change background colour (white, custom, gradient)
+- Flip and rotate
+- View and strip EXIF metadata
+
+### Video Tools
+- Convert video to animated GIF
+- Compress video (MP4 and other formats)
+- Resize video to specific dimensions
+- Trim/cut video clips
+- Extract frames as PNG images
+- Convert GIF to MP4 video
+
+### Label Crop
+Auto-detect and crop shipping labels from multi-page PDFs. Supported marketplaces: Amazon, Flipkart, Myntra, Meesho, AJIO, Nykaa, Snapdeal. Output: print-ready cropped label images or PDF.
+
+### GST Tools
+- GSTIN search and verification (real-time from GST portal)
+- GST calculator (5%, 12%, 18%, 28% — inclusive and exclusive)
+- HSN/SAC code search with applicable GST rate
+- GST return filing status checker (GSTR-1, GSTR-3B)
+- PAN card validator
+- TDS calculator for ecommerce (Section 194-O)
+- GST invoice generator (PDF output)
+- E-Way Bill requirement checker
+- GST Composition Scheme calculator
+- Reverse Charge Mechanism (RCM) calculator
+
+## Premium Modules (login required)
+
+### Ecommerce Reconciliation
+Match marketplace orders against settlement reports. Supports Amazon, Flipkart, Myntra, Meesho. Identifies missing payments, incorrect deductions, and unreconciled returns. Upload settlement CSV/Excel files and get a reconciliation report.
+
+### Inventory Management
+Product master with multi-warehouse stock tracking. Purchase order management. Stock movement history. Low-stock alerts. Supports multiple SKUs and variants.
+
+## Tech Stack
+
+- Frontend: React, Vite, TypeScript, Tailwind CSS v4
+- Backend: Supabase (PostgreSQL, Auth, Storage), Railway (processing API)
+- Processing: Node.js, Sharp (image), FFmpeg (video), Tesseract OCR, PDF-Lib, pdf2pic
+
+## Contact
+
+hello@ecomsathi.in
+
+## Website
+
+https://ecomsathi.vercel.app

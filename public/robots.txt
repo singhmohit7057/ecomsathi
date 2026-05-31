@@ -1,0 +1,39 @@
+User-agent: *
+Allow: /
+Allow: /tools/
+Allow: /label-crop
+Allow: /about
+Allow: /contact
+Allow: /faq
+Allow: /privacy
+Allow: /terms
+
+Disallow: /dashboard
+Disallow: /reconciliation
+Disallow: /inventory
+Disallow: /settings
+Disallow: /profile
+Disallow: /login
+Disallow: /register
+Disallow: /reset-password
+
+Sitemap: https://ecomsathi.vercel.app/sitemap.xml
+
+# AI crawlers — welcome
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Googlebot-Extended
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
