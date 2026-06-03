@@ -3,6 +3,17 @@ import { useDropzone } from 'react-dropzone';
 import { UploadCloud, Download, Trash2, Link, Unlink } from 'lucide-react';
 import { Button } from '../../components/common/Button';
 import { Alert } from '../../components/common/Alert';
+import SEO from '../../components/common/SEO';
+import { FAQPageSchema, BreadcrumbSchema, WebApplicationSchema } from '../../components/common/SchemaMarkup';
+import ImageFAQ from './components/ImageFAQ';
+
+const FAQS = [
+  { q: 'What image formats can I resize?', a: 'JPG, PNG, and WEBP images are supported. The output format matches the input format.' },
+  { q: 'What are the marketplace preset sizes?', a: 'Presets include Amazon Product (2000×2000), Flipkart Product (1500×1500), Instagram Square (1080×1080), HD (1920×1080), Banner Wide (1200×628), Profile Pic (400×400), and Thumbnail (300×300).' },
+  { q: 'What does the aspect ratio lock do?', a: 'When locked, changing the width automatically adjusts the height to maintain the original proportions and vice versa. Unlock it to set arbitrary dimensions.' },
+  { q: 'Is there a limit on the resize percentage?', a: 'You can scale images from 1% to 400% of the original size. Scaling above 100% may reduce image sharpness.' },
+  { q: 'Does resizing happen in the browser?', a: 'Yes, all resizing is done locally in your browser using the Canvas API. No image data is uploaded to any server.' },
+];
 
 const MAX_SIZE_BYTES = 20 * 1024 * 1024;
 
@@ -169,8 +180,24 @@ export const ResizeImage: React.FC = () => {
 
   const dims = getTargetDimensions();
 
+  const schema = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      WebApplicationSchema({ name: 'Resize Image', url: 'https://ecomsathi.vercel.app/image/resize-image', description: 'Resize by custom dimensions, percentage, or marketplace presets. Free online image resizer.' }),
+      BreadcrumbSchema([{ name: 'Home', url: '/' }, { name: 'Tools', url: '/tools' }, { name: 'Resize Image', url: '/image/resize-image' }]),
+      FAQPageSchema(FAQS.map(f => ({ question: f.q, answer: f.a }))),
+    ],
+  };
+
   return (
     <div className="max-w-3xl mx-auto flex flex-col gap-6">
+      <SEO
+        title="Resize Image Online Free — EcomSathi"
+        description="Resize images to exact pixel dimensions or percentage. Free online image resizer with marketplace presets for Amazon, Flipkart, Instagram."
+        keywords="image resize online free, resize image pixels, image resizer tool, resize photo online, resize image for amazon flipkart"
+        canonicalUrl="https://ecomsathi.vercel.app/image/resize-image"
+        schema={schema}
+      />
       <div>
         <h1 className="text-2xl font-bold text-[#0F172A]">Resize Image</h1>
         <p className="text-sm text-[#64748B] mt-1">Resize images by custom dimensions, percentage, or marketplace presets.</p>
@@ -355,6 +382,8 @@ export const ResizeImage: React.FC = () => {
           )}
         </div>
       )}
+
+      <ImageFAQ faqs={FAQS} />
     </div>
   );
 };

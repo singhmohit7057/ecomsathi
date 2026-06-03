@@ -154,7 +154,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       // Refresh local state
       const fresh = await fetchProfile(user.id)
-      setUser(fresh)
+      if (fresh) setUser(fresh)
     },
     [user, fetchProfile],
   )

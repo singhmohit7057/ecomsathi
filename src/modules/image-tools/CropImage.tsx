@@ -3,6 +3,17 @@ import { useDropzone } from 'react-dropzone';
 import { UploadCloud, Download, Trash2, RotateCw, Crop } from 'lucide-react';
 import { Button } from '../../components/common/Button';
 import { Alert } from '../../components/common/Alert';
+import SEO from '../../components/common/SEO';
+import { FAQPageSchema, BreadcrumbSchema, WebApplicationSchema } from '../../components/common/SchemaMarkup';
+import ImageFAQ from './components/ImageFAQ';
+
+const FAQS = [
+  { q: 'What aspect ratio options are available?', a: 'Free crop (any size), 1:1 (square, for Instagram and marketplace main images), 4:3 (standard), 16:9 (widescreen), and 3:4 (portrait).' },
+  { q: 'Can I rotate the image before cropping?', a: 'Yes. Use the 90° rotate button to rotate the image in 90-degree increments before applying the crop.' },
+  { q: 'How do I resize the crop area?', a: 'Drag any of the 8 corner and edge handles to resize the crop area. The blue handles are draggable.' },
+  { q: 'What is the output format?', a: 'The output format matches the input format (JPG stays JPG, PNG stays PNG, WEBP stays WEBP).' },
+  { q: 'Is cropping done in the browser?', a: 'Yes, all cropping uses the Canvas API locally in your browser. No image data is uploaded to any server.' },
+];
 
 const MAX_SIZE_BYTES = 20 * 1024 * 1024;
 
@@ -370,8 +381,24 @@ export const CropImage: React.FC = () => {
   const pixelW = Math.round(cropRect.w * naturalSize.w);
   const pixelH = Math.round(cropRect.h * naturalSize.h);
 
+  const schema = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      WebApplicationSchema({ name: 'Crop Image', url: 'https://ecomsathi.vercel.app/image/crop-image', description: 'Crop images with drag-and-drop handles, aspect ratio presets, and rotation support.' }),
+      BreadcrumbSchema([{ name: 'Home', url: '/' }, { name: 'Tools', url: '/tools' }, { name: 'Crop Image', url: '/image/crop-image' }]),
+      FAQPageSchema(FAQS.map(f => ({ question: f.q, answer: f.a }))),
+    ],
+  };
+
   return (
     <div className="max-w-3xl mx-auto flex flex-col gap-6">
+      <SEO
+        title="Crop Image Online Free — EcomSathi"
+        description="Crop images to any size or aspect ratio online for free. Drag-and-drop crop with aspect ratio presets and rotation support."
+        keywords="crop image online free, image cropper, crop photo online, aspect ratio crop, free image cropping tool"
+        canonicalUrl="https://ecomsathi.vercel.app/image/crop-image"
+        schema={schema}
+      />
       <div>
         <h1 className="text-2xl font-bold text-[#0F172A]">Crop Image</h1>
         <p className="text-sm text-[#64748B] mt-1">Drag the handles to define your crop area.</p>
@@ -498,6 +525,8 @@ export const CropImage: React.FC = () => {
           )}
         </div>
       )}
+
+      <ImageFAQ faqs={FAQS} />
     </div>
   );
 };

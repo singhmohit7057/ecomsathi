@@ -193,6 +193,7 @@ function QuickAction({ label, description, icon, to, iconBg, iconColor }: QuickA
 
 export default function DashboardPage() {
   const { user } = useAuth()
+  const navigate = useNavigate()
 
   const [stats, setStats] = useState<DashboardStats>({
     totalProducts: 0,
@@ -536,7 +537,7 @@ export default function DashboardPage() {
           variant="outline"
           size="sm"
           rightIcon={<ChevronRight size={14} />}
-          onClick={() => (window.location.href = '/tools')}
+          onClick={() => navigate('/tools')}
         >
           Explore All Tools
         </Button>

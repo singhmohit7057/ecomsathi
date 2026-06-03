@@ -152,6 +152,7 @@ export function useFileUpload(options: UseFileUploadOptions): UseFileUploadRetur
           })
 
         if (uploadError) throw new Error(uploadError.message)
+        if (!data?.path) throw new Error('Upload succeeded but no path returned')
 
         setProgress(90)
 

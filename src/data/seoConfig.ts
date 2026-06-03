@@ -20,322 +20,390 @@ export const SEO_CONFIG: Record<string, SEOProps> = {
       'free ecommerce tools, online tools for sellers, ecommerce seller tools india, amazon tools, flipkart tools',
   },
 
-  // ─── SKU Tools ────────────────────────────────────────────────────────────
-  '/tools/sku-generator': {
+  // ─── SKU Tools Hub ────────────────────────────────────────────────────────
+  '/tools/sku': {
+    title: 'Free SKU Tools for Ecommerce Sellers — EcomSathi',
+    description:
+      'Generate, bulk-create, validate, and print SKU codes and barcodes. Free SKU tools for Amazon, Flipkart, Meesho sellers. No signup needed.',
+    keywords:
+      'sku generator, bulk sku, barcode generator, sku label printer, sku tools india, ecommerce sku tools',
+    ogType: 'website',
+  },
+
+  // ─── SKU Tools (individual) ───────────────────────────────────────────────
+  '/tools/sku/generator': {
     title: 'Free SKU Generator — EcomSathi',
     description:
       'Generate professional SKU codes for your products. Free online SKU generator for Amazon, Flipkart, Meesho sellers. Customise prefix, category, and numbering.',
     keywords:
       'sku generator, free sku generator, sku code generator online, amazon sku, flipkart sku, product sku generator',
   },
-  '/tools/bulk-sku': {
+  '/tools/sku/bulk': {
     title: 'Bulk SKU Generator — EcomSathi',
     description:
       'Generate SKU codes in bulk for hundreds of products at once. Upload CSV, generate SKUs, and download. Free bulk SKU generator for ecommerce sellers.',
     keywords:
       'bulk sku generator, sku generator csv, generate multiple skus, batch sku generator',
   },
-  '/tools/barcode': {
+  '/tools/sku/variant': {
+    title: 'Variant SKU Builder — EcomSathi',
+    description:
+      'Create size, colour, and attribute variant SKUs from a master product code. Free variant SKU generator for ecommerce sellers.',
+    keywords:
+      'variant sku builder, sku variants, size color sku generator, product variant sku, ecommerce variant codes',
+  },
+  '/tools/sku/custom': {
+    title: 'Custom SKU Format — EcomSathi',
+    description:
+      'Define your own prefix, suffix, and separator rules to create custom SKU formats. Free custom SKU format tool for Indian sellers.',
+    keywords:
+      'custom sku format, sku prefix suffix, define sku rules, custom product codes, sku format builder',
+  },
+  '/tools/sku/barcode': {
     title: 'Free Barcode Generator — EcomSathi',
     description:
       'Generate EAN-13, Code 128, QR codes and UPC-A barcodes for free. Download as PNG or SVG. No registration required.',
     keywords:
       'barcode generator free, ean-13 barcode, code 128 barcode, qr code generator, upc-a barcode, online barcode maker',
   },
-  '/tools/sku-label': {
+  '/tools/sku/label-generator': {
+    title: 'SKU Label Generator — EcomSathi',
+    description:
+      'Create print-ready product labels with barcode, SKU, and price. Free SKU label generator for product stickering.',
+    keywords:
+      'sku label generator, barcode label maker, product label generator, print sku labels online',
+  },
+  '/tools/sku/label-printer': {
     title: 'SKU Label Printer — EcomSathi',
     description:
-      'Print SKU labels with barcodes for your products. Customise label size, font, and layout. Free SKU label generator for product stickering.',
+      'Configure and print labels directly to thermal or inkjet printers. Free label printer tool for ecommerce sellers.',
     keywords:
-      'sku label printer, barcode label maker, product label generator, print sku labels online',
-  },
-  '/tools/sku-validator': {
-    title: 'SKU Validator — EcomSathi',
-    description:
-      'Validate and check SKU codes for duplicates, invalid characters, and length issues. Free SKU validation tool for inventory management.',
-    keywords: 'sku validator, validate sku codes, check sku duplicates, sku format checker',
-  },
-  '/tools/sku-to-barcode': {
-    title: 'SKU to Barcode Converter — EcomSathi',
-    description:
-      'Convert your existing SKU codes to printable barcodes. Supports EAN-13, Code 128, and QR code formats. Free online converter.',
-    keywords:
-      'sku to barcode, convert sku to barcode, sku barcode generator, product barcode from sku',
+      'sku label printer, thermal label printer, inkjet label print, product label printing online',
   },
 
-  // ─── PDF Tools ────────────────────────────────────────────────────────────
-  '/tools/pdf-merge': {
+  // ─── PDF Tools Hub ────────────────────────────────────────────────────────
+  '/tools/pdf': {
+    title: 'Free PDF Tools for Ecommerce Sellers — EcomSathi',
+    description:
+      'Merge, split, compress, OCR, rotate, watermark and convert PDFs online for free. Built for Indian ecommerce sellers. No signup needed.',
+    keywords:
+      'pdf tools online free, merge pdf, split pdf, compress pdf, pdf ocr, pdf to image, ecommerce pdf tools india',
+    ogType: 'website',
+  },
+
+  // ─── PDF Tools (individual) ───────────────────────────────────────────────
+  '/tools/pdf/merge': {
     title: 'Merge PDF Free — EcomSathi',
     description:
       'Merge multiple PDF files into one. Free online PDF merger, no registration required. Combine invoices, shipping labels, and documents instantly.',
     keywords:
       'merge pdf free, pdf merger online, combine pdf files, join pdf documents, merge pdf no signup',
   },
-  '/tools/pdf-split': {
+  '/tools/pdf/split': {
     title: 'Split PDF Free — EcomSathi',
     description:
       'Split a PDF into individual pages or custom page ranges. Free online PDF splitter. Extract specific pages without any software.',
     keywords:
       'split pdf free, pdf splitter online, extract pdf pages, split pdf by page, divide pdf',
   },
-  '/tools/pdf-compress': {
-    title: 'Compress PDF Free — EcomSathi',
+  '/tools/pdf/crop': {
+    title: 'Crop PDF Pages — EcomSathi',
     description:
-      'Compress PDF files to reduce file size. Free online PDF compressor. Reduce large PDFs without losing quality.',
+      'Crop margins or specific regions from every page of a PDF. Free online PDF cropper. No software required.',
     keywords:
-      'compress pdf free, reduce pdf size, pdf compressor online, shrink pdf, pdf size reducer',
+      'crop pdf pages free, pdf cropper online, trim pdf margins, pdf page crop tool',
   },
-  '/tools/pdf-ocr': {
+  '/tools/pdf/ocr': {
     title: 'PDF OCR — Extract Text from PDF — EcomSathi',
     description:
       'Extract text from scanned PDFs using OCR. Free online PDF OCR tool. Convert scanned documents and images to searchable text.',
     keywords:
       'pdf ocr online, extract text from pdf, scanned pdf to text, pdf text recognition, ocr pdf free',
   },
-  '/tools/pdf-rotate': {
+  '/tools/pdf/compress': {
+    title: 'Compress PDF Free — EcomSathi',
+    description:
+      'Compress PDF files to reduce file size. Free online PDF compressor. Reduce large PDFs without losing quality.',
+    keywords:
+      'compress pdf free, reduce pdf size, pdf compressor online, shrink pdf, pdf size reducer',
+  },
+  '/tools/pdf/password': {
+    title: 'PDF Password Protect — EcomSathi',
+    description:
+      'Add or remove password protection from PDF documents. Free online PDF password tool. Secure sensitive documents.',
+    keywords:
+      'pdf password protect, add password to pdf, remove pdf password, pdf protection online, secure pdf free',
+  },
+  '/tools/pdf/rotate': {
     title: 'Rotate PDF Pages — EcomSathi',
     description:
       'Rotate PDF pages 90, 180, or 270 degrees. Free online PDF page rotator. Fix orientation of scanned documents.',
     keywords: 'rotate pdf pages free, pdf rotation online, flip pdf pages, pdf page orientation',
   },
-  '/tools/pdf-watermark': {
-    title: 'Add Watermark to PDF — EcomSathi',
+  '/tools/pdf/extract': {
+    title: 'Extract Text from PDF — EcomSathi',
     description:
-      'Add text or image watermark to PDF files. Free online PDF watermarking tool. Protect your documents with custom watermarks.',
-    keywords:
-      'add watermark to pdf, pdf watermark free, watermark pdf online, stamp pdf documents',
+      'Extract all text content from a PDF into a plain text file. Free online PDF text extractor.',
+    keywords: 'extract text from pdf free, pdf text extractor online, pdf to text converter',
   },
-  '/tools/pdf-to-image': {
+  '/tools/pdf/rearrange': {
+    title: 'Reorder PDF Pages — EcomSathi',
+    description:
+      'Drag and drop to reorder PDF pages. Free online PDF page organiser. Rearrange pages without any software.',
+    keywords: 'reorder pdf pages, rearrange pdf pages online, pdf page organiser free',
+  },
+  '/tools/pdf/to-images': {
     title: 'PDF to Image Converter — EcomSathi',
     description:
       'Convert PDF pages to PNG or JPG images. Free online PDF to image converter. Extract all pages as high-quality images.',
     keywords:
       'pdf to image converter, pdf to png, pdf to jpg online, convert pdf pages to images free',
   },
-  '/tools/image-to-pdf': {
+  '/tools/pdf/images-to-pdf': {
     title: 'Image to PDF Converter — EcomSathi',
     description:
       'Convert JPG, PNG, or WebP images to PDF. Free online image to PDF converter. Combine multiple images into a single PDF.',
     keywords:
       'image to pdf converter free, jpg to pdf online, png to pdf, convert images to pdf',
   },
-  '/tools/pdf-reorder': {
-    title: 'Reorder PDF Pages — EcomSathi',
+  '/tools/pdf/watermark': {
+    title: 'Add Watermark to PDF — EcomSathi',
     description:
-      'Drag and drop to reorder PDF pages. Free online PDF page organiser. Rearrange pages without any software.',
-    keywords: 'reorder pdf pages, rearrange pdf pages online, pdf page organiser free',
+      'Add text or image watermark to PDF files. Free online PDF watermarking tool. Protect your documents with custom watermarks.',
+    keywords:
+      'add watermark to pdf, pdf watermark free, watermark pdf online, stamp pdf documents',
   },
-  '/tools/pdf-extract-pages': {
-    title: 'Extract Pages from PDF — EcomSathi',
+  '/tools/pdf/page-numbers': {
+    title: 'Add Page Numbers to PDF — EcomSathi',
     description:
-      'Extract specific pages from a PDF and save as a new file. Free online PDF page extractor.',
-    keywords: 'extract pages from pdf free, pdf page extractor online, save pdf pages',
-  },
-  '/tools/pdf-delete-pages': {
-    title: 'Delete Pages from PDF — EcomSathi',
-    description:
-      'Delete unwanted pages from a PDF file. Free online PDF page deletion tool. Remove blank or duplicate pages easily.',
-    keywords: 'delete pdf pages free, remove pages from pdf online, pdf page remover',
-  },
-  '/tools/pdf-unlock': {
-    title: 'Unlock PDF — Remove PDF Password — EcomSathi',
-    description:
-      'Remove password protection from PDF files you own. Free online PDF unlocker tool.',
-    keywords: 'unlock pdf free, remove pdf password online, pdf password remover',
-  },
-  '/tools/pdf-protect': {
-    title: 'Protect PDF with Password — EcomSathi',
-    description:
-      'Add password protection to your PDF files. Free online PDF protection tool. Secure sensitive documents.',
-    keywords: 'protect pdf with password, pdf password protect online, secure pdf free',
+      'Insert page numbers into any position of a PDF document. Free online PDF page numbering tool.',
+    keywords:
+      'add page numbers to pdf, pdf page numbering, insert page numbers pdf, pdf footer page number',
   },
 
-  // ─── Image Tools ──────────────────────────────────────────────────────────
-  '/tools/background-remover': {
+  // ─── Image Tools Hub ──────────────────────────────────────────────────────
+  '/tools/image': {
+    title: 'Free Image Tools for Ecommerce Sellers — EcomSathi',
+    description:
+      'Free image editing tools for sellers — resize, compress, crop, convert, watermark, and optimize product photos for Amazon, Flipkart, Myntra, and Meesho. No signup needed.',
+    keywords:
+      'image tools online free, resize image, compress image, background remover, crop image, jpg to png, webp converter, product image optimizer, ecommerce image tools india',
+    ogType: 'website',
+  },
+
+  // ─── Image Tools (individual) ─────────────────────────────────────────────
+  '/tools/image/background-remover': {
     title: 'Remove Background Free — EcomSathi',
     description:
-      'Remove background from product images free. Perfect for Amazon, Flipkart product listings. Get clean white background product photos instantly.',
+      'Remove background from product images free. Perfect for Amazon, Flipkart product listings. Get clean transparent PNG product photos instantly. No signup required.',
     keywords:
-      'background remover free, remove image background, product photo background remove, white background product image, amazon product photo',
+      'background remover free, remove image background online, product photo background remove, transparent background png, amazon product photo background',
   },
-  '/tools/product-optimizer': {
-    title: 'Product Image Optimizer — EcomSathi',
-    description:
-      'Optimise product images for ecommerce marketplaces. Resize, compress, and format product photos for Amazon, Flipkart, Meesho requirements.',
-    keywords:
-      'product image optimizer, ecommerce image optimizer, amazon image size, flipkart image requirements, compress product photos',
-  },
-  '/tools/image-resize': {
-    title: 'Image Resize Online Free — EcomSathi',
-    description:
-      'Resize images to exact pixel dimensions or percentage. Free online image resizer. Supports JPG, PNG, WebP formats.',
-    keywords: 'image resize online free, resize image pixels, image resizer tool, resize photo online',
-  },
-  '/tools/image-compress': {
-    title: 'Compress Image Free — EcomSathi',
-    description:
-      'Compress JPG, PNG, and WebP images online for free. Reduce image file size without visible quality loss.',
-    keywords:
-      'compress image free, image compressor online, reduce image size, jpg compressor, png compressor',
-  },
-  '/tools/image-convert': {
-    title: 'Image Format Converter — EcomSathi',
-    description:
-      'Convert images between JPG, PNG, WebP, AVIF, and BMP formats. Free online image format converter.',
-    keywords:
-      'image converter online, jpg to png, png to webp, convert image format free, webp converter',
-  },
-  '/tools/image-crop': {
+  '/tools/image/crop': {
     title: 'Crop Image Online Free — EcomSathi',
     description:
-      'Crop images to any size or aspect ratio. Free online image cropping tool. Supports custom dimensions and preset ratios.',
-    keywords: 'crop image online free, image cropper, crop photo online, custom image crop',
-  },
-  '/tools/image-watermark': {
-    title: 'Add Watermark to Image — EcomSathi',
-    description:
-      'Add text or logo watermark to product images. Free online image watermarking tool. Protect your product photography.',
+      'Crop images to any size or aspect ratio online for free. Drag-and-drop crop with aspect ratio presets (1:1, 4:3, 16:9) and rotation support. No signup needed.',
     keywords:
-      'add watermark to image free, image watermark online, watermark product photos, brand image watermark',
+      'crop image online free, image cropper, crop photo online, custom image crop, aspect ratio crop, free image cropping tool',
   },
-  '/tools/image-bulk-resize': {
-    title: 'Bulk Image Resize — EcomSathi',
+  '/tools/image/resize': {
+    title: 'Resize Image Online Free — EcomSathi',
     description:
-      'Resize multiple images at once to the same dimensions. Free bulk image resizer for ecommerce sellers.',
-    keywords: 'bulk image resize, batch image resizer, resize multiple images online free',
-  },
-  '/tools/image-background-colour': {
-    title: 'Change Image Background Colour — EcomSathi',
-    description:
-      'Change the background colour of product images. Replace transparent or removed backgrounds with white, custom colours, or gradients.',
+      'Resize images to exact pixel dimensions or percentage. Free online image resizer with marketplace presets for Amazon, Flipkart, Instagram. Supports JPG, PNG, WebP.',
     keywords:
-      'change image background colour, white background product photo, image background replace free',
+      'image resize online free, resize image pixels, image resizer tool, resize photo online, resize image for amazon flipkart, online image resizer',
   },
-  '/tools/image-flip-rotate': {
-    title: 'Flip and Rotate Image — EcomSathi',
+  '/tools/image/compress': {
+    title: 'Compress Image Free — EcomSathi',
     description:
-      'Flip images horizontally or vertically, rotate by custom angle. Free online image flip and rotate tool.',
-    keywords: 'flip image online, rotate image free, flip photo horizontally, image rotation tool',
+      'Compress JPG, PNG, and WebP images online for free. Reduce image file size without visible quality loss. Set target file size in KB. No signup required.',
+    keywords:
+      'compress image free, image compressor online, reduce image size, jpg compressor, png compressor, compress photo online, reduce image file size',
   },
-  '/tools/image-metadata': {
-    title: 'Image Metadata Viewer — EcomSathi',
+  '/tools/image/jpg-to-png': {
+    title: 'JPG to PNG Converter Free — EcomSathi',
     description:
-      'View and remove EXIF metadata from images. Check image dimensions, camera settings, GPS data. Free online metadata viewer.',
-    keywords: 'image metadata viewer, exif data viewer, remove exif data, image info viewer free',
+      'Convert JPG/JPEG images to PNG format online for free. Supports batch conversion of multiple files. Preserves image quality. No signup required.',
+    keywords:
+      'jpg to png converter free, jpeg to png online, convert jpg to png, batch jpg to png, free image format converter',
+  },
+  '/tools/image/png-to-jpg': {
+    title: 'PNG to JPG Converter Free — EcomSathi',
+    description:
+      'Convert PNG images to JPEG online for free. Set custom background color for transparent areas. Control JPEG quality. Supports batch conversion.',
+    keywords:
+      'png to jpg converter free, png to jpeg online, convert png to jpg, batch png to jpg converter, transparent png to jpg',
+  },
+  '/tools/image/webp': {
+    title: 'WEBP Converter — Convert to/from WEBP Free — EcomSathi',
+    description:
+      'Convert between WEBP and PNG/JPG formats in both directions. Free online WEBP converter. Reduce file size with WEBP or convert WEBP to standard formats.',
+    keywords:
+      'webp converter free, jpg to webp, png to webp, webp to jpg, webp to png, convert webp online, image webp converter',
+  },
+  '/tools/image/watermark': {
+    title: 'Add Watermark to Image Free — EcomSathi',
+    description:
+      'Add text or logo watermark to product images online for free. Control opacity, font size, position, and color. Protect your product photography.',
+    keywords:
+      'add watermark to image free, image watermark online, watermark product photos, brand image watermark, text watermark image, logo watermark tool',
+  },
+  '/tools/image/product-optimizer': {
+    title: 'Product Image Optimizer for Ecommerce — EcomSathi',
+    description:
+      'Optimise product images for ecommerce marketplaces. Resize, add white background, compress, and format product photos for Amazon, Flipkart, Myntra, Meesho requirements.',
+    keywords:
+      'product image optimizer, ecommerce image optimizer, amazon image size requirements, flipkart image requirements, meesho product photo, compress product photos',
+  },
+  '/tools/image/white-background': {
+    title: 'White Background Generator — EcomSathi',
+    description:
+      'Replace product photo backgrounds with white for marketplace compliance. Free AI-powered white background tool for Amazon, Flipkart, Myntra product images.',
+    keywords:
+      'white background product photo, add white background image, remove background add white, amazon white background requirement, ecommerce product photo white bg',
+  },
+  '/tools/image/square': {
+    title: 'Square Image Creator — Make Image Square Free — EcomSathi',
+    description:
+      'Add padding to make any image perfectly square. Choose fill color (white, transparent, custom) and image position. Free square image maker for marketplace listings.',
+    keywords:
+      'square image creator, make image square online free, add padding to image, square product photo, instagram square image, 1:1 image ratio tool',
   },
 
-  // ─── Video Tools ──────────────────────────────────────────────────────────
-  '/tools/video-to-gif': {
-    title: 'Video to GIF Converter — EcomSathi',
+  // ─── Video Tools Hub ──────────────────────────────────────────────────────
+  '/tools/video': {
+    title: 'Free Video Tools for Ecommerce Sellers — EcomSathi',
     description:
-      'Convert video clips to animated GIF. Free online video to GIF converter. Perfect for product showcase animations on ecommerce listings.',
+      'Convert, resize, compress and optimize product videos online. Video to GIF, frame extractor, video compression, resize, converter, and thumbnail generator. Free, no signup.',
     keywords:
-      'video to gif converter free, mp4 to gif online, convert video to gif, animated gif maker, product video to gif',
+      'video tools online free, video to gif, compress video online, resize video, video converter, extract frames, thumbnail generator, ecommerce video tools',
+    ogType: 'website',
   },
-  '/tools/video-compress': {
+
+  // ─── Video Tools (individual) ─────────────────────────────────────────────
+  '/tools/video/to-gif': {
+    title: 'Video to GIF Converter Free — EcomSathi',
+    description:
+      'Convert video clips to animated GIF free online. MP4, MOV, AVI to GIF converter. Set frame rate, width, and trim. Perfect for product showcase animations.',
+    keywords:
+      'video to gif converter free, mp4 to gif online, convert video to gif, animated gif maker, product video to gif, webm to gif',
+  },
+  '/tools/video/frame-extractor': {
+    title: 'Extract Frames from Video Free — EcomSathi',
+    description:
+      'Extract individual frames from MP4, MOV, AVI, WEBM, MKV videos as JPEG images. Free online video frame extractor for product thumbnail creation.',
+    keywords:
+      'extract frames from video, video to images free, video frame extractor online, screenshot from video, frame capture from video',
+  },
+  '/tools/video/compress': {
     title: 'Compress Video Online Free — EcomSathi',
     description:
-      'Compress MP4 and other video files online for free. Reduce video file size for ecommerce listings and social media.',
+      'Compress MP4 and other video files online for free. Reduce video file size for ecommerce listings and social media without losing too much quality.',
     keywords:
-      'compress video online free, video compressor, reduce video size, mp4 compressor online',
+      'compress video online free, video compressor, reduce video size, mp4 compressor online, video file size reducer, compress video for upload',
   },
-  '/tools/video-resize': {
-    title: 'Resize Video Online — EcomSathi',
+  '/tools/video/resize': {
+    title: 'Resize Video Online Free — EcomSathi',
     description:
-      'Resize video to specific dimensions or aspect ratio. Free online video resizer. Change resolution for marketplace requirements.',
-    keywords: 'resize video online free, video resolution changer, mp4 resizer, video dimensions',
-  },
-  '/tools/video-trim': {
-    title: 'Trim Video Online Free — EcomSathi',
-    description:
-      'Trim and cut video clips online for free. Remove unwanted beginning or end from product videos.',
+      'Resize video to specific dimensions or aspect ratio. Free online video resizer. Change video resolution for Amazon, Flipkart and other marketplace requirements.',
     keywords:
-      'trim video online free, cut video online, video trimmer, mp4 cutter, video clip trimmer',
+      'resize video online free, video resolution changer, mp4 resizer, change video dimensions, video resolution converter, resize video for amazon',
   },
-  '/tools/video-to-frames': {
-    title: 'Extract Frames from Video — EcomSathi',
+  '/tools/video/convert': {
+    title: 'Video Converter Online Free — MP4, MOV, AVI, WEBM — EcomSathi',
     description:
-      'Extract individual frames from video as PNG images. Free online video frame extractor for product thumbnail creation.',
+      'Convert between MP4, MOV, AVI, WEBM, MKV video formats online for free. Browser-based video converter. No signup required.',
     keywords:
-      'extract frames from video, video to images free, video frame extractor, screenshot from video online',
+      'video converter online free, mp4 to webm, mov to mp4, convert video format, avi to mp4, webm to mp4, mkv to mp4 online',
   },
-  '/tools/gif-to-video': {
-    title: 'GIF to Video Converter — EcomSathi',
+  '/tools/video/thumbnail': {
+    title: 'Video Thumbnail Generator Free — EcomSathi',
     description:
-      'Convert animated GIF to MP4 video. Free online GIF to video converter. Create videos from product GIF animations.',
-    keywords: 'gif to video converter, gif to mp4 online free, animated gif to video, convert gif',
+      'Extract the perfect thumbnail from your product video at any timestamp. Free online video thumbnail generator. Save as JPEG for marketplace listings.',
+    keywords:
+      'video thumbnail generator, extract thumbnail from video, video screenshot free, product video thumbnail, thumbnail maker from video',
   },
 
-  // ─── GST Tools ────────────────────────────────────────────────────────────
-  '/tools/gst-search': {
+  // ─── GST Tools Hub ────────────────────────────────────────────────────────
+  '/tools/gst': {
+    title: 'Free GST Tools for Ecommerce Sellers — EcomSathi',
+    description:
+      'Search GSTIN, calculate GST, verify PAN, find HSN/SAC codes, and look up GST rates. Free GST tools for Indian ecommerce sellers. No signup needed.',
+    keywords:
+      'gst tools online free, gstin search, gst calculator, hsn code search, pan validator, gst rate finder, ecommerce gst tools india',
+    ogType: 'website',
+  },
+
+  // ─── GST Tools (individual) ───────────────────────────────────────────────
+  '/tools/gst/search': {
     title: 'GST Search — Verify GSTIN Free — EcomSathi',
     description:
       'Search and verify GSTIN numbers instantly. Free GST number verification tool for Indian sellers. Check business name, address, and filing status.',
     keywords:
       'gst search, gstin verification, verify gst number, gst number check, gstin lookup india',
   },
-  '/tools/gst-calculator': {
+  '/tools/gst/verify': {
+    title: 'GSTIN Verifier — EcomSathi',
+    description:
+      'Instantly verify if a GSTIN is valid and active on the GST portal. Free online GSTIN verification tool for Indian sellers.',
+    keywords:
+      'gstin verifier, verify gstin online, gst number active check, gstin validity checker india',
+  },
+  '/tools/gst/calculator': {
     title: 'GST Calculator — EcomSathi',
     description:
       'Calculate GST for any product. Supports all GST rates: 5%, 12%, 18%, 28%. Calculate GST inclusive and exclusive prices instantly.',
     keywords:
       'gst calculator online, calculate gst india, gst amount calculator, inclusive exclusive gst calculator',
   },
-  '/tools/hsn-search': {
-    title: 'HSN Code Search — EcomSathi',
+  '/tools/gst/reverse': {
+    title: 'Reverse GST Calculator — EcomSathi',
     description:
-      'Search HSN codes for products. Find the correct HSN/SAC code and applicable GST rate. Free HSN code finder for Indian sellers.',
+      'Find the base price and GST amount from a GST-inclusive total. Free reverse GST calculator for Indian sellers.',
     keywords:
-      'hsn code search, find hsn code, hsn code gst rate, sac code search, product hsn code finder',
+      'reverse gst calculator, gst exclusive price calculator, find base price from gst inclusive, reverse charge gst india',
   },
-  '/tools/gst-return-checker': {
-    title: 'GST Return Filing Status Checker — EcomSathi',
+  '/tools/gst/rate-finder': {
+    title: 'GST Rate Finder — EcomSathi',
     description:
-      'Check GST return filing status by GSTIN. Verify if your supplier has filed GSTR-3B and GSTR-1 returns.',
+      'Find the correct GST rate for any product category or HSN code. Free GST rate finder for Indian sellers.',
     keywords:
-      'gst return status checker, gstr filing status, check gst return filed, gstin compliance check',
+      'gst rate finder, find gst rate online, product gst rate, hsn code gst rate, gst slab finder india',
   },
-  '/tools/pan-validator': {
+  '/tools/gst/state-finder': {
+    title: 'GST State Code Lookup — EcomSathi',
+    description:
+      'Look up the 2-digit state code used in GSTIN numbers. Free GST state code finder for all Indian states and UTs.',
+    keywords:
+      'gst state code lookup, gstin state code, indian state gst code, 2 digit state code gstin',
+  },
+  '/tools/gst/gstin-validator': {
+    title: 'GSTIN Validator — EcomSathi',
+    description:
+      'Validate GSTIN format and checksum without an API call. Free offline GSTIN format validator.',
+    keywords:
+      'gstin validator, validate gstin format, gstin checksum checker, gstin format validation free',
+  },
+  '/tools/gst/pan-validator': {
     title: 'PAN Card Validator — EcomSathi',
     description:
       'Validate PAN card numbers online. Check PAN format, type (individual, company, HUF), and basic details. Free PAN validator.',
     keywords:
       'pan card validator, validate pan number, pan verification online, check pan card free',
   },
-  '/tools/tds-calculator': {
-    title: 'TDS Calculator — EcomSathi',
+  '/tools/gst/hsn-search': {
+    title: 'HSN Code Search — EcomSathi',
     description:
-      'Calculate TDS deductions on ecommerce seller payments. Check TDS rates for Amazon, Flipkart seller payouts under Section 194-O.',
+      'Search HSN codes for products. Find the correct HSN/SAC code and applicable GST rate. Free HSN code finder for Indian sellers.',
     keywords:
-      'tds calculator ecommerce, section 194-o tds, amazon tds calculator, flipkart tds rate',
+      'hsn code search, find hsn code, hsn code gst rate, sac code search, product hsn code finder',
   },
-  '/tools/invoice-generator': {
-    title: 'GST Invoice Generator — EcomSathi',
+  '/tools/gst/sac-search': {
+    title: 'SAC Code Search — EcomSathi',
     description:
-      'Generate professional GST invoices for your business. Free online invoice maker with GSTIN, HSN codes, and tax calculations.',
+      'Look up Service Accounting Codes (SAC) and GST rates for services. Free SAC code search tool for Indian businesses.',
     keywords:
-      'gst invoice generator free, invoice maker online, create gst invoice, tax invoice generator india',
-  },
-  '/tools/eway-bill': {
-    title: 'E-Way Bill Calculator — EcomSathi',
-    description:
-      'Check e-way bill requirements and calculate thresholds. Know when e-way bill is mandatory for your shipments.',
-    keywords:
-      'eway bill calculator, e-way bill requirement checker, when is eway bill required, eway bill threshold',
-  },
-  '/tools/composition-scheme': {
-    title: 'GST Composition Scheme Calculator — EcomSathi',
-    description:
-      'Check eligibility and calculate tax liability under GST composition scheme. Compare regular vs composition scheme for your business.',
-    keywords:
-      'gst composition scheme calculator, composition scheme eligibility, gst composition tax rate',
-  },
-  '/tools/reverse-charge': {
-    title: 'GST Reverse Charge Calculator — EcomSathi',
-    description:
-      'Calculate GST under reverse charge mechanism. Find services and goods subject to RCM. Free reverse charge calculator.',
-    keywords:
-      'gst reverse charge calculator, rcm calculator, reverse charge mechanism gst india',
+      'sac code search, find sac code, service accounting code gst, sac code lookup india',
   },
 
   // ─── Label Crop ───────────────────────────────────────────────────────────

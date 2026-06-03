@@ -3,6 +3,17 @@ import { useDropzone } from 'react-dropzone';
 import { UploadCloud, Download, Trash2, CheckSquare, Square, Info } from 'lucide-react';
 import { Button } from '../../components/common/Button';
 import { Alert } from '../../components/common/Alert';
+import SEO from '../../components/common/SEO';
+import { FAQPageSchema, BreadcrumbSchema, WebApplicationSchema } from '../../components/common/SchemaMarkup';
+import ImageFAQ from './components/ImageFAQ';
+
+const FAQS = [
+  { q: 'What marketplaces are supported?', a: 'Amazon, Flipkart, Myntra, and Meesho presets are available. Each preset applies the correct dimensions, background, and format requirements for that marketplace.' },
+  { q: 'What operations does the optimizer perform?', a: 'Depending on the preset, the optimizer can resize to required dimensions, add a white background, compress the file, and convert to JPEG format — all in one step.' },
+  { q: 'What are Amazon\'s image requirements?', a: 'Amazon requires product images to be at least 1000px on the longest side (2000px recommended), in JPEG format, with a pure white background (#FFFFFF) for main images.' },
+  { q: 'Does white background removal use AI?', a: 'Yes. The white background step sends your image to an AI processing server to remove the existing background and replace it with white. This requires an internet connection.' },
+  { q: 'Can I choose which operations to apply?', a: 'Yes. Each optimization step (resize, white background, compress, convert) has a checkbox. Uncheck any step you want to skip.' },
+];
 
 const MAX_SIZE_BYTES = 20 * 1024 * 1024;
 const PROCESSING_API_URL = import.meta.env.VITE_PROCESSING_API_URL as string;
@@ -278,8 +289,24 @@ export const ProductOptimizer: React.FC = () => {
     </button>
   );
 
+  const schema = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      WebApplicationSchema({ name: 'Product Image Optimizer', url: 'https://ecomsathi.vercel.app/image/product-optimizer', description: 'Optimize product images for Amazon, Flipkart, Myntra, Meesho with one click.' }),
+      BreadcrumbSchema([{ name: 'Home', url: '/' }, { name: 'Tools', url: '/tools' }, { name: 'Product Image Optimizer', url: '/image/product-optimizer' }]),
+      FAQPageSchema(FAQS.map(f => ({ question: f.q, answer: f.a }))),
+    ],
+  };
+
   return (
     <div className="max-w-3xl mx-auto flex flex-col gap-6">
+      <SEO
+        title="Product Image Optimizer for Ecommerce — EcomSathi"
+        description="Optimise product images for ecommerce marketplaces. Resize, add white background, compress, and format product photos for Amazon, Flipkart, Myntra, Meesho."
+        keywords="product image optimizer, ecommerce image optimizer, amazon image size requirements, flipkart image requirements"
+        canonicalUrl="https://ecomsathi.vercel.app/image/product-optimizer"
+        schema={schema}
+      />
       <div>
         <h1 className="text-2xl font-bold text-[#0F172A]">Product Image Optimizer</h1>
         <p className="text-sm text-[#64748B] mt-1">Optimize product images for Indian marketplaces — Amazon, Flipkart, Myntra, and more.</p>
@@ -406,6 +433,8 @@ export const ProductOptimizer: React.FC = () => {
           )}
         </div>
       )}
+
+      <ImageFAQ faqs={FAQS} />
     </div>
   );
 };

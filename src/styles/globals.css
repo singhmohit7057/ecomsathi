@@ -13,6 +13,8 @@
   --color-accent-hover: #0891B2;
   --color-accent-subtle: #ECFEFF;
   --color-background: #FFFFFF;
+  --color-white: #ffffff;
+  --color-black: #000000;
   --color-surface: #F8FAFC;
   --color-text: #0F172A;
   --color-text-muted: #64748B;
@@ -157,6 +159,14 @@
   --element-gap: 24px;
   --content-max-width: 1280px;
 }
+
+/* =========================================================
+ * Explicit color overrides (Tailwind v4 CSS var safety)
+ * ======================================================= */
+
+/* Ensure text-white always renders white regardless of CSS var resolution */
+.text-white { color: #ffffff !important; }
+.text-black { color: #000000 !important; }
 
 /* =========================================================
  * Base resets

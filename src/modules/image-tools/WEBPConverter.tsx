@@ -3,6 +3,17 @@ import { useDropzone } from 'react-dropzone';
 import { UploadCloud, Download, Trash2, ArrowLeftRight, FileImage } from 'lucide-react';
 import { Button } from '../../components/common/Button';
 import { Alert } from '../../components/common/Alert';
+import SEO from '../../components/common/SEO';
+import { FAQPageSchema, BreadcrumbSchema, WebApplicationSchema } from '../../components/common/SchemaMarkup';
+import ImageFAQ from './components/ImageFAQ';
+
+const FAQS = [
+  { q: 'What is WEBP and why use it?', a: 'WEBP is a modern image format from Google that produces smaller file sizes than JPG and PNG while maintaining similar visual quality, making it ideal for web performance.' },
+  { q: 'Can I convert WEBP back to PNG or JPG?', a: 'Yes. Use the "WEBP → PNG/JPG" direction to convert WEBP files to standard formats. Choose PNG to preserve transparency or JPG for smaller file sizes.' },
+  { q: 'Do all marketplaces accept WEBP?', a: 'Most marketplaces (Amazon, Flipkart, Myntra) require JPG or PNG product images. Use the WEBP → JPG/PNG direction to convert before uploading to marketplaces.' },
+  { q: 'What quality setting should I use for WEBP?', a: '85% is a good default. Values above 90% offer minimal visual difference with noticeably larger files. Values below 75% may show visible compression artifacts.' },
+  { q: 'Is conversion done in the browser?', a: 'Yes, all conversions use the Canvas API locally in your browser. No images are uploaded to any server.' },
+];
 
 const MAX_SIZE_BYTES = 20 * 1024 * 1024;
 
@@ -156,8 +167,24 @@ export const WEBPConverter: React.FC = () => {
     ? 'PNG/JPG → WEBP'
     : 'WEBP → PNG/JPG';
 
+  const schema = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      WebApplicationSchema({ name: 'WEBP Converter', url: 'https://ecomsathi.vercel.app/image/webp-converter', description: 'Convert between WEBP and PNG/JPG formats in both directions. Free online WEBP converter.' }),
+      BreadcrumbSchema([{ name: 'Home', url: '/' }, { name: 'Tools', url: '/tools' }, { name: 'WEBP Converter', url: '/image/webp-converter' }]),
+      FAQPageSchema(FAQS.map(f => ({ question: f.q, answer: f.a }))),
+    ],
+  };
+
   return (
     <div className="max-w-3xl mx-auto flex flex-col gap-6">
+      <SEO
+        title="WEBP Converter — Convert to/from WEBP Free — EcomSathi"
+        description="Convert between WEBP and PNG/JPG formats in both directions. Free online WEBP converter. Reduce file size or convert WEBP to standard formats."
+        keywords="webp converter free, jpg to webp, png to webp, webp to jpg, webp to png, convert webp online"
+        canonicalUrl="https://ecomsathi.vercel.app/image/webp-converter"
+        schema={schema}
+      />
       <div>
         <h1 className="text-2xl font-bold text-[#0F172A]">WEBP Converter</h1>
         <p className="text-sm text-[#64748B] mt-1">Convert between WEBP and PNG/JPG formats.</p>
@@ -308,6 +335,8 @@ export const WEBPConverter: React.FC = () => {
           </div>
         </div>
       )}
+
+      <ImageFAQ faqs={FAQS} />
     </div>
   );
 };

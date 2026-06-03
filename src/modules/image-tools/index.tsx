@@ -1,156 +1,249 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React from 'react'
+import { Link } from 'react-router-dom'
 import {
-  Eraser,
+  Wand2,
   Crop,
-  Expand,
-  Minimize2,
-  FileImage,
-  ArrowRightLeft,
+  Maximize2,
+  Archive,
+  ArrowRight,
+  Zap,
   Stamp,
-  Package,
-  PaintBucket,
+  Star,
   Square,
-  Layers,
-} from 'lucide-react';
+  LayoutGrid,
+  ChevronRight,
+  ImageIcon,
+  CheckCircle2,
+  Shield,
+} from 'lucide-react'
 
-interface ToolCard {
-  icon: React.ReactNode;
-  title: string;
-  description: string;
-  path: string;
-  accent: string;
+// ─── Tool list ────────────────────────────────────────────────────────────────
+
+interface ImageTool {
+  name: string
+  href: string
+  icon: React.ReactNode
+  desc: string
+  color: string
+  iconBg: string
 }
 
-const TOOLS: ToolCard[] = [
+const IMAGE_TOOLS: ImageTool[] = [
   {
-    icon: <Eraser size={28} />,
-    title: 'Background Remover',
-    description: 'Remove backgrounds automatically using AI. Outputs transparent PNG.',
-    path: '/tools/image/background-remover',
-    accent: 'bg-[#FFF1F2] text-[#DC2626] border-[#FFE4E6]',
+    name: 'Background Remover',
+    href: '/tools/image/background-remover',
+    icon: <Wand2 size={22} />,
+    desc: 'Remove backgrounds from product images',
+    color: 'text-[#DC2626]',
+    iconBg: 'bg-[#FFF1F2]',
   },
   {
-    icon: <Crop size={28} />,
-    title: 'Crop Image',
-    description: 'Drag-and-drop crop with aspect ratio presets and rotation support.',
-    path: '/tools/image/crop',
-    accent: 'bg-[#F0FDF4] text-[#16A34A] border-[#BBF7D0]',
+    name: 'Crop Image',
+    href: '/tools/image/crop',
+    icon: <Crop size={22} />,
+    desc: 'Crop to any size or aspect ratio',
+    color: 'text-[#16A34A]',
+    iconBg: 'bg-[#DCFCE7]',
   },
   {
-    icon: <Expand size={28} />,
-    title: 'Resize Image',
-    description: 'Resize by custom dimensions, percentage, or marketplace presets.',
-    path: '/tools/image/resize',
-    accent: 'bg-[#EFF6FF] text-[#2563EB] border-[#BFDBFE]',
+    name: 'Resize Image',
+    href: '/tools/image/resize',
+    icon: <Maximize2 size={22} />,
+    desc: 'Resize for marketplace requirements',
+    color: 'text-[#2563EB]',
+    iconBg: 'bg-[#DBEAFE]',
   },
   {
-    icon: <Minimize2 size={28} />,
-    title: 'Compress Image',
-    description: 'Reduce file size with quality control and optional target size input.',
-    path: '/tools/image/compress',
-    accent: 'bg-[#FFFBEB] text-[#D97706] border-[#FDE68A]',
+    name: 'Compress Image',
+    href: '/tools/image/compress',
+    icon: <Archive size={22} />,
+    desc: 'Reduce file size with quality control',
+    color: 'text-[#D97706]',
+    iconBg: 'bg-[#FEF9C3]',
   },
   {
-    icon: <FileImage size={28} />,
-    title: 'JPG to PNG',
-    description: 'Convert JPG/JPEG images to PNG format. Supports batch conversion.',
-    path: '/tools/image/jpg-to-png',
-    accent: 'bg-[#F0F9FF] text-[#0284C7] border-[#BAE6FD]',
+    name: 'JPG to PNG',
+    href: '/tools/image/jpg-to-png',
+    icon: <ArrowRight size={22} />,
+    desc: 'Convert JPG images to transparent PNG',
+    color: 'text-[#0891B2]',
+    iconBg: 'bg-[#CFFAFE]',
   },
   {
-    icon: <Layers size={28} />,
-    title: 'PNG to JPG',
-    description: 'Convert PNG files to JPEG with custom background color for transparency.',
-    path: '/tools/image/png-to-jpg',
-    accent: 'bg-[#FDF4FF] text-[#9333EA] border-[#E9D5FF]',
+    name: 'PNG to JPG',
+    href: '/tools/image/png-to-jpg',
+    icon: <ArrowRight size={22} />,
+    desc: 'Convert PNG to JPG with white background',
+    color: 'text-[#9333EA]',
+    iconBg: 'bg-[#F3E8FF]',
   },
   {
-    icon: <ArrowRightLeft size={28} />,
-    title: 'WEBP Converter',
-    description: 'Convert between WEBP and PNG/JPG formats in both directions.',
-    path: '/tools/image/webp-converter',
-    accent: 'bg-[#F0FDF4] text-[#059669] border-[#A7F3D0]',
+    name: 'WEBP Converter',
+    href: '/tools/image/webp',
+    icon: <Zap size={22} />,
+    desc: 'Convert to/from WEBP format',
+    color: 'text-[#16A34A]',
+    iconBg: 'bg-[#DCFCE7]',
   },
   {
-    icon: <Stamp size={28} />,
-    title: 'Image Watermark',
-    description: 'Add text or logo watermarks with opacity, size, and position control.',
-    path: '/tools/image/watermark',
-    accent: 'bg-[#FFF7ED] text-[#EA580C] border-[#FED7AA]',
+    name: 'Image Watermark',
+    href: '/tools/image/watermark',
+    icon: <Stamp size={22} />,
+    desc: 'Add text or logo watermark',
+    color: 'text-[#EA580C]',
+    iconBg: 'bg-[#FFF7ED]',
   },
   {
-    icon: <Package size={28} />,
-    title: 'Product Optimizer',
-    description: 'Optimize product images for Amazon, Flipkart, Myntra, Meesho, and more.',
-    path: '/tools/image/product-optimizer',
-    accent: 'bg-[#EFF6FF] text-[#1D4ED8] border-[#BFDBFE]',
+    name: 'Product Optimizer',
+    href: '/tools/image/product-optimizer',
+    icon: <Star size={22} />,
+    desc: 'Optimize product images for listings',
+    color: 'text-[#2563EB]',
+    iconBg: 'bg-[#DBEAFE]',
   },
   {
-    icon: <PaintBucket size={28} />,
-    title: 'White Background',
-    description: 'Replace product photo backgrounds with white for marketplace compliance.',
-    path: '/tools/image/white-background',
-    accent: 'bg-[#F8FAFC] text-[#334155] border-[#CBD5E1]',
+    name: 'White Background',
+    href: '/tools/image/white-background',
+    icon: <Square size={22} />,
+    desc: 'Add white background for marketplace',
+    color: 'text-[#334155]',
+    iconBg: 'bg-[#F1F5F9]',
   },
   {
-    icon: <Square size={28} />,
-    title: 'Square Image Creator',
-    description: 'Add padding to make any image perfectly square. Pick position and fill color.',
-    path: '/tools/image/square-creator',
-    accent: 'bg-[#FFF1F2] text-[#BE185D] border-[#FBCFE8]',
+    name: 'Square Image Creator',
+    href: '/tools/image/square',
+    icon: <LayoutGrid size={22} />,
+    desc: 'Create 1:1 square images with padding',
+    color: 'text-[#BE185D]',
+    iconBg: 'bg-[#FCE7F3]',
   },
-];
+]
 
-export const ImageToolsIndex: React.FC = () => {
-  const navigate = useNavigate();
+// ─── Hub page ─────────────────────────────────────────────────────────────────
 
+export const handle = {
+  toolName: undefined,
+  category: 'Image Tools',
+  description: 'Free image editing tools for Indian marketplace sellers.',
+}
+
+export default function ImageToolsHub() {
   return (
-    <div className="max-w-5xl mx-auto flex flex-col gap-8">
-      {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-[#0F172A]">Image Tools</h1>
-        <p className="text-base text-[#64748B] mt-2">
-          Free image editing tools for sellers — resize, compress, watermark, and optimize product photos for Indian marketplaces.
-        </p>
+    <div className="flex flex-col gap-8">
+
+      {/* ── Hero ──────────────────────────────────────────────── */}
+      <div className="rounded-[8px] border border-[#A7F3D0] bg-[#F0FDF4] p-6 sm:p-8">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:gap-6">
+          {/* Icon */}
+          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-[8px] border border-[#A7F3D0] bg-white text-[#16A34A] shadow-sm">
+            <ImageIcon size={28} />
+          </div>
+
+          {/* Text */}
+          <div className="flex-1">
+            <div className="flex flex-wrap items-center gap-2">
+              <h1 className="text-2xl font-extrabold text-[#0F172A] sm:text-3xl">
+                Image Tools
+              </h1>
+              <span className="inline-flex items-center gap-1 rounded-full bg-white px-2.5 py-0.5 text-xs font-medium text-[#16A34A] ring-1 ring-inset ring-[#A7F3D0]">
+                <CheckCircle2 size={11} />
+                No login required
+              </span>
+              <span className="inline-flex items-center rounded-full bg-white px-2.5 py-0.5 text-xs font-medium text-[#D97706] ring-1 ring-inset ring-[#FDE68A]">
+                100% Free
+              </span>
+            </div>
+            <p className="mt-2 text-sm text-[#475569] sm:text-base">
+              {IMAGE_TOOLS.length} free image editing tools — resize, compress, remove backgrounds,
+              and optimize product photos for Amazon, Flipkart, Meesho and more.
+            </p>
+
+            {/* Stats row */}
+            <div className="mt-4 flex flex-wrap gap-4">
+              <div className="flex items-center gap-1.5 text-xs text-[#64748B]">
+                <span className="font-bold text-[#16A34A] text-sm">{IMAGE_TOOLS.length}</span>
+                tools available
+              </div>
+              <div className="flex items-center gap-1.5 text-xs text-[#64748B]">
+                <Shield size={13} className="text-[#16A34A]" />
+                Files processed securely
+              </div>
+              <div className="flex items-center gap-1.5 text-xs text-[#64748B]">
+                <CheckCircle2 size={13} className="text-[#16A34A]" />
+                Browser-based — no install
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
-      {/* Tool grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {TOOLS.map(tool => (
-          <div
-            key={tool.path}
-            className="bg-white border border-[#E2E8F0] rounded-[8px] p-5 flex flex-col gap-4 hover:shadow-[#1E293B_2px_2px_0px_0px] hover:border-[#CBD5E1] transition-all duration-150"
+      {/* ── Breadcrumb ─────────────────────────────────────────── */}
+      <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-sm text-[#64748B]">
+        <Link to="/" className="transition-colors hover:text-[#0F172A]">
+          Home
+        </Link>
+        <ChevronRight size={14} />
+        <Link to="/tools" className="transition-colors hover:text-[#0F172A]">
+          Tools
+        </Link>
+        <ChevronRight size={14} />
+        <span className="font-medium text-[#0F172A]">Image Tools</span>
+      </nav>
+
+      {/* ── Tool grid ──────────────────────────────────────────── */}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {IMAGE_TOOLS.map((tool) => (
+          <Link
+            key={tool.href}
+            to={tool.href}
+            className="group flex flex-col gap-4 rounded-[8px] border border-[#E2E8F0] bg-white p-5 transition-all duration-150 hover:border-[#16A34A] hover:shadow-[#1E293B_2px_2px_0px_0px]"
           >
-            {/* Icon */}
-            <div className={`w-12 h-12 rounded-[8px] border flex items-center justify-center flex-shrink-0 ${tool.accent}`}>
-              {tool.icon}
+            {/* Icon + badges */}
+            <div className="flex items-start justify-between">
+              <div
+                className={`flex h-11 w-11 items-center justify-center rounded-[8px] ${tool.iconBg} ${tool.color}`}
+              >
+                {tool.icon}
+              </div>
+              <div className="flex gap-1.5">
+                <span className="inline-flex items-center rounded-full bg-[#F0FDF4] px-2 py-0.5 text-[10px] font-semibold text-[#16A34A] border border-[#A7F3D0]">
+                  Free
+                </span>
+                <span className="inline-flex items-center rounded-full bg-[#DCFCE7] px-2 py-0.5 text-[10px] font-medium text-[#16A34A]">
+                  Image Tools
+                </span>
+              </div>
             </div>
 
-            {/* Text */}
-            <div className="flex flex-col gap-1 flex-1">
-              <h2 className="text-base font-semibold text-[#0F172A]">{tool.title}</h2>
-              <p className="text-sm text-[#64748B] leading-relaxed">{tool.description}</p>
+            {/* Title + description */}
+            <div className="flex-1">
+              <h2 className="text-base font-semibold text-[#0F172A] transition-colors group-hover:text-[#16A34A]">
+                {tool.name}
+              </h2>
+              <p className="mt-1 text-sm text-[#64748B]">{tool.desc}</p>
             </div>
 
             {/* CTA */}
-            <button
-              type="button"
-              onClick={() => navigate(tool.path)}
-              className="w-full px-4 py-2 text-sm font-medium text-[#2563EB] border border-[#2563EB] rounded-[4px] hover:bg-[#EFF6FF] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB]/40"
+            <div
+              className={`flex items-center gap-1 text-sm font-medium ${tool.color}`}
             >
               Open Tool
-            </button>
-          </div>
+              <ChevronRight
+                size={14}
+                className="transition-transform group-hover:translate-x-0.5"
+              />
+            </div>
+          </Link>
         ))}
       </div>
 
-      {/* Footer note */}
-      <p className="text-xs text-[#94A3B8] text-center">
-        All tools process images in your browser. Files are not uploaded unless the tool explicitly requires backend processing (Background Remover, White Background).
-      </p>
+      {/* ── Privacy note ───────────────────────────────────────── */}
+      <div className="rounded-[8px] border border-[#E2E8F0] bg-[#F8FAFC] p-4 text-center">
+        <p className="text-xs text-[#64748B]">
+          Most tools process images directly in your browser. Background Remover and White Background
+          use our secure backend. Files are never stored permanently.
+        </p>
+      </div>
     </div>
-  );
-};
-
-export default ImageToolsIndex;
+  )
+}

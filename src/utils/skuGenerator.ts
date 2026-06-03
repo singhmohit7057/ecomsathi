@@ -42,7 +42,8 @@ export function generateSKU(
         break;
 
       case 'sequence': {
-        const seq = parseInt(comp.value ?? '1', 10);
+        const parsed = parseInt(comp.value ?? '1', 10);
+        const seq = isNaN(parsed) ? 1 : parsed;
         const digits = comp.digits ?? 4;
         part = String(seq).padStart(digits, '0');
         break;

@@ -63,7 +63,7 @@ const NAV_ITEMS: NavItem[] = [
     icon: <Package size={18} />,
     children: [
       { label: 'Products', to: '/inventory/products', icon: <Boxes size={16} /> },
-      { label: 'Stock', to: '/inventory/stock', icon: <ClipboardList size={16} /> },
+      { label: 'Movements', to: '/inventory/movements', icon: <ClipboardList size={16} /> },
       { label: 'Purchase Orders', to: '/inventory/purchase-orders', icon: <Truck size={16} /> },
       { label: 'Warehouses', to: '/inventory/warehouses', icon: <Store size={16} /> },
     ],

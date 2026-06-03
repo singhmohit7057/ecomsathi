@@ -57,7 +57,7 @@ export async function signOut(): Promise<void> {
 // ─── Send a password reset email ────────────────────────────────────────────
 export async function resetPassword(email: string): Promise<void> {
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${window.location.origin}/auth/update-password`,
+    redirectTo: `${window.location.origin}/reset-password`,
   })
   if (error) throw new Error(`resetPassword failed: ${error.message}`)
 }

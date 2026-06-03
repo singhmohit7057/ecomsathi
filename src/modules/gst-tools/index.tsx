@@ -1,257 +1,259 @@
-import React, { useState, Suspense, lazy } from 'react'
+import React from 'react'
+import { Link } from 'react-router-dom'
 import {
   Search,
-  Shield,
+  CheckCircle,
   Calculator,
-  Divide,
-  Tag,
+  ArrowLeft,
+  Percent,
   MapPin,
-  CheckSquare,
+  Shield,
   CreditCard,
   BookOpen,
-  FileText,
-  ArrowLeft,
+  Headphones,
+  ChevronRight,
+  Receipt,
+  CheckCircle2,
 } from 'lucide-react'
-import { Card } from '../../components/common/Card'
-import { Badge } from '../../components/common/Badge'
-import { Button } from '../../components/common/Button'
-import { PageLoader } from '../../components/common/Loader'
 
-// Lazy load all tools
-const GSTSearch = lazy(() => import('./GSTSearch'))
-const GSTVerify = lazy(() => import('./GSTVerify'))
-const GSTCalculator = lazy(() => import('./GSTCalculator'))
-const ReverseGSTCalculator = lazy(() => import('./ReverseGSTCalculator'))
-const GSTRateFinder = lazy(() => import('./GSTRateFinder'))
-const GSTStateFinder = lazy(() => import('./GSTStateFinder'))
-const GSTINValidator = lazy(() => import('./GSTINValidator'))
-const PANValidator = lazy(() => import('./PANValidator'))
-const HSNSearch = lazy(() => import('./HSNSearch'))
-const SACSearch = lazy(() => import('./SACSearch'))
+// ─── Tool list ────────────────────────────────────────────────────────────────
 
-type ToolId =
-  | 'gstin-search'
-  | 'gstin-verify'
-  | 'gst-calculator'
-  | 'reverse-gst-calculator'
-  | 'gst-rate-finder'
-  | 'gst-state-finder'
-  | 'gstin-validator'
-  | 'pan-validator'
-  | 'hsn-search'
-  | 'sac-search'
-
-interface ToolCard {
-  id: ToolId
-  title: string
-  description: string
+interface GSTTool {
+  name: string
+  href: string
   icon: React.ReactNode
-  badge?: string
-  badgeVariant?: 'success' | 'info' | 'warning' | 'error' | 'default' | 'primary'
+  desc: string
   color: string
+  iconBg: string
+  badge?: string
 }
 
-const TOOLS: ToolCard[] = [
+const GST_TOOLS: GSTTool[] = [
   {
-    id: 'gstin-search',
-    title: 'GSTIN Search & Lookup',
-    description: 'Search any GSTIN for instant format validation. Optionally verify live on government portal.',
+    name: 'GST Search',
+    href: '/tools/gst/search',
     icon: <Search size={22} />,
+    desc: 'Search and verify any GSTIN number',
+    color: 'text-[#2563EB]',
+    iconBg: 'bg-[#EFF6FF]',
     badge: 'Live Verify',
-    badgeVariant: 'info',
-    color: 'from-blue-50 to-blue-100',
   },
   {
-    id: 'gstin-verify',
-    title: 'GSTIN Verifier',
-    description: 'Step-by-step format, checksum and live portal verification with status badges.',
-    icon: <Shield size={22} />,
-    badge: 'Live Verify',
-    badgeVariant: 'info',
-    color: 'from-indigo-50 to-indigo-100',
+    name: 'GSTIN Validator',
+    href: '/tools/gst/gstin-validator',
+    icon: <CheckCircle size={22} />,
+    desc: 'Validate GSTIN format and checksum',
+    color: 'text-[#059669]',
+    iconBg: 'bg-[#ECFDF5]',
+    badge: 'Offline',
   },
   {
-    id: 'gst-calculator',
-    title: 'GST Calculator',
-    description: 'Calculate CGST + SGST (intra-state) or IGST (inter-state) on any amount.',
+    name: 'GST Calculator',
+    href: '/tools/gst/calculator',
     icon: <Calculator size={22} />,
+    desc: 'Calculate CGST, SGST, IGST instantly',
+    color: 'text-[#D97706]',
+    iconBg: 'bg-[#FFFBEB]',
     badge: 'Offline',
-    badgeVariant: 'success',
-    color: 'from-green-50 to-green-100',
   },
   {
-    id: 'reverse-gst-calculator',
-    title: 'Reverse GST Calculator',
-    description: 'Enter a GST-inclusive price and extract the base amount and tax breakdown.',
-    icon: <Divide size={22} />,
+    name: 'Reverse GST Calculator',
+    href: '/tools/gst/reverse',
+    icon: <ArrowLeft size={22} />,
+    desc: 'Extract base price from GST-inclusive amount',
+    color: 'text-[#7C3AED]',
+    iconBg: 'bg-[#F5F3FF]',
     badge: 'Offline',
-    badgeVariant: 'success',
-    color: 'from-emerald-50 to-emerald-100',
   },
   {
-    id: 'gst-rate-finder',
-    title: 'GST Rate Finder',
-    description: 'Find the applicable GST rate for any product (HSN) or service (SAC) by code or keyword.',
-    icon: <Tag size={22} />,
+    name: 'GST Rate Finder',
+    href: '/tools/gst/rate-finder',
+    icon: <Percent size={22} />,
+    desc: 'Find GST rate by HSN or description',
+    color: 'text-[#DC2626]',
+    iconBg: 'bg-[#FFF1F2]',
     badge: 'Offline',
-    badgeVariant: 'success',
-    color: 'from-yellow-50 to-yellow-100',
   },
   {
-    id: 'gst-state-finder',
-    title: 'GST State Finder',
-    description: 'Find state name and zone from a 2-digit GST state code or full GSTIN.',
-    icon: <MapPin size={22} />,
-    badge: 'Offline',
-    badgeVariant: 'success',
-    color: 'from-orange-50 to-orange-100',
-  },
-  {
-    id: 'gstin-validator',
-    title: 'GSTIN Validator',
-    description: 'Validate GSTIN length, state code, PAN format, entity number, Z-marker and checksum.',
-    icon: <CheckSquare size={22} />,
-    badge: 'Offline',
-    badgeVariant: 'success',
-    color: 'from-teal-50 to-teal-100',
-  },
-  {
-    id: 'pan-validator',
-    title: 'PAN Validator',
-    description: 'Validate PAN card format and extract taxpayer entity type (Individual, Company, etc.).',
-    icon: <CreditCard size={22} />,
-    badge: 'Offline',
-    badgeVariant: 'success',
-    color: 'from-purple-50 to-purple-100',
-  },
-  {
-    id: 'hsn-search',
-    title: 'HSN Code Search',
-    description: 'Search HSN codes for goods by code or description. Click any result for a quick GST calc.',
+    name: 'HSN Code Search',
+    href: '/tools/gst/hsn-search',
     icon: <BookOpen size={22} />,
+    desc: 'Search HSN codes and tax rates',
+    color: 'text-[#0891B2]',
+    iconBg: 'bg-[#ECFEFF]',
     badge: 'Offline',
-    badgeVariant: 'success',
-    color: 'from-pink-50 to-pink-100',
   },
   {
-    id: 'sac-search',
-    title: 'SAC Code Search',
-    description: 'Search Service Accounting Codes (SAC) for services by code or service name.',
-    icon: <FileText size={22} />,
+    name: 'SAC Code Search',
+    href: '/tools/gst/sac-search',
+    icon: <Headphones size={22} />,
+    desc: 'Search SAC codes for services',
+    color: 'text-[#BE185D]',
+    iconBg: 'bg-[#FCE7F3]',
     badge: 'Offline',
-    badgeVariant: 'success',
-    color: 'from-rose-50 to-rose-100',
+  },
+  {
+    name: 'GST State Finder',
+    href: '/tools/gst/state-finder',
+    icon: <MapPin size={22} />,
+    desc: 'Find state from GSTIN state code',
+    color: 'text-[#D97706]',
+    iconBg: 'bg-[#FFFBEB]',
+    badge: 'Offline',
+  },
+  {
+    name: 'GST Verify',
+    href: '/tools/gst/verify',
+    icon: <Shield size={22} />,
+    desc: 'Live verify GSTIN with government data',
+    color: 'text-[#2563EB]',
+    iconBg: 'bg-[#EFF6FF]',
+    badge: 'Live Verify',
+  },
+  {
+    name: 'PAN Validator',
+    href: '/tools/gst/pan-validator',
+    icon: <CreditCard size={22} />,
+    desc: 'Validate PAN card format and type',
+    color: 'text-[#7C3AED]',
+    iconBg: 'bg-[#F5F3FF]',
+    badge: 'Offline',
   },
 ]
 
-function renderTool(id: ToolId) {
-  switch (id) {
-    case 'gstin-search': return <GSTSearch />
-    case 'gstin-verify': return <GSTVerify />
-    case 'gst-calculator': return <GSTCalculator />
-    case 'reverse-gst-calculator': return <ReverseGSTCalculator />
-    case 'gst-rate-finder': return <GSTRateFinder />
-    case 'gst-state-finder': return <GSTStateFinder />
-    case 'gstin-validator': return <GSTINValidator />
-    case 'pan-validator': return <PANValidator />
-    case 'hsn-search': return <HSNSearch />
-    case 'sac-search': return <SACSearch />
-  }
+const BADGE_STYLES: Record<string, string> = {
+  'Live Verify': 'bg-[#EFF6FF] text-[#2563EB] border-[#BFDBFE]',
+  Offline: 'bg-[#F0FDF4] text-[#16A34A] border-[#A7F3D0]',
 }
 
-export const GSTTools: React.FC = () => {
-  const [activeTool, setActiveTool] = useState<ToolId | null>(null)
+// ─── Hub page ─────────────────────────────────────────────────────────────────
 
-  if (activeTool) {
-    const tool = TOOLS.find(t => t.id === activeTool)!
-    return (
-      <div className="min-h-screen bg-[#F8FAFC]">
-        <div className="max-w-4xl mx-auto px-4 py-8">
-          {/* Back button */}
-          <div className="mb-6">
-            <Button
-              variant="ghost"
-              size="sm"
-              leftIcon={<ArrowLeft size={16} />}
-              onClick={() => setActiveTool(null)}
-            >
-              All GST Tools
-            </Button>
+export const handle = {
+  toolName: undefined,
+  category: 'GST Tools',
+  description: 'Free GST tools for Indian sellers — validate, calculate and find codes.',
+}
+
+export default function GSTToolsHub() {
+  return (
+    <div className="flex flex-col gap-8">
+
+      {/* ── Hero ──────────────────────────────────────────────── */}
+      <div className="rounded-[8px] border border-[#FDE68A] bg-[#FFFBEB] p-6 sm:p-8">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:gap-6">
+          {/* Icon */}
+          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-[8px] border border-[#FDE68A] bg-white text-[#D97706] shadow-sm">
+            <Receipt size={28} />
           </div>
-          <Suspense fallback={<PageLoader />}>
-            {renderTool(activeTool)}
-          </Suspense>
+
+          {/* Text */}
+          <div className="flex-1">
+            <div className="flex flex-wrap items-center gap-2">
+              <h1 className="text-2xl font-extrabold text-[#0F172A] sm:text-3xl">
+                GST Tools
+              </h1>
+              <span className="inline-flex items-center gap-1 rounded-full bg-white px-2.5 py-0.5 text-xs font-medium text-[#16A34A] ring-1 ring-inset ring-[#A7F3D0]">
+                <CheckCircle2 size={11} />
+                No login required
+              </span>
+              <span className="inline-flex items-center rounded-full bg-white px-2.5 py-0.5 text-xs font-medium text-[#D97706] ring-1 ring-inset ring-[#FDE68A]">
+                100% Free
+              </span>
+            </div>
+            <p className="mt-2 text-sm text-[#475569] sm:text-base">
+              {GST_TOOLS.length} free tools for Indian sellers — validate GSTINs, calculate tax,
+              find HSN/SAC codes and more. Most tools work offline; live verification uses the GSTN
+              portal via our secure backend.
+            </p>
+
+            {/* Legend row */}
+            <div className="mt-4 flex flex-wrap gap-4">
+              <span className="inline-flex items-center gap-1.5 text-xs text-[#475569]">
+                <span className="h-2 w-2 rounded-full bg-[#16A34A]" />
+                Offline — works without internet
+              </span>
+              <span className="inline-flex items-center gap-1.5 text-xs text-[#475569]">
+                <span className="h-2 w-2 rounded-full bg-[#2563EB]" />
+                Live Verify — calls GSTN portal
+              </span>
+              <span className="inline-flex items-center gap-1.5 text-xs text-[#475569]">
+                <span className="h-2 w-2 rounded-full bg-[#D97706]" />
+                No login required
+              </span>
+            </div>
+          </div>
         </div>
       </div>
-    )
-  }
 
-  return (
-    <div className="min-h-screen bg-[#F8FAFC]">
-      <div className="max-w-5xl mx-auto px-4 py-10">
-        {/* Header */}
-        <div className="text-center mb-10">
-          <h1 className="text-3xl font-bold text-[#0F172A]">GST Tools</h1>
-          <p className="text-[#475569] mt-2 max-w-2xl mx-auto">
-            Free tools for Indian sellers — validate GSTINs, calculate tax, find HSN/SAC codes and more.
-            Most tools work offline. Live verification uses the GSTN portal via our secure backend.
-          </p>
-          <div className="flex items-center justify-center gap-3 mt-4 flex-wrap">
-            <span className="inline-flex items-center gap-1.5 text-xs text-[#475569]">
-              <span className="w-2 h-2 rounded-full bg-[#16A34A]" />
-              Offline — works without internet
-            </span>
-            <span className="inline-flex items-center gap-1.5 text-xs text-[#475569]">
-              <span className="w-2 h-2 rounded-full bg-[#0284C7]" />
-              Live Verify — calls GSTN portal
-            </span>
-            <span className="inline-flex items-center gap-1.5 text-xs text-[#475569]">
-              <span className="w-2 h-2 rounded-full bg-[#D97706]" />
-              No login required
-            </span>
-          </div>
-        </div>
+      {/* ── Breadcrumb ─────────────────────────────────────────── */}
+      <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-sm text-[#64748B]">
+        <Link to="/" className="transition-colors hover:text-[#0F172A]">
+          Home
+        </Link>
+        <ChevronRight size={14} />
+        <Link to="/tools" className="transition-colors hover:text-[#0F172A]">
+          Tools
+        </Link>
+        <ChevronRight size={14} />
+        <span className="font-medium text-[#0F172A]">GST Tools</span>
+      </nav>
 
-        {/* Tool grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {TOOLS.map(tool => (
-            <Card
-              key={tool.id}
-              variant="shadowed"
-              padding="none"
-              onClick={() => setActiveTool(tool.id)}
-              className="overflow-hidden group hover:shadow-lg transition-shadow"
+      {/* ── Tool grid ──────────────────────────────────────────── */}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {GST_TOOLS.map((tool) => (
+          <Link
+            key={tool.href}
+            to={tool.href}
+            className="group flex flex-col gap-4 rounded-[8px] border border-[#E2E8F0] bg-white p-5 transition-all duration-150 hover:border-[#D97706] hover:shadow-[#1E293B_2px_2px_0px_0px]"
+          >
+            {/* Icon + badge */}
+            <div className="flex items-start justify-between">
+              <div
+                className={`flex h-11 w-11 items-center justify-center rounded-[8px] ${tool.iconBg} ${tool.color}`}
+              >
+                {tool.icon}
+              </div>
+              {tool.badge && (
+                <span
+                  className={[
+                    'inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-semibold',
+                    BADGE_STYLES[tool.badge] ?? 'bg-gray-50 text-gray-600 border-gray-200',
+                  ].join(' ')}
+                >
+                  {tool.badge}
+                </span>
+              )}
+            </div>
+
+            {/* Title + description */}
+            <div className="flex-1">
+              <h2 className="text-base font-semibold text-[#0F172A] transition-colors group-hover:text-[#D97706]">
+                {tool.name}
+              </h2>
+              <p className="mt-1 text-sm text-[#64748B]">{tool.desc}</p>
+            </div>
+
+            {/* CTA */}
+            <div
+              className={`flex items-center gap-1 text-sm font-medium ${tool.color}`}
             >
-              {/* Colored top strip */}
-              <div className={`bg-gradient-to-r ${tool.color} px-5 pt-5 pb-4`}>
-                <div className="flex items-start justify-between">
-                  <div className="p-2.5 bg-white rounded-[8px] shadow-sm text-[#374151]">
-                    {tool.icon}
-                  </div>
-                  {tool.badge && tool.badgeVariant && (
-                    <Badge variant={tool.badgeVariant} size="sm">{tool.badge}</Badge>
-                  )}
-                </div>
-              </div>
+              Open Tool
+              <ChevronRight
+                size={14}
+                className="transition-transform group-hover:translate-x-0.5"
+              />
+            </div>
+          </Link>
+        ))}
+      </div>
 
-              {/* Content */}
-              <div className="px-5 py-4">
-                <h2 className="text-sm font-bold text-[#0F172A] mb-1 group-hover:text-[#2563EB] transition-colors">
-                  {tool.title}
-                </h2>
-                <p className="text-xs text-[#64748B] leading-relaxed">{tool.description}</p>
-              </div>
-            </Card>
-          ))}
-        </div>
-
-        {/* Bottom note */}
-        <div className="mt-10 text-center text-xs text-[#94A3B8]">
-          GST data is based on official CBIC notifications. Rates are indicative — always verify with your CA for specific transactions.
-        </div>
+      {/* ── Disclaimer ─────────────────────────────────────────── */}
+      <div className="rounded-[8px] border border-[#E2E8F0] bg-[#F8FAFC] p-4 text-center">
+        <p className="text-xs text-[#64748B]">
+          GST data is based on official CBIC notifications. Rates are indicative — always verify
+          with your CA for specific transactions. We do not store any GSTIN or PAN data you enter.
+        </p>
       </div>
     </div>
   )
 }
-
-export default GSTTools

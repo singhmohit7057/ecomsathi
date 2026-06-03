@@ -3,6 +3,17 @@ import { useDropzone } from 'react-dropzone';
 import { UploadCloud, Download, Trash2 } from 'lucide-react';
 import { Button } from '../../components/common/Button';
 import { Alert } from '../../components/common/Alert';
+import SEO from '../../components/common/SEO';
+import { FAQPageSchema, BreadcrumbSchema, WebApplicationSchema } from '../../components/common/SchemaMarkup';
+import ImageFAQ from './components/ImageFAQ';
+
+const FAQS = [
+  { q: 'What is the quality slider?', a: 'The quality slider (10–100%) controls the compression level. Lower values produce smaller files but may show visible artifacts. 80% is a good balance for most images.' },
+  { q: 'How does the target file size option work?', a: 'Enter a target size in KB and the tool will binary-search for the best quality setting that keeps the file under that size. It performs up to 12 iterations to find the optimal quality.' },
+  { q: 'Can I change the output format?', a: 'Yes. You can compress to the same format as the input, or choose JPEG, PNG, or WEBP as the output format. Note that PNG is lossless so the quality slider has less effect.' },
+  { q: 'Does compression affect image dimensions?', a: 'No. Only the file size is reduced. The image dimensions stay exactly the same after compression.' },
+  { q: 'Is compression done in the browser?', a: 'Yes, all compression uses the Canvas API locally in your browser. No images are uploaded to any server.' },
+];
 
 const MAX_SIZE_BYTES = 20 * 1024 * 1024;
 
@@ -176,8 +187,24 @@ export const CompressImage: React.FC = () => {
     ? (((file.size - resultBytes) / file.size) * 100).toFixed(1)
     : null;
 
+  const schema = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      WebApplicationSchema({ name: 'Compress Image', url: 'https://ecomsathi.vercel.app/image/compress-image', description: 'Reduce image file size with quality control and optional target size. Supports JPG, PNG, WEBP.' }),
+      BreadcrumbSchema([{ name: 'Home', url: '/' }, { name: 'Tools', url: '/tools' }, { name: 'Compress Image', url: '/image/compress-image' }]),
+      FAQPageSchema(FAQS.map(f => ({ question: f.q, answer: f.a }))),
+    ],
+  };
+
   return (
     <div className="max-w-3xl mx-auto flex flex-col gap-6">
+      <SEO
+        title="Compress Image Free — EcomSathi"
+        description="Compress JPG, PNG, and WebP images online for free. Reduce image file size without visible quality loss. Set target file size in KB."
+        keywords="compress image free, image compressor online, reduce image size, jpg compressor, png compressor"
+        canonicalUrl="https://ecomsathi.vercel.app/image/compress-image"
+        schema={schema}
+      />
       <div>
         <h1 className="text-2xl font-bold text-[#0F172A]">Compress Image</h1>
         <p className="text-sm text-[#64748B] mt-1">Reduce image file size for web, email, or marketplace uploads.</p>
@@ -323,6 +350,8 @@ export const CompressImage: React.FC = () => {
           </div>
         </div>
       )}
+
+      <ImageFAQ faqs={FAQS} />
     </div>
   );
 };

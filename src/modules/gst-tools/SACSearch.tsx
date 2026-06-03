@@ -13,17 +13,17 @@ const RATE_BADGE: Record<number, 'success' | 'info' | 'warning' | 'error' | 'def
   28: 'error',
 }
 
-const SAC_FUSE = new Fuse(SAC_DATA, {
-  keys: [
-    { name: 'code', weight: 2 },
-    { name: 'description', weight: 1 },
-  ],
-  threshold: 0.35,
-  includeScore: true,
-})
-
 export const SACSearch: React.FC = () => {
   const [query, setQuery] = useState('')
+
+  const fuse = useMemo(() => new Fuse(SAC_DATA, {
+    keys: [
+      { name: 'code', weight: 2 },
+      { name: 'description', weight: 1 },
+    ],
+    threshold: 0.35,
+    includeScore: true,
+  }), [])
 
   const results = useMemo<SACEntry[]>(() => {
     const q = query.trim()
@@ -31,8 +31,8 @@ export const SACSearch: React.FC = () => {
     if (/^\d+$/.test(q)) {
       return SAC_DATA.filter(e => e.code.startsWith(q))
     }
-    return SAC_FUSE.search(q).map(r => r.item)
-  }, [query])
+    return fuse.search(q).map(r => r.item)
+  }, [query, fuse])
 
   return (
     <div className="max-w-3xl mx-auto space-y-6">

@@ -3,6 +3,17 @@ import { useDropzone } from 'react-dropzone';
 import { UploadCloud, Download, Trash2, FileImage, Archive } from 'lucide-react';
 import { Button } from '../../components/common/Button';
 import { Alert } from '../../components/common/Alert';
+import SEO from '../../components/common/SEO';
+import { FAQPageSchema, BreadcrumbSchema, WebApplicationSchema } from '../../components/common/SchemaMarkup';
+import ImageFAQ from './components/ImageFAQ';
+
+const FAQS = [
+  { q: 'Why convert PNG to JPG?', a: 'JPG files are much smaller than PNG for photographic images, making them better for fast-loading marketplace listings where file size matters.' },
+  { q: 'What happens to transparent areas?', a: 'PNG transparency is filled with the background color you choose before conversion. White is the default, which is ideal for marketplace product listings.' },
+  { q: 'Does the quality slider affect file size?', a: 'Yes. Lower quality settings produce smaller JPEG files. 90% is a good default that keeps visible quality high while significantly reducing file size versus PNG.' },
+  { q: 'Can I convert multiple PNG files at once?', a: 'Yes. Drag and drop multiple PNG files at once. They will all be converted using the same settings.' },
+  { q: 'Is the conversion done in the browser?', a: 'Yes, conversion uses the Canvas API locally in your browser. No images are uploaded to any server.' },
+];
 
 const MAX_SIZE_BYTES = 20 * 1024 * 1024;
 
@@ -116,8 +127,24 @@ export const PNGtoJPG: React.FC = () => {
     setError(null);
   };
 
+  const schema = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      WebApplicationSchema({ name: 'PNG to JPG', url: 'https://ecomsathi.vercel.app/image/png-to-jpg', description: 'Convert PNG images to JPEG with custom background color for transparency. Free batch converter.' }),
+      BreadcrumbSchema([{ name: 'Home', url: '/' }, { name: 'Tools', url: '/tools' }, { name: 'PNG to JPG', url: '/image/png-to-jpg' }]),
+      FAQPageSchema(FAQS.map(f => ({ question: f.q, answer: f.a }))),
+    ],
+  };
+
   return (
     <div className="max-w-3xl mx-auto flex flex-col gap-6">
+      <SEO
+        title="PNG to JPG Converter Free — EcomSathi"
+        description="Convert PNG images to JPEG online for free. Set custom background color for transparent areas. Control JPEG quality. Supports batch conversion."
+        keywords="png to jpg converter free, png to jpeg online, convert png to jpg, batch png to jpg converter"
+        canonicalUrl="https://ecomsathi.vercel.app/image/png-to-jpg"
+        schema={schema}
+      />
       <div>
         <h1 className="text-2xl font-bold text-[#0F172A]">PNG to JPG</h1>
         <p className="text-sm text-[#64748B] mt-1">Convert PNG images to JPEG. Transparent areas are filled with a background color.</p>
@@ -241,6 +268,8 @@ export const PNGtoJPG: React.FC = () => {
           </div>
         </div>
       )}
+
+      <ImageFAQ faqs={FAQS} />
     </div>
   );
 };

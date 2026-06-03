@@ -3,6 +3,17 @@ import { useDropzone } from 'react-dropzone';
 import { UploadCloud, Download, Trash2 } from 'lucide-react';
 import { Button } from '../../components/common/Button';
 import { Alert } from '../../components/common/Alert';
+import SEO from '../../components/common/SEO';
+import { FAQPageSchema, BreadcrumbSchema, WebApplicationSchema } from '../../components/common/SchemaMarkup';
+import ImageFAQ from './components/ImageFAQ';
+
+const FAQS = [
+  { q: 'Why do I need square product images?', a: 'Instagram feed posts and many marketplace thumbnail grids display images in a 1:1 square aspect ratio. Non-square images get cropped, which can hide parts of your product.' },
+  { q: 'What padding fill options are available?', a: 'White (solid white background, best for marketplaces), Transparent (PNG output only), or a custom color you pick with the color picker.' },
+  { q: 'What does the image position control do?', a: 'You can place the original image at any of 9 positions within the square canvas: center, corners, or edge midpoints. Center is best for most product photos.' },
+  { q: 'Can I set a custom canvas size?', a: 'Yes. By default the canvas size is set to the longest dimension of your original image (making it the largest possible square without upscaling). Toggle "Custom size" to enter a specific pixel dimension.' },
+  { q: 'Is the processing done in the browser?', a: 'Yes, all processing uses the Canvas API locally in your browser. No image data is uploaded to any server.' },
+];
 
 const MAX_SIZE_BYTES = 20 * 1024 * 1024;
 
@@ -170,8 +181,24 @@ export const SquareImageCreator: React.FC = () => {
   const autoSize = naturalSize.w > 0 ? Math.max(naturalSize.w, naturalSize.h) : '—';
   const targetSize = getCanvasSize();
 
+  const schema = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      WebApplicationSchema({ name: 'Square Image Creator', url: 'https://ecomsathi.vercel.app/image/square-image', description: 'Add padding to make any image perfectly square. Choose fill color and position.' }),
+      BreadcrumbSchema([{ name: 'Home', url: '/' }, { name: 'Tools', url: '/tools' }, { name: 'Square Image Creator', url: '/image/square-image' }]),
+      FAQPageSchema(FAQS.map(f => ({ question: f.q, answer: f.a }))),
+    ],
+  };
+
   return (
     <div className="max-w-3xl mx-auto flex flex-col gap-6">
+      <SEO
+        title="Square Image Creator — Make Image Square Free — EcomSathi"
+        description="Add padding to make any image perfectly square. Choose fill color (white, transparent, custom) and image position. Free square image maker for marketplace listings."
+        keywords="square image creator, make image square online free, add padding to image, square product photo, instagram square image"
+        canonicalUrl="https://ecomsathi.vercel.app/image/square-image"
+        schema={schema}
+      />
       <div>
         <h1 className="text-2xl font-bold text-[#0F172A]">Square Image Creator</h1>
         <p className="text-sm text-[#64748B] mt-1">Create a perfect square image with custom padding. Ideal for Instagram and marketplace listings.</p>
@@ -333,6 +360,8 @@ export const SquareImageCreator: React.FC = () => {
           </div>
         </div>
       )}
+
+      <ImageFAQ faqs={FAQS} />
     </div>
   );
 };

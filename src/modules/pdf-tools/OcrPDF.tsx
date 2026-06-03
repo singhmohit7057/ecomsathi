@@ -76,7 +76,7 @@ export default function OcrPDF() {
   const runServerSideOcr = async (f: File) => {
     const formData = new FormData();
     formData.append('file', f);
-    formData.append('language', 'eng');
+    formData.append('lang', 'eng');
     formData.append('output', outputType);
 
     // Simulate progress via polling interval
@@ -98,7 +98,7 @@ export default function OcrPDF() {
 
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
-        throw new Error((body as { message?: string }).message ?? `Server error ${res.status}`);
+        throw new Error((body as { error?: string }).error ?? `Server error ${res.status}`);
       }
 
       const blob = await res.blob();

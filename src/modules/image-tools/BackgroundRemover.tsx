@@ -3,6 +3,17 @@ import { useDropzone } from 'react-dropzone';
 import { UploadCloud, Download, Trash2, Wand2, Info } from 'lucide-react';
 import { Button } from '../../components/common/Button';
 import { Alert } from '../../components/common/Alert';
+import SEO from '../../components/common/SEO';
+import { FAQPageSchema, BreadcrumbSchema, WebApplicationSchema } from '../../components/common/SchemaMarkup';
+import ImageFAQ from './components/ImageFAQ';
+
+const FAQS = [
+  { q: 'How does the background remover work?', a: 'It uses AI-powered background removal via a server-side model. Your image is sent securely to the processing API, the background is detected and removed, and you receive a PNG with a transparent background.' },
+  { q: 'What image formats are supported?', a: 'JPG, PNG, and WEBP images are supported. The output is always a PNG file to preserve transparency.' },
+  { q: 'Is my image data stored on the server?', a: 'No. Images are processed and the result is returned immediately. No images are retained after processing.' },
+  { q: 'What is the maximum file size?', a: 'The maximum file size is 20MB per image. For best results, use images where the subject is clearly distinct from the background.' },
+  { q: 'What should I do if the result is not accurate?', a: 'Results vary based on image complexity. For best quality, use images with a clear subject against a simple background. You can then use the White Background tool to add a clean white background.' },
+];
 
 const PROCESSING_API_URL = import.meta.env.VITE_PROCESSING_API_URL as string;
 const MAX_SIZE_MB = 20;
@@ -119,8 +130,24 @@ export const BackgroundRemover: React.FC = () => {
     setSliderPos((x / rect.width) * 100);
   };
 
+  const schema = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      WebApplicationSchema({ name: 'Background Remover', url: 'https://ecomsathi.vercel.app/image/background-remover', description: 'Remove backgrounds from product images automatically using AI. Outputs transparent PNG.' }),
+      BreadcrumbSchema([{ name: 'Home', url: '/' }, { name: 'Tools', url: '/tools' }, { name: 'Background Remover', url: '/image/background-remover' }]),
+      FAQPageSchema(FAQS.map(f => ({ question: f.q, answer: f.a }))),
+    ],
+  };
+
   return (
     <div className="max-w-3xl mx-auto flex flex-col gap-6">
+      <SEO
+        title="Remove Background Free — EcomSathi"
+        description="Remove background from product images free. Perfect for Amazon, Flipkart product listings. Get clean transparent PNG product photos instantly."
+        keywords="background remover free, remove image background online, product photo background remove, transparent background png"
+        canonicalUrl="https://ecomsathi.vercel.app/image/background-remover"
+        schema={schema}
+      />
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold text-[#0F172A]">Background Remover</h1>
@@ -261,6 +288,8 @@ export const BackgroundRemover: React.FC = () => {
           )}
         </div>
       )}
+
+      <ImageFAQ faqs={FAQS} />
     </div>
   );
 };

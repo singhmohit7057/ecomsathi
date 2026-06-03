@@ -15,15 +15,6 @@ const RATE_BADGE: Record<number, 'success' | 'info' | 'warning' | 'error' | 'def
   28: 'error',
 }
 
-const HSN_FUSE = new Fuse(HSN_DATA, {
-  keys: [
-    { name: 'code', weight: 2 },
-    { name: 'description', weight: 1 },
-  ],
-  threshold: 0.35,
-  includeScore: true,
-})
-
 function formatINR(n: number) {
   return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: 2 }).format(n)
 }
@@ -38,14 +29,23 @@ export const HSNSearch: React.FC = () => {
   const [expandedCode, setExpandedCode] = useState<string | null>(null)
   const [calcState, setCalcState] = useState<Record<string, MiniCalc>>({})
 
+  const fuse = useMemo(() => new Fuse(HSN_DATA, {
+    keys: [
+      { name: 'code', weight: 2 },
+      { name: 'description', weight: 1 },
+    ],
+    threshold: 0.35,
+    includeScore: true,
+  }), [])
+
   const results = useMemo(() => {
     const q = query.trim()
     if (!q) return HSN_DATA.slice(0, 20)
     if (/^\d+$/.test(q)) {
       return HSN_DATA.filter(e => e.code.startsWith(q)).slice(0, 30)
     }
-    return HSN_FUSE.search(q).map(r => r.item).slice(0, 30)
-  }, [query])
+    return fuse.search(q).map(r => r.item).slice(0, 30)
+  }, [query, fuse])
 
   const getCalc = (code: string): MiniCalc =>
     calcState[code] ?? { amount: '', transType: 'intra' }

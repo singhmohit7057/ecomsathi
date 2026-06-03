@@ -66,302 +66,332 @@
   </url>
 
   <!-- ═══════════════════════════════════════════════════════════════════
-       SKU TOOLS (7)
+       SKU TOOLS HUB + 7 TOOLS
        ═══════════════════════════════════════════════════════════════════ -->
   <url>
-    <loc>https://ecomsathi.vercel.app/tools/sku-generator</loc>
+    <loc>https://ecomsathi.vercel.app/tools/sku</loc>
+    <lastmod>2025-01-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://ecomsathi.vercel.app/tools/sku/generator</loc>
     <lastmod>2025-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ecomsathi.vercel.app/tools/bulk-sku</loc>
+    <loc>https://ecomsathi.vercel.app/tools/sku/bulk</loc>
     <lastmod>2025-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ecomsathi.vercel.app/tools/barcode</loc>
+    <loc>https://ecomsathi.vercel.app/tools/sku/variant</loc>
     <lastmod>2025-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ecomsathi.vercel.app/tools/sku-label</loc>
+    <loc>https://ecomsathi.vercel.app/tools/sku/custom</loc>
     <lastmod>2025-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ecomsathi.vercel.app/tools/sku-validator</loc>
+    <loc>https://ecomsathi.vercel.app/tools/sku/barcode</loc>
     <lastmod>2025-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ecomsathi.vercel.app/tools/sku-to-barcode</loc>
+    <loc>https://ecomsathi.vercel.app/tools/sku/label-generator</loc>
     <lastmod>2025-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ecomsathi.vercel.app/tools/sku-bulk-barcode</loc>
+    <loc>https://ecomsathi.vercel.app/tools/sku/label-printer</loc>
     <lastmod>2025-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <!-- ═══════════════════════════════════════════════════════════════════
-       PDF TOOLS (13)
+       PDF TOOLS HUB + 13 TOOLS
        ═══════════════════════════════════════════════════════════════════ -->
   <url>
-    <loc>https://ecomsathi.vercel.app/tools/pdf-merge</loc>
+    <loc>https://ecomsathi.vercel.app/tools/pdf</loc>
+    <lastmod>2025-01-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://ecomsathi.vercel.app/tools/pdf/merge</loc>
     <lastmod>2025-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ecomsathi.vercel.app/tools/pdf-split</loc>
+    <loc>https://ecomsathi.vercel.app/tools/pdf/split</loc>
     <lastmod>2025-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ecomsathi.vercel.app/tools/pdf-compress</loc>
+    <loc>https://ecomsathi.vercel.app/tools/pdf/crop</loc>
     <lastmod>2025-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ecomsathi.vercel.app/tools/pdf-ocr</loc>
+    <loc>https://ecomsathi.vercel.app/tools/pdf/ocr</loc>
     <lastmod>2025-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ecomsathi.vercel.app/tools/pdf-rotate</loc>
+    <loc>https://ecomsathi.vercel.app/tools/pdf/compress</loc>
     <lastmod>2025-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ecomsathi.vercel.app/tools/pdf-watermark</loc>
+    <loc>https://ecomsathi.vercel.app/tools/pdf/password</loc>
     <lastmod>2025-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ecomsathi.vercel.app/tools/pdf-to-image</loc>
+    <loc>https://ecomsathi.vercel.app/tools/pdf/rotate</loc>
     <lastmod>2025-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ecomsathi.vercel.app/tools/image-to-pdf</loc>
+    <loc>https://ecomsathi.vercel.app/tools/pdf/extract</loc>
     <lastmod>2025-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ecomsathi.vercel.app/tools/pdf-reorder</loc>
+    <loc>https://ecomsathi.vercel.app/tools/pdf/rearrange</loc>
     <lastmod>2025-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ecomsathi.vercel.app/tools/pdf-extract-pages</loc>
+    <loc>https://ecomsathi.vercel.app/tools/pdf/to-images</loc>
     <lastmod>2025-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ecomsathi.vercel.app/tools/pdf-delete-pages</loc>
+    <loc>https://ecomsathi.vercel.app/tools/pdf/images-to-pdf</loc>
     <lastmod>2025-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ecomsathi.vercel.app/tools/pdf-unlock</loc>
+    <loc>https://ecomsathi.vercel.app/tools/pdf/watermark</loc>
     <lastmod>2025-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ecomsathi.vercel.app/tools/pdf-protect</loc>
+    <loc>https://ecomsathi.vercel.app/tools/pdf/page-numbers</loc>
     <lastmod>2025-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <!-- ═══════════════════════════════════════════════════════════════════
-       IMAGE TOOLS (11)
+       IMAGE TOOLS HUB + 11 TOOLS
        ═══════════════════════════════════════════════════════════════════ -->
   <url>
-    <loc>https://ecomsathi.vercel.app/tools/background-remover</loc>
+    <loc>https://ecomsathi.vercel.app/tools/image</loc>
+    <lastmod>2025-01-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://ecomsathi.vercel.app/tools/image/background-remover</loc>
     <lastmod>2025-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ecomsathi.vercel.app/tools/product-optimizer</loc>
+    <loc>https://ecomsathi.vercel.app/tools/image/crop</loc>
     <lastmod>2025-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ecomsathi.vercel.app/tools/image-resize</loc>
+    <loc>https://ecomsathi.vercel.app/tools/image/resize</loc>
     <lastmod>2025-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ecomsathi.vercel.app/tools/image-compress</loc>
+    <loc>https://ecomsathi.vercel.app/tools/image/compress</loc>
     <lastmod>2025-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ecomsathi.vercel.app/tools/image-convert</loc>
+    <loc>https://ecomsathi.vercel.app/tools/image/jpg-to-png</loc>
     <lastmod>2025-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ecomsathi.vercel.app/tools/image-crop</loc>
+    <loc>https://ecomsathi.vercel.app/tools/image/png-to-jpg</loc>
     <lastmod>2025-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ecomsathi.vercel.app/tools/image-watermark</loc>
+    <loc>https://ecomsathi.vercel.app/tools/image/webp</loc>
     <lastmod>2025-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ecomsathi.vercel.app/tools/image-bulk-resize</loc>
+    <loc>https://ecomsathi.vercel.app/tools/image/watermark</loc>
     <lastmod>2025-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ecomsathi.vercel.app/tools/image-background-colour</loc>
+    <loc>https://ecomsathi.vercel.app/tools/image/product-optimizer</loc>
     <lastmod>2025-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ecomsathi.vercel.app/tools/image-flip-rotate</loc>
+    <loc>https://ecomsathi.vercel.app/tools/image/white-background</loc>
     <lastmod>2025-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ecomsathi.vercel.app/tools/image-metadata</loc>
+    <loc>https://ecomsathi.vercel.app/tools/image/square</loc>
     <lastmod>2025-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <!-- ═══════════════════════════════════════════════════════════════════
-       VIDEO TOOLS (6)
+       VIDEO TOOLS HUB + 6 TOOLS
        ═══════════════════════════════════════════════════════════════════ -->
   <url>
-    <loc>https://ecomsathi.vercel.app/tools/video-to-gif</loc>
+    <loc>https://ecomsathi.vercel.app/tools/video</loc>
+    <lastmod>2025-01-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://ecomsathi.vercel.app/tools/video/to-gif</loc>
     <lastmod>2025-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ecomsathi.vercel.app/tools/video-compress</loc>
+    <loc>https://ecomsathi.vercel.app/tools/video/frame-extractor</loc>
     <lastmod>2025-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ecomsathi.vercel.app/tools/video-resize</loc>
+    <loc>https://ecomsathi.vercel.app/tools/video/compress</loc>
     <lastmod>2025-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ecomsathi.vercel.app/tools/video-trim</loc>
+    <loc>https://ecomsathi.vercel.app/tools/video/resize</loc>
     <lastmod>2025-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ecomsathi.vercel.app/tools/video-to-frames</loc>
+    <loc>https://ecomsathi.vercel.app/tools/video/convert</loc>
     <lastmod>2025-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ecomsathi.vercel.app/tools/gif-to-video</loc>
+    <loc>https://ecomsathi.vercel.app/tools/video/thumbnail</loc>
     <lastmod>2025-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <!-- ═══════════════════════════════════════════════════════════════════
-       GST TOOLS (10)
+       GST TOOLS HUB + 10 TOOLS
        ═══════════════════════════════════════════════════════════════════ -->
   <url>
-    <loc>https://ecomsathi.vercel.app/tools/gst-search</loc>
+    <loc>https://ecomsathi.vercel.app/tools/gst</loc>
+    <lastmod>2025-01-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://ecomsathi.vercel.app/tools/gst/search</loc>
     <lastmod>2025-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ecomsathi.vercel.app/tools/gst-calculator</loc>
+    <loc>https://ecomsathi.vercel.app/tools/gst/verify</loc>
     <lastmod>2025-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ecomsathi.vercel.app/tools/hsn-search</loc>
+    <loc>https://ecomsathi.vercel.app/tools/gst/calculator</loc>
     <lastmod>2025-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ecomsathi.vercel.app/tools/gst-return-checker</loc>
+    <loc>https://ecomsathi.vercel.app/tools/gst/reverse</loc>
     <lastmod>2025-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ecomsathi.vercel.app/tools/pan-validator</loc>
+    <loc>https://ecomsathi.vercel.app/tools/gst/rate-finder</loc>
     <lastmod>2025-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ecomsathi.vercel.app/tools/tds-calculator</loc>
+    <loc>https://ecomsathi.vercel.app/tools/gst/state-finder</loc>
     <lastmod>2025-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ecomsathi.vercel.app/tools/invoice-generator</loc>
+    <loc>https://ecomsathi.vercel.app/tools/gst/gstin-validator</loc>
     <lastmod>2025-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ecomsathi.vercel.app/tools/eway-bill</loc>
+    <loc>https://ecomsathi.vercel.app/tools/gst/pan-validator</loc>
     <lastmod>2025-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ecomsathi.vercel.app/tools/composition-scheme</loc>
+    <loc>https://ecomsathi.vercel.app/tools/gst/hsn-search</loc>
     <lastmod>2025-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ecomsathi.vercel.app/tools/reverse-charge</loc>
+    <loc>https://ecomsathi.vercel.app/tools/gst/sac-search</loc>
     <lastmod>2025-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>

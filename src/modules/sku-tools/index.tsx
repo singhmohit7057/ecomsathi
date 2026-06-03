@@ -29,7 +29,7 @@ import { LabelPrinter } from './LabelPrinter';
 const TOOLS = [
   {
     id: 'single',
-    path: 'single',
+    path: '/tools/sku/generator',
     name: 'Single SKU Generator',
     description: 'Generate a single SKU from brand, category, variant fields with live preview and barcode.',
     icon: Tag,
@@ -39,7 +39,7 @@ const TOOLS = [
   },
   {
     id: 'bulk',
-    path: 'bulk',
+    path: '/tools/sku/bulk',
     name: 'Bulk SKU Generator',
     description: 'Generate 1–1000 SKUs at once from a form or CSV upload. Download as CSV or PDF labels.',
     icon: Layers,
@@ -49,7 +49,7 @@ const TOOLS = [
   },
   {
     id: 'variant',
-    path: 'variant',
+    path: '/tools/sku/variant',
     name: 'Variant SKU Generator',
     description: 'Generate all combinations of Color × Size × Material — matrix preview and bulk export.',
     icon: GitBranch,
@@ -59,7 +59,7 @@ const TOOLS = [
   },
   {
     id: 'custom',
-    path: 'custom',
+    path: '/tools/sku/custom',
     name: 'Custom Template Builder',
     description: 'Drag-and-drop token blocks to build your own SKU template. Save presets to localStorage.',
     icon: Settings2,
@@ -69,7 +69,7 @@ const TOOLS = [
   },
   {
     id: 'barcode',
-    path: 'barcode',
+    path: '/tools/sku/barcode',
     name: 'Barcode Generator',
     description: 'Generate EAN-13, Code 128, UPC-A, Code 39 barcodes. Download as SVG, PNG, or PDF.',
     icon: QrCode,
@@ -79,7 +79,7 @@ const TOOLS = [
   },
   {
     id: 'label',
-    path: 'label',
+    path: '/tools/sku/label',
     name: 'Label Designer',
     description: 'Canvas-based label editor with drag-and-drop elements. Generate single or bulk labels.',
     icon: Layout,
@@ -89,7 +89,7 @@ const TOOLS = [
   },
   {
     id: 'printer',
-    path: 'printer',
+    path: '/tools/sku/printer',
     name: 'Label Printer',
     description: 'Arrange labels in 1-up, 2-up, 4-up, or thermal layouts. Print or download PDF.',
     icon: Printer,

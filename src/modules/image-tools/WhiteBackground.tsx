@@ -3,6 +3,17 @@ import { useDropzone } from 'react-dropzone';
 import { UploadCloud, Download, Trash2, Info, Wand2 } from 'lucide-react';
 import { Button } from '../../components/common/Button';
 import { Alert } from '../../components/common/Alert';
+import SEO from '../../components/common/SEO';
+import { FAQPageSchema, BreadcrumbSchema, WebApplicationSchema } from '../../components/common/SchemaMarkup';
+import ImageFAQ from './components/ImageFAQ';
+
+const FAQS = [
+  { q: 'How does the white background tool work?', a: 'It uses AI background removal on the server to detect and remove the existing background, then fills it with solid white (#FFFFFF).' },
+  { q: 'Why do marketplaces require white backgrounds?', a: 'Amazon, Flipkart, and Myntra require main product images to have a pure white background to ensure a consistent look across the platform and improve conversion rates.' },
+  { q: 'What is the sensitivity slider?', a: 'Sensitivity (5–100) controls how aggressively the AI detects background pixels. Higher values remove more background but may also affect parts of the product. Start at 30 and adjust.' },
+  { q: 'What formats are supported?', a: 'JPG, PNG, and WEBP images up to 20MB are accepted. The output is always a PNG file.' },
+  { q: 'Is my image uploaded to a server?', a: 'Yes. This tool uses a server-side AI model to process the background. Your image is sent securely and not stored after processing.' },
+];
 
 const MAX_SIZE_BYTES = 20 * 1024 * 1024;
 const PROCESSING_API_URL = import.meta.env.VITE_PROCESSING_API_URL as string;
@@ -111,8 +122,24 @@ export const WhiteBackground: React.FC = () => {
     setSliderPos((x / rect.width) * 100);
   };
 
+  const schema = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      WebApplicationSchema({ name: 'White Background', url: 'https://ecomsathi.vercel.app/image/white-background', description: 'Replace product photo backgrounds with white for Amazon, Flipkart, Myntra compliance.' }),
+      BreadcrumbSchema([{ name: 'Home', url: '/' }, { name: 'Tools', url: '/tools' }, { name: 'White Background', url: '/image/white-background' }]),
+      FAQPageSchema(FAQS.map(f => ({ question: f.q, answer: f.a }))),
+    ],
+  };
+
   return (
     <div className="max-w-3xl mx-auto flex flex-col gap-6">
+      <SEO
+        title="White Background Generator — EcomSathi"
+        description="Replace product photo backgrounds with white for marketplace compliance. Free AI-powered white background tool for Amazon, Flipkart, Myntra product images."
+        keywords="white background product photo, add white background image, amazon white background requirement, ecommerce product photo white bg"
+        canonicalUrl="https://ecomsathi.vercel.app/image/white-background"
+        schema={schema}
+      />
       <div>
         <h1 className="text-2xl font-bold text-[#0F172A]">White Background</h1>
         <p className="text-sm text-[#64748B] mt-1">Replace image backgrounds with white — ideal for marketplace product photos.</p>
@@ -237,6 +264,8 @@ export const WhiteBackground: React.FC = () => {
           </div>
         </div>
       )}
+
+      <ImageFAQ faqs={FAQS} />
     </div>
   );
 };

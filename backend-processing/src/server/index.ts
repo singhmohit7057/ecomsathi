@@ -159,15 +159,19 @@ app.get('/api/jobs/:jobId', (req: Request, res: Response) => {
   }
 
   if (job.status === 'done' && job.resultPath) {
-    // Return job metadata; client should call /api/jobs/:jobId/download to get the file
+    // Return job metadata; client uses resultUrl / downloadUrl to fetch the file
+    const fileUrl = `/api/jobs/${job.id}/download`;
     res.json({
       jobId: job.id,
       status: job.status,
+      progress: 100,
       createdAt: job.createdAt,
       completedAt: job.completedAt,
       resultMime: job.resultMime,
       resultFilename: job.resultFilename,
-      downloadUrl: `/api/jobs/${job.id}/download`,
+      resultUrl: fileUrl,
+      downloadUrl: fileUrl,
+      error: null,
     });
     return;
   }
@@ -175,9 +179,12 @@ app.get('/api/jobs/:jobId', (req: Request, res: Response) => {
   res.json({
     jobId: job.id,
     status: job.status,
+    progress: job.status === 'processing' ? 50 : 0,
     createdAt: job.createdAt,
-    completedAt: job.completedAt,
-    error: job.error,
+    completedAt: job.completedAt ?? null,
+    resultUrl: null,
+    downloadUrl: null,
+    error: job.error ?? null,
   });
 });
 

@@ -20,7 +20,7 @@ import { generateSKU, skuToBarcode, SKU_PRESETS } from '../../utils/skuGenerator
 import type { SKUComponent } from '../../types';
 
 // ─── Types ────────────────────────────────────────────────
-type BarcodeFormat = 'CODE128' | 'EAN13' | 'UPC' | 'QR';
+type BarcodeFormat = 'CODE128' | 'EAN13' | 'UPC';
 type Separator = '-' | '_' | '/';
 
 interface FormState {
@@ -85,16 +85,14 @@ const PRESETS: PresetOption[] = [
 ];
 
 const BARCODE_OPTIONS: { value: BarcodeFormat; label: string }[] = [
-  { value: 'CODE128', label: 'Code 128' },
+  { value: 'CODE128', label: 'Code 128 Barcode' },
   { value: 'EAN13', label: 'EAN-13' },
   { value: 'UPC', label: 'UPC-A' },
-  { value: 'QR', label: 'QR Code' },
 ];
 
 // ─── Component ────────────────────────────────────────────
 export const SingleSKUGenerator: React.FC = () => {
   const svgRef = useRef<SVGSVGElement>(null);
-  const qrCanvasRef = useRef<HTMLCanvasElement>(null);
 
   const [form, setForm] = useState<FormState>({
     brand: '',
@@ -140,14 +138,9 @@ export const SingleSKUGenerator: React.FC = () => {
   // Barcode rendering
   useEffect(() => {
     if (!showBarcode || !generatedSKU) return;
+    if (!svgRef.current) return;
     setBarcodeError('');
 
-    if (barcodeFormat === 'QR') {
-      renderQR(generatedSKU);
-      return;
-    }
-
-    if (!svgRef.current) return;
     try {
       const value =
         barcodeFormat === 'EAN13'
@@ -169,23 +162,6 @@ export const SingleSKUGenerator: React.FC = () => {
       setBarcodeError(String(e));
     }
   }, [showBarcode, generatedSKU, barcodeFormat]);
-
-  const renderQR = async (data: string) => {
-    // Use canvas with a simple QR approach via jsbarcode CODE128 fallback
-    // For real QR we'd use qrcode.js but we use jsbarcode's QR support
-    if (!svgRef.current) return;
-    try {
-      JsBarcode(svgRef.current, data, {
-        format: 'CODE128',
-        displayValue: true,
-        fontSize: 12,
-        height: 60,
-        margin: 10,
-      });
-    } catch (e) {
-      setBarcodeError(String(e));
-    }
-  };
 
   const handleGenerate = () => {
     const seq = form.autoIncrement ? seqCounter : parseInt(form.sequence || '1', 10);

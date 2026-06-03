@@ -443,7 +443,10 @@ export default function ProfilePage() {
             <Button
               variant="danger"
               size="sm"
-              onClick={() => setDeleteModalOpen(false)}
+              onClick={() => {
+                window.location.href = 'mailto:support@ecomsathi.in?subject=Account+Deletion+Request&body=Please+delete+my+EcomSathi+account.+User+ID:+' + user?.id
+                setDeleteModalOpen(false)
+              }}
             >
               I understand, request deletion
             </Button>

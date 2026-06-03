@@ -3,6 +3,17 @@ import { useDropzone } from 'react-dropzone';
 import { UploadCloud, Download, Trash2, Type, ImageIcon } from 'lucide-react';
 import { Button } from '../../components/common/Button';
 import { Alert } from '../../components/common/Alert';
+import SEO from '../../components/common/SEO';
+import { FAQPageSchema, BreadcrumbSchema, WebApplicationSchema } from '../../components/common/SchemaMarkup';
+import ImageFAQ from './components/ImageFAQ';
+
+const FAQS = [
+  { q: 'Can I add a logo as a watermark?', a: 'Yes. Switch to "Image Logo" mode and upload a PNG logo file. PNG is recommended to preserve transparency around your logo.' },
+  { q: 'How do I control the watermark visibility?', a: 'Use the opacity slider. 100% is fully opaque, lower values make the watermark semi-transparent. For subtle branding, 50-70% usually works well.' },
+  { q: 'What positions can I place the watermark?', a: 'There are 9 positions available: all four corners, all four edge midpoints, and the center. Click any position in the 3×3 grid to select it.' },
+  { q: 'Does the watermark affect the original file?', a: 'No. The tool creates a new copy with the watermark applied. Click "Apply Watermark" to generate the output and then download it.' },
+  { q: 'What formats does the watermark tool support?', a: 'Input images can be JPG, PNG, or WEBP. The output format matches the input format. Use PNG input if you need transparent output.' },
+];
 
 const MAX_SIZE_BYTES = 20 * 1024 * 1024;
 
@@ -189,8 +200,24 @@ export const ImageWatermark: React.FC = () => {
     setBaseFile(null); setBaseUrl(null); setLogoFile(null); setLogoUrl(null); setResultUrl(null);
   };
 
+  const schema = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      WebApplicationSchema({ name: 'Image Watermark', url: 'https://ecomsathi.vercel.app/image/image-watermark', description: 'Add text or logo watermarks to product images with opacity, size, and position control.' }),
+      BreadcrumbSchema([{ name: 'Home', url: '/' }, { name: 'Tools', url: '/tools' }, { name: 'Image Watermark', url: '/image/image-watermark' }]),
+      FAQPageSchema(FAQS.map(f => ({ question: f.q, answer: f.a }))),
+    ],
+  };
+
   return (
     <div className="max-w-3xl mx-auto flex flex-col gap-6">
+      <SEO
+        title="Add Watermark to Image Free — EcomSathi"
+        description="Add text or logo watermark to product images online for free. Control opacity, font size, position, and color. Protect your product photography."
+        keywords="add watermark to image free, image watermark online, watermark product photos, logo watermark tool"
+        canonicalUrl="https://ecomsathi.vercel.app/image/image-watermark"
+        schema={schema}
+      />
       <div>
         <h1 className="text-2xl font-bold text-[#0F172A]">Image Watermark</h1>
         <p className="text-sm text-[#64748B] mt-1">Add text or logo watermarks to your product images.</p>
@@ -352,6 +379,8 @@ export const ImageWatermark: React.FC = () => {
           </div>
         </div>
       )}
+
+      <ImageFAQ faqs={FAQS} />
     </div>
   );
 };

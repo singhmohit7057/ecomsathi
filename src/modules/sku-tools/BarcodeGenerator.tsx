@@ -51,7 +51,6 @@ function validateEAN13(raw: string): { value: string; valid: boolean; message: s
 // ─── Component ────────────────────────────────────────────
 export const BarcodeGenerator: React.FC = () => {
   const svgRef = useRef<SVGSVGElement>(null);
-  const bulkContainerRef = useRef<HTMLDivElement>(null);
 
   const [format, setFormat] = useState<BarcodeFormat>('CODE128');
   const [inputValue, setInputValue] = useState('');
@@ -441,7 +440,7 @@ export const BarcodeGenerator: React.FC = () => {
 
           {/* Bulk Preview */}
           {bulkValues.length > 0 && (
-            <div ref={bulkContainerRef} className="mt-4 space-y-3 max-h-96 overflow-y-auto">
+            <div className="mt-4 space-y-3 max-h-96 overflow-y-auto">
               {bulkValues.slice(0, 20).map((val, i) => (
                 <BulkBarcodeItem key={i} value={val} format={format} />
               ))}

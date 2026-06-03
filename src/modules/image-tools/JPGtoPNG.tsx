@@ -3,6 +3,17 @@ import { useDropzone } from 'react-dropzone';
 import { UploadCloud, Download, Trash2, FileImage, Archive } from 'lucide-react';
 import { Button } from '../../components/common/Button';
 import { Alert } from '../../components/common/Alert';
+import SEO from '../../components/common/SEO';
+import { FAQPageSchema, BreadcrumbSchema, WebApplicationSchema } from '../../components/common/SchemaMarkup';
+import ImageFAQ from './components/ImageFAQ';
+
+const FAQS = [
+  { q: 'Why would I convert JPG to PNG?', a: 'PNG supports transparency and is lossless, making it ideal for product images with removed backgrounds, logos, and graphics where quality must be preserved.' },
+  { q: 'Does converting JPG to PNG improve quality?', a: 'No. PNG is lossless but the original JPG quality is already locked in. Converting to PNG prevents further quality loss from re-saving as JPG.' },
+  { q: 'Can I convert multiple files at once?', a: 'Yes. You can drag and drop multiple JPG files at once and they will all be converted to PNG in a batch.' },
+  { q: 'Will the file size increase after conversion?', a: 'Usually yes. PNG is lossless and generally produces larger files than JPEG for photographic content.' },
+  { q: 'Is the conversion done in the browser?', a: 'Yes, conversion uses the Canvas API locally in your browser. No images are uploaded to any server.' },
+];
 
 const MAX_SIZE_BYTES = 20 * 1024 * 1024;
 
@@ -116,8 +127,24 @@ export const JPGtoPNG: React.FC = () => {
     setError(null);
   };
 
+  const schema = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      WebApplicationSchema({ name: 'JPG to PNG', url: 'https://ecomsathi.vercel.app/image/jpg-to-png', description: 'Convert JPG/JPEG images to PNG format online for free. Supports batch conversion.' }),
+      BreadcrumbSchema([{ name: 'Home', url: '/' }, { name: 'Tools', url: '/tools' }, { name: 'JPG to PNG', url: '/image/jpg-to-png' }]),
+      FAQPageSchema(FAQS.map(f => ({ question: f.q, answer: f.a }))),
+    ],
+  };
+
   return (
     <div className="max-w-3xl mx-auto flex flex-col gap-6">
+      <SEO
+        title="JPG to PNG Converter Free — EcomSathi"
+        description="Convert JPG/JPEG images to PNG format online for free. Supports batch conversion of multiple files. Preserves image quality."
+        keywords="jpg to png converter free, jpeg to png online, convert jpg to png, batch jpg to png"
+        canonicalUrl="https://ecomsathi.vercel.app/image/jpg-to-png"
+        schema={schema}
+      />
       <div>
         <h1 className="text-2xl font-bold text-[#0F172A]">JPG to PNG</h1>
         <p className="text-sm text-[#64748B] mt-1">Convert JPG/JPEG images to PNG format. Supports multiple files.</p>
@@ -205,6 +232,8 @@ export const JPGtoPNG: React.FC = () => {
           </div>
         </div>
       )}
+
+      <ImageFAQ faqs={FAQS} />
     </div>
   );
 };
