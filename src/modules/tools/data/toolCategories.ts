@@ -80,6 +80,24 @@ export const TOOL_CATEGORIES: ToolCategoryData[] = [
       { name: 'Label Printer',         path: '/tools/sku/label-printer',  iconName: 'Printer' },
     ],
   },
+  {
+    id: 'label',
+    title: 'Label Crop Tools',
+    description: 'Auto-crop shipping labels for all major Indian marketplaces.',
+    href: '/label-crop',
+    buttonText: 'View All Label Crop Tools',
+    colorScheme: 'amber',
+    tools: [
+      { name: 'Amazon Label Crop',   path: '/label-crop/amazon',   iconName: 'ShoppingCart' },
+      { name: 'Flipkart Label Crop', path: '/label-crop/flipkart', iconName: 'Package' },
+      { name: 'Myntra Label Crop',   path: '/label-crop/myntra',   iconName: 'Shirt' },
+      { name: 'Meesho Label Crop',   path: '/label-crop/meesho',   iconName: 'Store' },
+      { name: 'AJIO Label Crop',     path: '/label-crop/ajio',     iconName: 'Tag' },
+      { name: 'Nykaa Label Crop',    path: '/label-crop/nykaa',    iconName: 'Heart' },
+      { name: 'Snapdeal Label Crop', path: '/label-crop/snapdeal', iconName: 'Zap' },
+      { name: 'Shopsy Label Crop',   path: '/label-crop/shopsy',   iconName: 'ShoppingBag' },
+    ],
+  },
 ]
 
 export const POPULAR_TOOLS: PopularToolData[] = [
@@ -149,6 +167,7 @@ export const MARKETPLACES: MarketplaceData[] = [
   { name: 'AJIO',     accentColor: '#1A1A1A', bgColor: 'bg-[#F8FAFC]', textColor: 'text-[#0F172A]' },
   { name: 'Nykaa',    accentColor: '#FC2779', bgColor: 'bg-[#FDF2F8]', textColor: 'text-[#BE185D]' },
   { name: 'Snapdeal', accentColor: '#E40020', bgColor: 'bg-[#FFF1F2]', textColor: 'text-[#9F1239]' },
+  { name: 'Shopsy',   accentColor: '#F0530A', bgColor: 'bg-[#FFF7ED]', textColor: 'text-[#C2410C]' },
 ]
 
 export const FAQ_ITEMS: FAQItemData[] = [

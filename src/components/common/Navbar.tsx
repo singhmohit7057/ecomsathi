@@ -369,21 +369,23 @@ export const Navbar: React.FC = () => {
         {/* ── Logo ─────────────────────────────────────────────────────────── */}
         <Link
           to="/"
-          className="flex items-center gap-2.5 select-none flex-shrink-0 group"
+          className="flex items-center gap-2 select-none flex-shrink-0"
           aria-label="EcomSathi home"
         >
-          <span
-            className="w-8 h-8 rounded-[8px] flex items-center justify-center flex-shrink-0 shadow-sm"
-            style={{ background: 'linear-gradient(135deg, #2563EB 0%, #06B6D4 100%)' }}
-            aria-hidden="true"
-          >
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path d="M3 4h10M3 8h7M3 12h10" stroke="white" strokeWidth="1.8" strokeLinecap="round"/>
-            </svg>
-          </span>
-          <span className="text-[22px] font-bold leading-none tracking-tight">
-            <span style={{ color: '#2563EB' }}>Ecom</span>
-            <span style={{ color: '#0F172A' }}>Sathi</span>
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className="shrink-0">
+            <defs>
+              <linearGradient id="navLogoGrad" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stopColor="#6366F1"/>
+                <stop offset="100%" stopColor="#06B6D4"/>
+              </linearGradient>
+            </defs>
+            <rect width="32" height="32" rx="8" fill="url(#navLogoGrad)"/>
+            <line x1="8" y1="11" x2="24" y2="11" stroke="white" strokeWidth="2.5" strokeLinecap="round"/>
+            <line x1="8" y1="16" x2="19" y2="16" stroke="white" strokeWidth="2.5" strokeLinecap="round"/>
+            <line x1="8" y1="21" x2="24" y2="21" stroke="white" strokeWidth="2.5" strokeLinecap="round"/>
+          </svg>
+          <span className="text-[20px] font-bold leading-none tracking-tight">
+            <span style={{ color: '#6366F1' }}>Ecom</span><span style={{ color: '#0F172A' }}>Sathi</span>
           </span>
         </Link>
 
@@ -510,13 +512,10 @@ export const Navbar: React.FC = () => {
       </div>
 
       {/* ── Mobile drawer ──────────────────────────────────────────────────── */}
+      {mobileOpen && (
       <div
         id="mobile-drawer"
-        aria-hidden={!mobileOpen}
-        className={[
-          'md:hidden fixed inset-x-0 top-[71px] bottom-0 z-50 bg-white overflow-y-auto transition-all duration-200 border-t border-[#E2E8F0]',
-          mobileOpen ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 -translate-y-1 pointer-events-none',
-        ].join(' ')}
+        className="md:hidden fixed inset-x-0 top-[74px] bottom-0 z-[9999] bg-white overflow-y-auto border-t border-[#E2E8F0]"
       >
         <div className="flex flex-col p-4 gap-1 pb-10">
           {/* Main links */}
@@ -661,6 +660,7 @@ export const Navbar: React.FC = () => {
           </div>
         </div>
       </div>
+      )}
     </nav>
   );
 };

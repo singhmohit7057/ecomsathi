@@ -152,6 +152,24 @@ export const MARKETPLACE_CONFIGS: Record<string, MarketplaceCropConfig> = {
       a4: { labelsPerPage: 4 },
     },
   },
+
+  // =====================================================================
+  // SHOPSY (by Flipkart)
+  // Same label format as Flipkart — centred label in top area, invoice rotated at bottom.
+  // Label: x=0.31, y=0.027, w=0.381, h=0.428
+  // Invoice: x=0.05, y=0.46, w=0.91, h=0.441 (rotate 90°)
+  // =====================================================================
+  shopsy: {
+    marketplace: 'Shopsy',
+    slug: 'shopsy',
+    labelRegion: { x: 0.31, y: 0.027, width: 0.381, height: 0.428 },
+    invoiceRegion: { x: 0.05, y: 0.46, width: 0.91, height: 0.441, rotate: 90 },
+    pagePattern: 'label_invoice',
+    outputSizes: {
+      thermal: { width: 100, height: 150 },
+      a4: { labelsPerPage: 4 },
+    },
+  },
 };
 
 // -----------------------------------------------------------------------

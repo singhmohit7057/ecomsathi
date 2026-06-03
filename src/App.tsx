@@ -67,7 +67,7 @@ const UnsubscribePage    = lazy(() => import('./pages/UnsubscribePage'))
 // Lazy imports — SKU Tools
 // ============================================================
 
-const SKUToolsIndex      = lazy(() => import('./modules/sku-tools/index'))
+const SKUToolsIndex      = lazy(() => import('./modules/sku-tools/pages/SKUHub'))
 const SingleSKUGenerator = lazy(() => import('./modules/sku-tools/pages/SKUGenerator'))
 const BulkSKUGenerator   = lazy(() => import('./modules/sku-tools/pages/BulkSKUGenerator'))
 const VariantSKUGenerator= lazy(() => import('./modules/sku-tools/pages/VariantSKUGenerator'))
@@ -80,7 +80,7 @@ const LabelPrinter       = lazy(() => import('./modules/sku-tools/pages/LabelPri
 // Lazy imports — PDF Tools
 // ============================================================
 
-const PDFToolsIndex        = lazy(() => import('./modules/pdf-tools/index'))
+const PDFToolsIndex        = lazy(() => import('./modules/pdf-tools/pages/PDFHub'))
 const MergePDF             = lazy(() => import('./modules/pdf-tools/pages/MergePDF'))
 const SplitPDF             = lazy(() => import('./modules/pdf-tools/pages/SplitPDF'))
 const CropPDF              = lazy(() => import('./modules/pdf-tools/pages/CropPDF'))
@@ -99,24 +99,24 @@ const PageNumbersPDF       = lazy(() => import('./modules/pdf-tools/pages/PageNu
 // Lazy imports — Image Tools
 // ============================================================
 
-const ImageToolsIndex      = lazy(() => import('./modules/image-tools/index'))
-const BackgroundRemover    = lazy(() => import('./modules/image-tools/BackgroundRemover'))
-const CropImage            = lazy(() => import('./modules/image-tools/CropImage'))
-const ResizeImage          = lazy(() => import('./modules/image-tools/ResizeImage'))
-const CompressImage        = lazy(() => import('./modules/image-tools/CompressImage'))
-const JPGtoPNG             = lazy(() => import('./modules/image-tools/JPGtoPNG'))
-const PNGtoJPG             = lazy(() => import('./modules/image-tools/PNGtoJPG'))
-const WEBPConverter        = lazy(() => import('./modules/image-tools/WEBPConverter'))
-const ImageWatermark       = lazy(() => import('./modules/image-tools/ImageWatermark'))
-const ProductOptimizer     = lazy(() => import('./modules/image-tools/ProductOptimizer'))
-const WhiteBackground      = lazy(() => import('./modules/image-tools/WhiteBackground'))
-const SquareImageCreator   = lazy(() => import('./modules/image-tools/SquareImageCreator'))
+const ImageToolsIndex      = lazy(() => import('./modules/image-tools/pages/ImageHub'))
+const BackgroundRemover    = lazy(() => import('./modules/image-tools/pages/BackgroundRemover'))
+const CropImage            = lazy(() => import('./modules/image-tools/pages/CropImage'))
+const ResizeImage          = lazy(() => import('./modules/image-tools/pages/ResizeImage'))
+const CompressImage        = lazy(() => import('./modules/image-tools/pages/CompressImage'))
+const JPGtoPNG             = lazy(() => import('./modules/image-tools/pages/JPGtoPNG'))
+const PNGtoJPG             = lazy(() => import('./modules/image-tools/pages/PNGtoJPG'))
+const WEBPConverter        = lazy(() => import('./modules/image-tools/pages/WEBPConverter'))
+const ImageWatermark       = lazy(() => import('./modules/image-tools/pages/ImageWatermark'))
+const ProductOptimizer     = lazy(() => import('./modules/image-tools/pages/ProductOptimizer'))
+const WhiteBackground      = lazy(() => import('./modules/image-tools/pages/WhiteBackground'))
+const SquareImageCreator   = lazy(() => import('./modules/image-tools/pages/SquareImageCreator'))
 
 // ============================================================
 // Lazy imports — Video Tools
 // ============================================================
 
-const VideoToolsIndex      = lazy(() => import('./modules/video-tools/index'))
+const VideoToolsIndex      = lazy(() => import('./modules/video-tools/pages/VideoHub'))
 const VideoToGIF           = lazy(() => import('./modules/video-tools/pages/VideoToGif'))
 const FrameExtractor       = lazy(() => import('./modules/video-tools/pages/FrameExtractor'))
 const CompressVideo        = lazy(() => import('./modules/video-tools/pages/CompressVideo'))
@@ -128,16 +128,14 @@ const ThumbnailGenerator   = lazy(() => import('./modules/video-tools/pages/Thum
 // Lazy imports — GST Tools
 // ============================================================
 
-const GSTToolsIndex        = lazy(() => import('./modules/gst-tools/index'))
-const GSTCalculator        = lazy(() => import('./modules/gst-tools/GSTCalculator'))
-const ReverseGSTCalculator = lazy(() => import('./modules/gst-tools/ReverseGSTCalculator'))
-const GSTRateFinder        = lazy(() => import('./modules/gst-tools/GSTRateFinder'))
-const GSTStateFinder       = lazy(() => import('./modules/gst-tools/GSTStateFinder'))
-const PANValidator         = lazy(() => import('./modules/gst-tools/PANValidator'))
-const HSNSearch            = lazy(() => import('./modules/gst-tools/HSNSearch'))
-const SACSearch            = lazy(() => import('./modules/gst-tools/SACSearch'))
-
-// GST Verification — unified page (merges search + verify + validator)
+const GSTToolsIndex        = lazy(() => import('./modules/gst-tools/pages/GSTHub'))
+const GSTCalculator        = lazy(() => import('./modules/gst-tools/pages/GSTCalculator'))
+const ReverseGSTCalculator = lazy(() => import('./modules/gst-tools/pages/ReverseGSTCalculator'))
+const GSTRateFinder        = lazy(() => import('./modules/gst-tools/pages/GSTRateFinder'))
+const GSTStateFinder       = lazy(() => import('./modules/gst-tools/pages/GSTStateFinder'))
+const PANValidator         = lazy(() => import('./modules/gst-tools/pages/PANValidator'))
+const HSNSearch            = lazy(() => import('./modules/gst-tools/pages/HSNSearch'))
+const SACSearch            = lazy(() => import('./modules/gst-tools/pages/SACSearch'))
 const GSTVerificationPage  = lazy(() => import('./modules/gst-tools/pages/GSTVerification'))
 
 // ============================================================
@@ -152,6 +150,7 @@ const MeeshoLabelCrop      = lazy(() => import('./modules/label-crop/pages/Meesh
 const AjioLabelCrop        = lazy(() => import('./modules/label-crop/pages/AjioLabelCrop'))
 const NykaaLabelCrop       = lazy(() => import('./modules/label-crop/pages/NykaaLabelCrop'))
 const SnapdealLabelCrop    = lazy(() => import('./modules/label-crop/pages/SnapdealLabelCrop'))
+const ShopsyLabelCrop      = lazy(() => import('./modules/label-crop/pages/ShopsyLabelCrop'))
 
 // ============================================================
 // Lazy imports — Reconciliation (premium)
@@ -889,107 +888,42 @@ const routes: RouteObject[] = [
       {
         path: 'amazon',
         element: <S><AmazonLabelCrop /></S>,
-        handle: {
-          tool: 'Amazon Label Crop',
-          category: 'Label Tools',
-          description: 'Crop Amazon shipping labels to thermal or A4 format.',
-          relatedTools: [
-            { label: 'Flipkart Label Crop', to: '/label-crop/flipkart' },
-            { label: 'Myntra Label Crop',   to: '/label-crop/myntra' },
-            { label: 'Meesho Label Crop',   to: '/label-crop/meesho' },
-            { label: 'AJIO Label Crop',     to: '/label-crop/ajio' },
-          ],
-        },
+        handle: { tool: 'Amazon Label Crop',   category: 'Label Tools' },
       },
       {
         path: 'flipkart',
         element: <S><FlipkartLabelCrop /></S>,
-        handle: {
-          tool: 'Flipkart Label Crop',
-          category: 'Label Tools',
-          description: 'Crop Flipkart shipping labels to thermal or A4 format.',
-          relatedTools: [
-            { label: 'Amazon Label Crop',   to: '/label-crop/amazon' },
-            { label: 'Myntra Label Crop',   to: '/label-crop/myntra' },
-            { label: 'Meesho Label Crop',   to: '/label-crop/meesho' },
-            { label: 'AJIO Label Crop',     to: '/label-crop/ajio' },
-          ],
-        },
+        handle: { tool: 'Flipkart Label Crop', category: 'Label Tools' },
       },
       {
         path: 'myntra',
         element: <S><MyntraLabelCrop /></S>,
-        handle: {
-          tool: 'Myntra Label Crop',
-          category: 'Label Tools',
-          description: 'Crop Myntra shipping labels to thermal or A4 format.',
-          relatedTools: [
-            { label: 'Amazon Label Crop',   to: '/label-crop/amazon' },
-            { label: 'Flipkart Label Crop', to: '/label-crop/flipkart' },
-            { label: 'Meesho Label Crop',   to: '/label-crop/meesho' },
-            { label: 'Nykaa Label Crop',    to: '/label-crop/nykaa' },
-          ],
-        },
+        handle: { tool: 'Myntra Label Crop',   category: 'Label Tools' },
       },
       {
         path: 'meesho',
         element: <S><MeeshoLabelCrop /></S>,
-        handle: {
-          tool: 'Meesho Label Crop',
-          category: 'Label Tools',
-          description: 'Crop Meesho shipping labels to thermal or A4 format.',
-          relatedTools: [
-            { label: 'Amazon Label Crop',   to: '/label-crop/amazon' },
-            { label: 'Flipkart Label Crop', to: '/label-crop/flipkart' },
-            { label: 'AJIO Label Crop',     to: '/label-crop/ajio' },
-            { label: 'Snapdeal Label Crop', to: '/label-crop/snapdeal' },
-          ],
-        },
+        handle: { tool: 'Meesho Label Crop',   category: 'Label Tools' },
       },
       {
         path: 'ajio',
         element: <S><AjioLabelCrop /></S>,
-        handle: {
-          tool: 'AJIO Label Crop',
-          category: 'Label Tools',
-          description: 'Crop AJIO shipping labels to thermal or A4 format.',
-          relatedTools: [
-            { label: 'Amazon Label Crop',   to: '/label-crop/amazon' },
-            { label: 'Flipkart Label Crop', to: '/label-crop/flipkart' },
-            { label: 'Myntra Label Crop',   to: '/label-crop/myntra' },
-            { label: 'Snapdeal Label Crop', to: '/label-crop/snapdeal' },
-          ],
-        },
+        handle: { tool: 'AJIO Label Crop',     category: 'Label Tools' },
       },
       {
         path: 'nykaa',
         element: <S><NykaaLabelCrop /></S>,
-        handle: {
-          tool: 'Nykaa Label Crop',
-          category: 'Label Tools',
-          description: 'Crop Nykaa shipping labels to thermal or A4 format.',
-          relatedTools: [
-            { label: 'Myntra Label Crop',   to: '/label-crop/myntra' },
-            { label: 'AJIO Label Crop',     to: '/label-crop/ajio' },
-            { label: 'Meesho Label Crop',   to: '/label-crop/meesho' },
-            { label: 'Amazon Label Crop',   to: '/label-crop/amazon' },
-          ],
-        },
+        handle: { tool: 'Nykaa Label Crop',    category: 'Label Tools' },
       },
       {
         path: 'snapdeal',
         element: <S><SnapdealLabelCrop /></S>,
-        handle: {
-          tool: 'Snapdeal Label Crop',
-          category: 'Label Tools',
-          description: 'Crop Snapdeal shipping labels to thermal or A4 format.',
-          relatedTools: [
-            { label: 'Amazon Label Crop',   to: '/label-crop/amazon' },
-            { label: 'Flipkart Label Crop', to: '/label-crop/flipkart' },
-            { label: 'Meesho Label Crop',   to: '/label-crop/meesho' },
-            { label: 'AJIO Label Crop',     to: '/label-crop/ajio' },
-          ],
-        },
+        handle: { tool: 'Snapdeal Label Crop', category: 'Label Tools' },
+      },
+      {
+        path: 'shopsy',
+        element: <S><ShopsyLabelCrop /></S>,
+        handle: { tool: 'Shopsy Label Crop', category: 'Label Tools' },
       },
     ],
   },

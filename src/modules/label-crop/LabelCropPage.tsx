@@ -20,7 +20,7 @@ import {
   type OutputType,
   type BatchCropResult,
 } from './LabelCropEngine';
-import { Button } from '../../components/common/Button';
+import { Button } from '@/components/common/Button';
 
 // ---------------------------------------------------------------------------
 // Marketplace icon/logo mapping (emoji fallback — replace with actual logos)

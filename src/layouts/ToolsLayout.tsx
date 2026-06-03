@@ -1,6 +1,6 @@
 import { useState, Suspense, lazy } from 'react'
 import { Outlet, Link, useMatches } from 'react-router-dom'
-import { ChevronRight, CheckCircle2, ChevronDown, ChevronUp } from 'lucide-react'
+import { CheckCircle2, ChevronDown, ChevronUp } from 'lucide-react'
 import { clsx } from 'clsx'
 
 const Navbar = lazy(() => import('@/components/common/Navbar'))
@@ -18,32 +18,6 @@ interface ToolHandle {
   description?: string
   relatedTools?: Array<{ label: string; to: string }>
   crumbs?: Array<{ label: string; to?: string }>
-}
-
-// ============================================================
-// Breadcrumb
-// ============================================================
-
-function Breadcrumb({ crumbs }: { crumbs: Array<{ label: string; to?: string }> }) {
-  return (
-    <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-sm text-gray-500">
-      <Link to="/" className="transition-colors hover:text-gray-800">
-        Home
-      </Link>
-      {crumbs.map((crumb, i) => (
-        <span key={i} className="flex items-center gap-1.5">
-          <ChevronRight size={14} className="shrink-0" />
-          {crumb.to ? (
-            <Link to={crumb.to} className="transition-colors hover:text-gray-800">
-              {crumb.label}
-            </Link>
-          ) : (
-            <span className="font-medium text-gray-800">{crumb.label}</span>
-          )}
-        </span>
-      ))}
-    </nav>
-  )
 }
 
 // ============================================================
@@ -102,15 +76,7 @@ export default function ToolsLayout() {
     category,
     description,
     relatedTools,
-    crumbs = [],
   } = handle
-
-  const breadcrumbs = [
-    { label: 'Tools', to: '/tools' },
-    ...(category ? [{ label: category }] : []),
-    ...(toolName ? [{ label: toolName }] : []),
-    ...crumbs,
-  ]
 
   return (
     <div className="flex min-h-screen flex-col bg-gray-50 text-[var(--color-text)]">
@@ -125,9 +91,7 @@ export default function ToolsLayout() {
       {(toolName || category) && (
         <div className="border-b border-gray-200 bg-white">
           <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6 lg:px-8">
-            <Breadcrumb crumbs={breadcrumbs} />
-
-            <div className="mt-3 flex flex-wrap items-start gap-3">
+            <div className="flex flex-wrap items-start gap-3">
               <div className="min-w-0 flex-1">
                 {toolName && (
                   <h1 className="text-xl font-bold text-gray-900 sm:text-2xl">{toolName}</h1>

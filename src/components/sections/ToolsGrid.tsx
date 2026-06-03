@@ -405,12 +405,62 @@ export const ALL_TOOLS: Tool[] = [
 
   // ── Label Crop ────────────────────────────────────────────
   {
-    name: 'Label Crop',
-    description: 'Crop shipping labels from marketplace PDFs — Amazon, Flipkart, Meesho',
-    path: '/label-crop',
+    name: 'Amazon Label Crop',
+    description: 'Auto-crop Amazon shipping labels from multi-label PDFs to thermal or A4.',
+    path: '/label-crop/amazon',
     icon: <ScissorsLineDashed size={20} />,
     category: 'Label Crop',
     isPopular: true,
+  },
+  {
+    name: 'Flipkart Label Crop',
+    description: 'Auto-crop Flipkart shipping labels from bulk PDFs instantly.',
+    path: '/label-crop/flipkart',
+    icon: <ScissorsLineDashed size={20} />,
+    category: 'Label Crop',
+    isPopular: true,
+  },
+  {
+    name: 'Myntra Label Crop',
+    description: 'Crop Myntra shipping labels to thermal or A4 format.',
+    path: '/label-crop/myntra',
+    icon: <ScissorsLineDashed size={20} />,
+    category: 'Label Crop',
+  },
+  {
+    name: 'Meesho Label Crop',
+    description: 'Auto-crop Meesho shipping labels from multi-label PDFs.',
+    path: '/label-crop/meesho',
+    icon: <ScissorsLineDashed size={20} />,
+    category: 'Label Crop',
+  },
+  {
+    name: 'AJIO Label Crop',
+    description: 'Crop AJIO shipping labels to thermal or A4 format.',
+    path: '/label-crop/ajio',
+    icon: <ScissorsLineDashed size={20} />,
+    category: 'Label Crop',
+  },
+  {
+    name: 'Nykaa Label Crop',
+    description: 'Auto-crop Nykaa shipping labels from bulk PDFs.',
+    path: '/label-crop/nykaa',
+    icon: <ScissorsLineDashed size={20} />,
+    category: 'Label Crop',
+  },
+  {
+    name: 'Snapdeal Label Crop',
+    description: 'Crop Snapdeal shipping labels to thermal or A4 format.',
+    path: '/label-crop/snapdeal',
+    icon: <ScissorsLineDashed size={20} />,
+    category: 'Label Crop',
+  },
+  {
+    name: 'Shopsy Label Crop',
+    description: 'Auto-crop Shopsy shipping labels from multi-label PDFs.',
+    path: '/label-crop/shopsy',
+    icon: <ScissorsLineDashed size={20} />,
+    category: 'Label Crop',
   },
 ]
 

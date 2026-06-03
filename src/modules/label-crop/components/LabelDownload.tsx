@@ -1,6 +1,6 @@
 import React from 'react';
 import { Download, Archive, CheckCircle2, RotateCcw } from 'lucide-react';
-import { Button } from '../../../components/common/Button';
+import { Button } from '@/components/common/Button';
 import type { ProcessedLabel, LabelCropSettings } from '../types';
 
 function downloadBlob(blob: Blob, filename: string) {

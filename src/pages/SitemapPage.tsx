@@ -141,6 +141,7 @@ const SECTIONS: SitemapSection[] = [
       { label: 'AJIO Label Crop',     path: '/label-crop/ajio' },
       { label: 'Nykaa Label Crop',    path: '/label-crop/nykaa' },
       { label: 'Snapdeal Label Crop', path: '/label-crop/snapdeal' },
+      { label: 'Shopsy Label Crop',   path: '/label-crop/shopsy' },
     ],
   },
   {

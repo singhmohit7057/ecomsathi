@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronRight, Home } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 
 interface Crumb {
   label: string;
@@ -13,8 +13,8 @@ interface LabelBreadcrumbProps {
 
 export const LabelBreadcrumb: React.FC<LabelBreadcrumbProps> = ({ crumbs }) => (
   <nav aria-label="Breadcrumb" className="flex items-center flex-wrap gap-1 text-sm text-[#64748B]">
-    <Link to="/" className="flex items-center gap-1 hover:text-[#0F172A] transition-colors">
-      <Home size={13} />
+    <Link to="/" className="hover:text-[#0F172A] transition-colors">
+      Home
     </Link>
     {crumbs.map((crumb, i) => (
       <React.Fragment key={i}>

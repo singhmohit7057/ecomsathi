@@ -211,7 +211,7 @@ a {
 }
 
 a:hover {
-  text-decoration: underline;
+  text-decoration: none;
 }
 
 /* Remove default list styles when inside nav */

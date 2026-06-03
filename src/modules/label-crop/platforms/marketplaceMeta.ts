@@ -322,6 +322,51 @@ export const MARKETPLACE_META: Record<string, MarketplaceInfo> = {
       },
     ],
   },
+  shopsy: {
+    slug: 'shopsy',
+    name: 'Shopsy',
+    displayName: 'Shopsy',
+    emoji: '🛒',
+    tagline: 'Crop Shopsy shipping labels in seconds',
+    description: 'Extract and crop Shopsy (by Flipkart) shipping labels from order PDFs. Shopsy uses the same label layout as Flipkart — centred label in the top area with invoice rotated at the bottom.',
+    seoTitle: 'Shopsy Label Crop Tool Online Free',
+    seoDescription: 'Free online Shopsy shipping label crop tool. Upload your Shopsy order PDF and crop shipping labels to thermal or A4 format instantly. No login required.',
+    seoKeywords: 'shopsy label crop, shopsy shipping label, shopsy label tool, crop shopsy label, shopsy thermal label, shopsy by flipkart label',
+    h1: 'Shopsy Shipping Label Crop Tool',
+    features: [
+      'Shopsy label auto-detection',
+      'Centred label extraction',
+      'Invoice region extraction',
+      'Thermal and A4 output',
+      'Bulk PDF processing',
+      'High-resolution PNG export',
+    ],
+    hasInvoice: true,
+    color: '#F97316',
+    bgColor: '#FFF7ED',
+    faqs: [
+      {
+        q: 'How do I crop Shopsy shipping labels?',
+        a: 'Upload your Shopsy order PDF, select Shopsy as the marketplace, choose your output format, and click Crop Labels. The tool locates and crops the centred label automatically.',
+      },
+      {
+        q: 'What is Shopsy and how are its labels formatted?',
+        a: 'Shopsy is a shopping app by Flipkart. Its shipping labels follow the same layout as Flipkart — centred horizontally in the upper portion of each A4 page, with the invoice rotated at the bottom.',
+      },
+      {
+        q: 'Can I extract invoices from Shopsy PDFs?',
+        a: 'Yes. Enable "Include Invoice" and the tool extracts the rotated invoice section from the bottom of each Shopsy page in addition to the label.',
+      },
+      {
+        q: 'What output formats are supported for Shopsy labels?',
+        a: 'Thermal (100×150 mm / 4×6 inch) for direct thermal printers, and A4 with 4 labels per page for desktop printers.',
+      },
+      {
+        q: 'Is batch processing supported for Shopsy?',
+        a: 'Yes. Upload multiple Shopsy PDFs in Batch mode and download all cropped labels as a ZIP archive.',
+      },
+    ],
+  },
 };
 
 export const ALL_MARKETPLACES = Object.values(MARKETPLACE_META);

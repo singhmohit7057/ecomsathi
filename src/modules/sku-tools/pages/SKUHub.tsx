@@ -1,297 +1,432 @@
 // ============================================================
-// SKU Tools Hub Page — /tools/sku
+// SKU Tools Hub Page — /tools/sku  (same UI pattern as ImageHub)
 // ============================================================
 
-import React from 'react'
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
-  Tag, Layers, GitBranch, Settings2, QrCode, Layout, Printer,
-  ChevronRight, CheckCircle2, Shield, Zap, Download, FileSpreadsheet,
-  Package,
+  Tag, QrCode, Printer, List, Layers, Barcode, FileBarChart2,
+  ChevronRight, CheckCircle2, Shield, Zap, Download,
+  ArrowRight, ChevronDown,
 } from 'lucide-react'
 import SEO from '@/components/common/SEO'
-import SKUToolCard from '../components/SKUToolCard'
-import SKUFAQ from '../components/SKUFAQ'
 
-// ─── SEO ───────────────────────────────────────────────────
-
-const PAGE_SCHEMA = {
-  '@context': 'https://schema.org',
-  '@type': 'WebPage',
-  name: 'Free SKU & Label Tools for Ecommerce Sellers',
-  description: 'Generate product SKUs, variant SKUs, barcode labels and printable product labels for ecommerce marketplaces.',
-  url: 'https://ecomsathi.vercel.app/tools/sku',
-  breadcrumb: {
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://ecomsathi.vercel.app' },
-      { '@type': 'ListItem', position: 2, name: 'Tools', item: 'https://ecomsathi.vercel.app/tools' },
-      { '@type': 'ListItem', position: 3, name: 'SKU Tools', item: 'https://ecomsathi.vercel.app/tools/sku' },
-    ],
-  },
-}
-
-// ─── Tools ─────────────────────────────────────────────────
+// ─── Tools ───────────────────────────────────────────────────
 
 const SKU_TOOLS = [
   {
     name: 'SKU Generator',
     href: '/tools/sku/generator',
-    icon: <Tag size={22} />,
-    desc: 'Generate a unique SKU from brand, category, color and size — with live barcode preview.',
-    color: 'text-[#2563EB]',
-    iconBg: 'bg-[#EFF6FF]',
-    badge: undefined,
+    icon: Tag,
+    desc: 'Generate unique SKU codes from brand, category, color and size attributes.',
+    color: 'text-[#7C3AED]',
+    iconBg: 'bg-[#F5F3FF]',
+    border: 'border-[#DDD6FE]',
+    badge: 'Most Used',
+    example: 'NIKE-SHIRT-BLK-L-001',
   },
   {
     name: 'Bulk SKU Generator',
-    href: '/tools/sku/bulk-generator',
-    icon: <Layers size={22} />,
-    desc: 'Upload a CSV or Excel file and generate SKUs for all products in one click.',
-    color: 'text-[#7C3AED]',
-    iconBg: 'bg-[#F5F3FF]',
+    href: '/tools/sku/bulk',
+    icon: List,
+    desc: 'Upload CSV or Excel to generate SKUs for hundreds of products at once.',
+    color: 'text-[#2563EB]',
+    iconBg: 'bg-[#EFF6FF]',
+    border: 'border-[#BFDBFE]',
     badge: 'CSV',
+    example: '500 SKUs in one upload',
   },
   {
     name: 'Variant SKU Generator',
-    href: '/tools/sku/variant-generator',
-    icon: <GitBranch size={22} />,
-    desc: 'Generate all Color × Size × Material combinations automatically.',
-    color: 'text-[#059669]',
-    iconBg: 'bg-[#ECFDF5]',
-    badge: undefined,
+    href: '/tools/sku/variant',
+    icon: Layers,
+    desc: 'Auto-generate all Color × Size × Material SKU combinations instantly.',
+    color: 'text-[#0891B2]',
+    iconBg: 'bg-[#ECFEFF]',
+    border: 'border-[#A5F3FC]',
+    badge: null,
+    example: 'RED-S · RED-M · BLUE-S…',
   },
   {
     name: 'Custom SKU Generator',
-    href: '/tools/sku/custom-generator',
-    icon: <Settings2 size={22} />,
-    desc: 'Build your own SKU format using token blocks — {BRAND}-{CATEGORY}-{NUMBER}.',
-    color: 'text-[#D97706]',
-    iconBg: 'bg-[#FFFBEB]',
-    badge: 'Templates',
+    href: '/tools/sku/custom',
+    icon: FileBarChart2,
+    desc: 'Build your own SKU pattern with custom tokens, separators and save presets.',
+    color: 'text-[#16A34A]',
+    iconBg: 'bg-[#F0FDF4]',
+    border: 'border-[#BBF7D0]',
+    badge: null,
+    example: '{BRAND}-{CAT}-{SEQ}',
   },
   {
     name: 'Barcode Generator',
     href: '/tools/sku/barcode',
-    icon: <QrCode size={22} />,
-    desc: 'Convert any SKU into Code128, EAN-13, EAN-8, UPC or QR Code. Download PNG/SVG.',
-    color: 'text-[#DC2626]',
-    iconBg: 'bg-[#FFF1F2]',
-    badge: undefined,
+    icon: Barcode,
+    desc: 'Generate EAN-13, Code 128, QR Code and UPC-A barcodes with one click.',
+    color: 'text-[#D97706]',
+    iconBg: 'bg-[#FFFBEB]',
+    border: 'border-[#FDE68A]',
+    badge: 'Popular',
+    example: 'EAN-13 · Code128 · QR',
   },
   {
     name: 'Label Generator',
     href: '/tools/sku/label-generator',
-    icon: <Layout size={22} />,
-    desc: 'Create printable product labels with SKU, barcode, price, MRP, brand and size.',
-    color: 'text-[#0891B2]',
-    iconBg: 'bg-[#ECFEFF]',
-    badge: 'PDF',
+    icon: QrCode,
+    desc: 'Design and export print-ready product labels with barcode and price.',
+    color: 'text-[#E11D48]',
+    iconBg: 'bg-[#FFF1F2]',
+    border: 'border-[#FECDD3]',
+    badge: null,
+    example: 'A4 · Thermal · Custom',
   },
   {
     name: 'Label Printer',
     href: '/tools/sku/label-printer',
-    icon: <Printer size={22} />,
-    desc: 'Print A4 sheets or thermal labels. Supports 1-up, 2-up, 4-up and batch printing.',
-    color: 'text-[#374151]',
-    iconBg: 'bg-[#F1F5F9]',
-    badge: undefined,
+    icon: Printer,
+    desc: 'Print labels directly to thermal printers or export A4 sheet PDFs.',
+    color: 'text-[#7C3AED]',
+    iconBg: 'bg-[#F5F3FF]',
+    border: 'border-[#DDD6FE]',
+    badge: null,
+    example: 'Zebra · TSC · A4 PDF',
   },
 ]
 
-// ─── FAQs ──────────────────────────────────────────────────
+// ─── Stats ───────────────────────────────────────────────────
+
+const STATS = [
+  { value: '7',     label: 'Free Tools',       icon: <Tag size={16} className="text-[#7C3AED]" /> },
+  { value: 'CSV',   label: 'Bulk Upload',       icon: <List size={16} className="text-[#2563EB]" /> },
+  { value: '4',     label: 'Barcode Types',     icon: <Barcode size={16} className="text-[#D97706]" /> },
+  { value: 'PDF',   label: 'Label Export',      icon: <Printer size={16} className="text-[#E11D48]" /> },
+  { value: '0',     label: 'Login Required',    icon: <Shield size={16} className="text-[#16A34A]" /> },
+  { value: '100%',  label: 'Free Forever',      icon: <Zap size={16} className="text-[#0891B2]" /> },
+]
+
+// ─── Features ────────────────────────────────────────────────
+
+const FEATURES = [
+  { icon: <Zap size={18} className="text-[#2563EB]" />,           title: 'Instant Generation',    desc: 'All SKU tools run in your browser — generate thousands in seconds.' },
+  { icon: <Shield size={18} className="text-[#16A34A]" />,        title: 'No Login Required',     desc: 'Use all 7 SKU tools for free — no signup or account needed.' },
+  { icon: <List size={18} className="text-[#2563EB]" />,          title: 'Bulk CSV Support',      desc: 'Upload a CSV with product data and generate SKUs for all rows at once.' },
+  { icon: <Barcode size={18} className="text-[#D97706]" />,       title: '4 Barcode Formats',     desc: 'EAN-13, Code 128, QR Code and UPC-A supported with PNG/SVG export.' },
+  { icon: <Printer size={18} className="text-[#E11D48]" />,       title: 'Thermal & A4 Labels',   desc: 'Export labels as A4 PDF sheets or 4×6 thermal format for Zebra/TSC.' },
+  { icon: <Layers size={18} className="text-[#0891B2]" />,        title: 'Variant SKUs',          desc: 'Auto-generate all size/color/material combinations in one step.' },
+  { icon: <Download size={18} className="text-[#D97706]" />,      title: 'Instant Download',      desc: 'Download SKUs as CSV or barcodes as PNG/SVG immediately.' },
+  { icon: <FileBarChart2 size={18} className="text-[#16A34A]" />, title: 'Custom Patterns',       desc: 'Define your own SKU format with token blocks and reusable presets.' },
+]
+
+// ─── FAQs ─────────────────────────────────────────────────────
 
 const FAQS = [
   {
-    question: 'What is a SKU?',
-    answer: 'A SKU (Stock Keeping Unit) is a unique alphanumeric code assigned to a product to track inventory. Each product variation (size, color, material) should have its own SKU.',
+    question: 'Are all SKU tools completely free?',
+    answer: 'Yes. All 7 SKU tools are 100% free with no login required. You can use them unlimited times.',
   },
   {
-    question: 'How do I generate a SKU?',
-    answer: 'Enter your brand name, product category, color, and size. Our tool builds a clean SKU like NIKE-TSH-BLK-M instantly. You can also use the Bulk or Variant generators for multiple products.',
+    question: 'What is a SKU and why do I need one?',
+    answer: 'A SKU (Stock Keeping Unit) is a unique code for each product variant. A well-structured SKU helps you track stock, process orders and reconcile marketplace payouts accurately.',
   },
   {
     question: 'What barcode formats are supported?',
-    answer: 'We support Code 128, EAN-13, EAN-8, UPC-A and QR Code. Code 128 works for all SKUs. EAN-13 is required for most Indian marketplaces.',
+    answer: 'EAN-13 (Indian retail standard), Code 128 (warehousing), QR Code (URLs/data) and UPC-A (international retail). Barcodes export as PNG or SVG.',
   },
   {
-    question: 'Can I upload a CSV to generate SKUs in bulk?',
-    answer: 'Yes! Use the Bulk SKU Generator to upload a CSV or Excel file with columns for productName, brand, color, size, and category. SKUs are generated instantly and you can download the result.',
+    question: 'Can I generate SKUs for hundreds of products at once?',
+    answer: 'Yes. The Bulk SKU Generator accepts CSV or Excel files. Prepare columns for product name, category, brand, color and size — EcomSathi generates structured SKUs for all rows instantly.',
   },
   {
-    question: 'How do I print product labels?',
-    answer: 'Use the Label Generator to design your label with SKU, barcode, price and MRP fields, then use the Label Printer to arrange them on A4 or thermal paper and print or download as PDF.',
+    question: 'What label sizes does the Label Generator support?',
+    answer: 'A4 sheet labels (2×4, 2×5, 3×7 grid), A6 thermal labels (100×150mm), 40×25mm and 50×25mm sticker labels, and custom dimensions. Output is a print-ready PDF.',
   },
   {
-    question: 'Are these tools free?',
-    answer: 'Yes, all SKU tools are completely free with no login required. You can generate unlimited SKUs and labels.',
+    question: 'How does the Custom SKU Generator work?',
+    answer: 'You define a pattern using token blocks like {BRAND}, {CATEGORY}, {COLOR}, {SIZE} and {SEQ}. Choose separators (- or _), set sequence numbering, and save as a reusable preset.',
   },
 ]
 
-// ─── Benefits ──────────────────────────────────────────────
-
-const BENEFITS = [
-  { icon: <Zap size={18} className="text-[#2563EB]" />, title: 'Instant Generation', desc: 'Generate SKUs in seconds with live preview.' },
-  { icon: <FileSpreadsheet size={18} className="text-[#059669]" />, title: 'Bulk Processing', desc: 'Upload CSV/Excel and process thousands of rows.' },
-  { icon: <QrCode size={18} className="text-[#7C3AED]" />, title: 'Multiple Barcode Formats', desc: 'Code 128, EAN-13, EAN-8, UPC, QR Code.' },
-  { icon: <Download size={18} className="text-[#D97706]" />, title: 'Multiple Export Formats', desc: 'Download as CSV, PDF, PNG, SVG.' },
-  { icon: <Shield size={18} className="text-[#DC2626]" />, title: 'No Login Required', desc: 'All tools are free and work in your browser.' },
-  { icon: <CheckCircle2 size={18} className="text-[#0891B2]" />, title: 'Marketplace Ready', desc: 'Optimized for Amazon, Flipkart, Meesho formats.' },
-]
-
-// ─── Related Tools ─────────────────────────────────────────
+// ─── Related ─────────────────────────────────────────────────
 
 const RELATED = [
-  { name: 'PDF Tools', href: '/tools/pdf', desc: 'Merge, split, compress and edit PDFs' },
-  { name: 'Image Tools', href: '/tools/image', desc: 'Background remover, resize, compress images' },
-  { name: 'GST Tools', href: '/tools/gst', desc: 'GST calculator, GSTIN validator, HSN search' },
-  { name: 'Label Crop', href: '/label-crop', desc: 'Crop shipping labels for all marketplaces' },
+  { name: 'PDF Tools',   href: '/tools/pdf',   desc: 'Merge, split, compress and watermark PDFs',       icon: '📄', color: 'bg-[#EFF6FF] border-[#BFDBFE]' },
+  { name: 'Image Tools', href: '/tools/image', desc: 'Resize, compress, crop and optimize images',       icon: '🖼️', color: 'bg-[#F0FDF4] border-[#BBF7D0]' },
+  { name: 'GST Tools',   href: '/tools/gst',   desc: 'GST calculator, GSTIN validator, HSN search',     icon: '📊', color: 'bg-[#FFFBEB] border-[#FDE68A]' },
+  { name: 'Video Tools', href: '/tools/video', desc: 'Video to GIF, compress, resize and thumbnails',     icon: '🎬', color: 'bg-[#FFF1F2] border-[#FECACA]' },
 ]
 
-// ─── Component ─────────────────────────────────────────────
+// ─── FAQ Component ────────────────────────────────────────────
 
-export default function SKUHub() {
+function SKUHubFAQ({ items }: { items: typeof FAQS }) {
+  const [openIdx, setOpenIdx] = useState<number | null>(null)
+  const toggle = (idx: number) => setOpenIdx((prev) => (prev === idx ? null : idx))
+
+  return (
+    <section className="flex flex-col gap-5">
+      <div className="flex flex-col gap-1">
+        <h2 className="text-xl font-bold text-[#0F172A]">Frequently Asked Questions</h2>
+        <p className="text-sm text-[#64748B]">Everything you need to know about EcomSathi SKU tools.</p>
+      </div>
+      <div className="flex flex-col gap-2">
+        {items.map((item, idx) => {
+          const isOpen = openIdx === idx
+          return (
+            <div
+              key={idx}
+              className={`rounded-[8px] border bg-white transition-all duration-200 ${
+                isOpen ? 'border-[#7C3AED] shadow-sm' : 'border-[#E2E8F0] hover:border-[#CBD5E1]'
+              }`}
+            >
+              <button
+                type="button"
+                onClick={() => toggle(idx)}
+                aria-expanded={isOpen}
+                className="w-full flex items-center justify-between gap-4 px-5 py-4 text-left"
+              >
+                <div className="flex items-center gap-3">
+                  <span className={`shrink-0 text-xs font-bold tabular-nums w-5 transition-colors ${
+                    isOpen ? 'text-[#7C3AED]' : 'text-[#CBD5E1]'
+                  }`}>
+                    {String(idx + 1).padStart(2, '0')}
+                  </span>
+                  <span className={`text-sm font-semibold transition-colors ${
+                    isOpen ? 'text-[#7C3AED]' : 'text-[#0F172A]'
+                  }`}>
+                    {item.question}
+                  </span>
+                </div>
+                <ChevronDown
+                  size={16}
+                  className={`shrink-0 transition-all duration-200 ${
+                    isOpen ? 'rotate-180 text-[#7C3AED]' : 'text-[#94A3B8]'
+                  }`}
+                />
+              </button>
+              {isOpen && (
+                <div className="px-5 pb-4 ml-8">
+                  <p className="text-sm text-[#64748B] leading-relaxed border-l-2 border-[#DDD6FE] pl-4">
+                    {item.answer}
+                  </p>
+                </div>
+              )}
+            </div>
+          )
+        })}
+      </div>
+      <p className="text-xs text-[#94A3B8] text-center">
+        Still have questions?{' '}
+        <a href="/contact" className="text-[#7C3AED] hover:underline font-medium">Contact us</a>
+      </p>
+    </section>
+  )
+}
+
+// ─── Component ───────────────────────────────────────────────
+
+export default function SKUToolsHub() {
   return (
     <>
       <SEO
-        title="Free SKU & Label Tools for Ecommerce Sellers | EcomSathi"
-        description="Generate product SKUs, variant SKUs, barcode labels and printable product labels for ecommerce marketplaces. Free, no login required."
-        keywords="sku generator, barcode generator, product label generator, bulk sku, variant sku, custom sku, ecommerce sku tools"
+        title="SKU Tools — Generate SKUs, Barcodes & Labels | EcomSathi"
+        description="Free SKU generator tools for Indian ecommerce sellers. Generate single, bulk and variant SKUs, print barcodes and create product labels. No login needed."
+        keywords="sku generator free, barcode generator india, bulk sku generator, label generator, product label printer, ecommerce sku tools india"
         canonicalUrl="https://ecomsathi.vercel.app/tools/sku"
-        schema={PAGE_SCHEMA}
       />
 
-      <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-10">
 
-        {/* Hero */}
-        <div className="rounded-[8px] border border-[#BFDBFE] bg-[#EFF6FF] p-6 sm:p-8">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:gap-6">
-            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-[8px] border border-[#BFDBFE] bg-white text-[#2563EB] shadow-sm">
-              <Package size={28} />
+        {/* ── HERO ─────────────────────────────────────────── */}
+        <div className="relative overflow-hidden rounded-[12px] bg-gradient-to-br from-[#0F172A] via-[#1e1040] to-[#2e1065] px-6 py-10 sm:px-10 sm:py-14">
+          <div className="pointer-events-none absolute -top-16 -right-16 h-64 w-64 rounded-full bg-[#7C3AED]/20 blur-3xl" />
+          <div className="pointer-events-none absolute -bottom-12 -left-12 h-48 w-48 rounded-full bg-[#2563EB]/20 blur-3xl" />
+
+          {/* breadcrumb */}
+          <nav className="relative mb-5 flex items-center gap-1.5 text-xs text-[#94A3B8]">
+            <Link to="/" className="hover:text-white transition-colors">Home</Link>
+            <ChevronRight size={12} />
+            <Link to="/tools" className="hover:text-white transition-colors">Tools</Link>
+            <ChevronRight size={12} />
+            <span className="text-white font-medium">SKU Tools</span>
+          </nav>
+
+          <div className="relative flex flex-col gap-5 sm:flex-row sm:items-center sm:gap-8">
+            {/* icon */}
+            <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-[16px] bg-white/10 backdrop-blur-sm border border-white/20 shadow-lg">
+              <Tag size={44} className="text-white" />
             </div>
+
+            {/* text */}
             <div className="flex-1">
-              <div className="flex flex-wrap items-center gap-2">
-                <h1 className="text-2xl font-extrabold text-[#0F172A] sm:text-3xl">
-                  Free SKU & Label Tools for Ecommerce Sellers
-                </h1>
-                <span className="inline-flex items-center gap-1 rounded-full bg-white px-2.5 py-0.5 text-xs font-medium text-[#16A34A] ring-1 ring-inset ring-[#BBF7D0]">
-                  <CheckCircle2 size={11} />
-                  No login required
+              <div className="flex flex-wrap items-center gap-2 mb-2">
+                <span className="inline-flex items-center gap-1 rounded-full bg-[#7C3AED]/20 px-2.5 py-0.5 text-[11px] font-semibold text-[#C4B5FD] ring-1 ring-[#C4B5FD]/30">
+                  <CheckCircle2 size={10} /> No login required
                 </span>
-                <span className="inline-flex items-center rounded-full bg-white px-2.5 py-0.5 text-xs font-medium text-[#D97706] ring-1 ring-inset ring-[#FDE68A]">
+                <span className="inline-flex items-center rounded-full bg-white/10 px-2.5 py-0.5 text-[11px] font-semibold text-[#FCD34D] ring-1 ring-[#FCD34D]/30">
                   100% Free
                 </span>
+                <span className="inline-flex items-center rounded-full bg-white/10 px-2.5 py-0.5 text-[11px] font-semibold text-[#93C5FD] ring-1 ring-[#93C5FD]/30">
+                  7 Tools
+                </span>
               </div>
-              <p className="mt-2 text-sm text-[#475569] sm:text-base">
-                Generate product SKUs, variant SKUs, barcode labels and printable product labels for ecommerce marketplaces.
+
+              <h1 className="text-2xl font-extrabold text-white sm:text-4xl leading-tight">
+                Free SKU Generator,<br className="hidden sm:block" />
+                <span className="text-[#C4B5FD]"> Barcode &amp; Label Tools</span>
+              </h1>
+              <p className="mt-3 text-sm text-[#94A3B8] sm:text-base max-w-xl">
+                Generate professional SKUs, create barcodes and print product labels — all from your browser. Built for Indian ecommerce sellers on Amazon, Flipkart, Meesho and Myntra.
               </p>
-              <div className="mt-4 flex flex-wrap gap-4">
-                <div className="flex items-center gap-1.5 text-xs text-[#64748B]">
-                  <span className="font-bold text-[#2563EB] text-sm">{SKU_TOOLS.length}</span>
-                  tools available
-                </div>
-                <div className="flex items-center gap-1.5 text-xs text-[#64748B]">
-                  <Shield size={13} className="text-[#16A34A]" />
-                  Browser-based, no data stored
-                </div>
-                <div className="flex items-center gap-1.5 text-xs text-[#64748B]">
-                  <CheckCircle2 size={13} className="text-[#2563EB]" />
-                  Unlimited generation
-                </div>
-              </div>
             </div>
           </div>
         </div>
 
-        {/* Breadcrumb */}
-        <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-sm text-[#64748B]">
-          <Link to="/" className="transition-colors hover:text-[#0F172A]">Home</Link>
-          <ChevronRight size={14} />
-          <Link to="/tools" className="transition-colors hover:text-[#0F172A]">Tools</Link>
-          <ChevronRight size={14} />
-          <span className="font-medium text-[#0F172A]">SKU Tools</span>
-        </nav>
+        {/* ── STATS STRIP ──────────────────────────────────── */}
+        <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
+          {STATS.map((s) => (
+            <div key={s.label} className="flex flex-col items-center gap-1.5 py-4 px-2 rounded-[8px] bg-white border border-[#E2E8F0] text-center">
+              {s.icon}
+              <p className="text-base font-extrabold text-[#0F172A] leading-tight">{s.value}</p>
+              <p className="text-[10px] text-[#64748B] leading-tight">{s.label}</p>
+            </div>
+          ))}
+        </div>
 
-        {/* Tool Grid */}
+        {/* ── TOOL CARDS ───────────────────────────────────── */}
         <div>
-          <h2 className="text-lg font-bold text-[#0F172A] mb-4">Choose a SKU Tool</h2>
+          <div className="flex items-center justify-between mb-5">
+            <div>
+              <h2 className="text-xl font-bold text-[#0F172A]">Choose a SKU Tool</h2>
+              <p className="text-sm text-[#64748B] mt-0.5">{SKU_TOOLS.length} free tools — no account needed</p>
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {SKU_TOOLS.map((tool) => (
-              <SKUToolCard key={tool.href} {...tool} />
-            ))}
+            {SKU_TOOLS.map((tool) => {
+              const Icon = tool.icon
+              return (
+                <Link
+                  key={tool.href}
+                  to={tool.href}
+                  className="group relative flex flex-col rounded-[10px] border border-[#E2E8F0] bg-white p-5 transition-all duration-150 hover:border-[#7C3AED] hover:shadow-[0_4px_20px_-4px_rgba(124,58,237,0.15)] hover:-translate-y-0.5"
+                >
+                  {/* top row */}
+                  <div className="flex items-start justify-between mb-4">
+                    <div className={`flex h-11 w-11 items-center justify-center rounded-[8px] border ${tool.iconBg} ${tool.border} ${tool.color}`}>
+                      <Icon size={20} />
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      {tool.badge && (
+                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#F5F3FF] text-[#7C3AED] border border-[#DDD6FE]">
+                          {tool.badge}
+                        </span>
+                      )}
+                      <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#F0FDF4] text-[#16A34A] border border-[#BBF7D0]">
+                        Free
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* content */}
+                  <h3 className={`text-[15px] font-bold text-[#0F172A] group-hover:${tool.color.replace('text-', 'text-')} transition-colors mb-1`}>
+                    {tool.name}
+                  </h3>
+                  <p className="text-[13px] text-[#64748B] leading-relaxed flex-1">{tool.desc}</p>
+
+                  {/* example badge */}
+                  <div className="mt-3 flex items-center justify-between">
+                    <code className="text-[11px] font-mono text-[#94A3B8] bg-[#F8FAFC] border border-[#E2E8F0] rounded px-2 py-0.5 truncate max-w-[150px]">
+                      {tool.example}
+                    </code>
+                    <span className={`flex items-center gap-1 text-xs font-semibold ${tool.color} group-hover:gap-1.5 transition-all`}>
+                      Open <ArrowRight size={12} className="transition-transform group-hover:translate-x-0.5" />
+                    </span>
+                  </div>
+                </Link>
+              )
+            })}
           </div>
         </div>
 
-        {/* Benefits */}
-        <div>
-          <h2 className="text-lg font-bold text-[#0F172A] mb-4">Why Use EcomSathi SKU Tools?</h2>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {BENEFITS.map((b) => (
-              <div key={b.title} className="flex gap-3 p-4 rounded-[8px] bg-white border border-[#E2E8F0]">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[6px] bg-[#F8FAFC] border border-[#E2E8F0]">
-                  {b.icon}
+        {/* ── FEATURES GRID ────────────────────────────────── */}
+        <div className="rounded-[12px] border border-[#E2E8F0] bg-white overflow-hidden">
+          <div className="px-6 py-5 border-b border-[#F1F5F9]">
+            <h2 className="text-lg font-bold text-[#0F172A]">Everything You Need to Manage Product SKUs</h2>
+            <p className="text-sm text-[#64748B] mt-0.5">Built for Indian ecommerce sellers on Amazon, Flipkart, Myntra and Meesho.</p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-[#F1F5F9]">
+            {FEATURES.map((f, i) => (
+              <div
+                key={f.title}
+                className={`flex flex-col gap-2 p-5 ${i >= 4 ? 'border-t border-[#F1F5F9]' : ''}`}
+              >
+                <div className="flex h-9 w-9 items-center justify-center rounded-[8px] bg-[#F8FAFC] border border-[#E2E8F0]">
+                  {f.icon}
                 </div>
-                <div>
-                  <p className="text-sm font-semibold text-[#0F172A]">{b.title}</p>
-                  <p className="text-xs text-[#64748B] mt-0.5">{b.desc}</p>
-                </div>
+                <p className="text-sm font-semibold text-[#0F172A]">{f.title}</p>
+                <p className="text-xs text-[#64748B] leading-relaxed">{f.desc}</p>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Features Section */}
-        <div className="rounded-[8px] border border-[#E2E8F0] bg-white p-6">
-          <h2 className="text-lg font-bold text-[#0F172A] mb-4">SKU Tools Features</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2">
+        {/* ── HOW IT WORKS ─────────────────────────────────── */}
+        <div>
+          <h2 className="text-xl font-bold text-[#0F172A] mb-5">How It Works</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
             {[
-              'Auto SKU Generation from product attributes',
-              'CSV and Excel upload for bulk processing',
-              'Variant matrix — all Color × Size combinations',
-              'Custom pattern builder with token blocks',
-              'Code 128, EAN-13, EAN-8, UPC, QR Code',
-              'Download PNG, SVG, PDF formats',
-              'Thermal and A4 label templates',
-              'Print preview with batch printing',
-              'Auto-numbering and sequence control',
-              'Duplicate SKU detection',
-              'No login or account required',
-              'Works 100% in your browser',
-            ].map((f) => (
-              <div key={f} className="flex items-center gap-2 py-1">
-                <CheckCircle2 size={14} className="text-[#16A34A] shrink-0" />
-                <span className="text-sm text-[#374151]">{f}</span>
+              { step: '01', title: 'Choose a Tool',     desc: 'Pick from SKU Generator, Barcode, Label or Bulk generator based on your need.',     color: 'bg-[#F5F3FF] border-[#DDD6FE] text-[#7C3AED]' },
+              { step: '02', title: 'Enter Details',     desc: 'Fill in brand, category, size and color or upload your product CSV file.',          color: 'bg-[#EFF6FF] border-[#BFDBFE] text-[#2563EB]' },
+              { step: '03', title: 'Generate',          desc: 'EcomSathi creates structured SKUs and barcodes following best practices.',           color: 'bg-[#FFFBEB] border-[#FDE68A] text-[#D97706]' },
+              { step: '04', title: 'Download & Print',  desc: 'Export as CSV, PNG or print-ready PDF labels instantly — no signup needed.',        color: 'bg-[#FFF1F2] border-[#FECACA] text-[#E11D48]' },
+            ].map((s) => (
+              <div key={s.step} className="flex flex-col gap-3 p-5 rounded-[10px] bg-white border border-[#E2E8F0]">
+                <span className={`inline-flex h-9 w-9 items-center justify-center rounded-[8px] border text-sm font-extrabold ${s.color}`}>
+                  {s.step}
+                </span>
+                <p className="text-sm font-bold text-[#0F172A]">{s.title}</p>
+                <p className="text-xs text-[#64748B] leading-relaxed">{s.desc}</p>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Related Tools */}
+        {/* ── RELATED TOOLS ────────────────────────────────── */}
         <div>
-          <h2 className="text-lg font-bold text-[#0F172A] mb-4">Related Ecommerce Tools</h2>
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <h2 className="text-xl font-bold text-[#0F172A] mb-5">Related Ecommerce Tools</h2>
+          <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
             {RELATED.map((r) => (
               <Link
                 key={r.href}
                 to={r.href}
-                className="flex flex-col gap-1 p-4 rounded-[8px] border border-[#E2E8F0] bg-white hover:border-[#2563EB] hover:shadow-[#1E293B_2px_2px_0px_0px] transition-all group"
+                className={`group flex flex-col gap-2 p-4 rounded-[10px] border ${r.color} hover:shadow-[0_2px_12px_-2px_rgba(15,23,42,0.1)] hover:-translate-y-0.5 transition-all`}
               >
-                <p className="text-sm font-semibold text-[#0F172A] group-hover:text-[#2563EB]">{r.name}</p>
-                <p className="text-xs text-[#64748B]">{r.desc}</p>
-                <p className="text-xs font-medium text-[#2563EB] mt-1">Explore →</p>
+                <span className="text-2xl">{r.icon}</span>
+                <p className="text-sm font-bold text-[#0F172A] group-hover:text-[#7C3AED] transition-colors">{r.name}</p>
+                <p className="text-xs text-[#64748B] leading-relaxed">{r.desc}</p>
+                <span className="text-xs font-semibold text-[#7C3AED] mt-auto flex items-center gap-1">
+                  Explore <ArrowRight size={11} className="transition-transform group-hover:translate-x-0.5" />
+                </span>
               </Link>
             ))}
           </div>
         </div>
 
-        {/* FAQ */}
-        <SKUFAQ items={FAQS} />
+        {/* ── FAQ ──────────────────────────────────────────── */}
+        <SKUHubFAQ items={FAQS} />
 
-        {/* Privacy Note */}
-        <div className="rounded-[8px] border border-[#E2E8F0] bg-[#F8FAFC] p-4 text-center">
-          <p className="text-xs text-[#64748B]">
-            All SKU tools run in your browser. No data is sent to any server. Files and generated content stay on your device.
-          </p>
+        {/* ── TRUST FOOTER ─────────────────────────────────── */}
+        <div className="rounded-[10px] bg-[#F8FAFC] border border-[#E2E8F0] px-6 py-4 flex flex-wrap items-center justify-center gap-6">
+          {[
+            { icon: <Shield size={14} className="text-[#16A34A]" />,    text: 'No login required' },
+            { icon: <CheckCircle2 size={14} className="text-[#7C3AED]" />, text: '100% free forever' },
+            { icon: <Zap size={14} className="text-[#D97706]" />,       text: 'Instant generation' },
+            { icon: <Download size={14} className="text-[#2563EB]" />,  text: 'Download CSV & PDF' },
+          ].map((t) => (
+            <div key={t.text} className="flex items-center gap-1.5 text-xs text-[#64748B]">
+              {t.icon}
+              {t.text}
+            </div>
+          ))}
         </div>
 
       </div>

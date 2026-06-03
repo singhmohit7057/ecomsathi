@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 60" width="280" height="60">
+  <defs>
+    <linearGradient id="iconGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#6366F1" />
+      <stop offset="100%" style="stop-color:#06B6D4" />
+    </linearGradient>
+    <linearGradient id="textGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#6366F1" />
+      <stop offset="100%" style="stop-color:#06B6D4" />
+    </linearGradient>
+  </defs>
+
+  <!-- Icon: rounded square -->
+  <rect x="0" y="4" width="52" height="52" rx="14" fill="url(#iconGrad)" />
+
+  <!-- Shopping bag -->
+  <path d="M16 24 L16 42 Q16 44 18 44 L34 44 Q36 44 36 42 L36 24 Z"
+        fill="none" stroke="white" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M20 24 Q20 16 26 16 Q32 16 32 24"
+        fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+  <polyline points="20,33 24,38 32,28"
+            fill="none" stroke="white" stroke-width="2.5"
+            stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- "Ecom" in gradient, "Sathi" in dark — no dot, no gap -->
+  <text x="64" y="36"
+        font-family="'Segoe UI', Inter, system-ui, sans-serif"
+        font-size="28" font-weight="800" letter-spacing="-0.5">
+    <tspan fill="url(#textGrad)">Ecom</tspan><tspan fill="#1E293B">Sathi</tspan>
+  </text>
+
+  <!-- Tagline -->
+  <text x="64" y="50"
+        font-family="'Segoe UI', Inter, system-ui, sans-serif"
+        font-size="8.5" fill="#94A3B8" letter-spacing="1.8"
+        font-weight="500">SELLER TOOLS FOR INDIA</text>
+</svg>
