@@ -66,8 +66,8 @@ const toolCategories: ToolCategory[] = [
     items: [
       { label: 'Video to GIF',        href: '/tools/video/to-gif',    description: 'Animated GIF from video' },
       { label: 'Compress Video',      href: '/tools/video/compress',  description: 'Reduce video file size' },
-      { label: 'Thumbnail Generator', href: '/tools/video/thumbnail', description: 'Extract video thumbnails' },
-      { label: 'Video Converter',     href: '/tools/video/convert',   description: 'Convert video formats' },
+      { label: 'Thumbnail Generator', href: '/tools/video/thumbnail-generator', description: 'Extract video thumbnails' },
+      { label: 'Video Converter',     href: '/tools/video/converter',           description: 'Convert video formats' },
     ],
   },
   {
@@ -78,7 +78,7 @@ const toolCategories: ToolCategory[] = [
     badgeColor: '#D97706',
     items: [
       { label: 'GST Calculator',         href: '/tools/gst/calculator',  description: 'Calculate CGST/SGST/IGST' },
-      { label: 'GST Search',             href: '/tools/gst/search',      description: 'Verify any GSTIN' },
+      { label: 'GST Verification',        href: '/tools/gst/verify',      description: 'Verify any GSTIN' },
       { label: 'Reverse GST Calculator', href: '/tools/gst/reverse',     description: 'Extract base from MRP' },
       { label: 'HSN Code Search',        href: '/tools/gst/hsn-search',  description: 'Find HSN codes & rates' },
       { label: 'GST Rate Finder',        href: '/tools/gst/rate-finder', description: 'Find applicable GST rate' },

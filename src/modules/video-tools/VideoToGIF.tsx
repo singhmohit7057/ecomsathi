@@ -4,7 +4,7 @@ import { ToolPage } from '../pdf-tools/shared/ToolPage';
 import { FileUploader } from '../../components/common/FileUploader';
 import { Button } from '../../components/common/Button';
 
-const API = import.meta.env.VITE_PROCESSING_API_URL as string;
+const API = import.meta.env.VITE_PROCESSING_API_URL ?? 'http://localhost:3001';
 const MAX_CLIP_SECONDS = 30;
 
 interface JobResult {

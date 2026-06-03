@@ -309,14 +309,14 @@ export const SEO_CONFIG: Record<string, SEOProps> = {
     keywords:
       'resize video online free, video resolution changer, mp4 resizer, change video dimensions, video resolution converter, resize video for amazon',
   },
-  '/tools/video/convert': {
+  '/tools/video/converter': {
     title: 'Video Converter Online Free — MP4, MOV, AVI, WEBM — EcomSathi',
     description:
       'Convert between MP4, MOV, AVI, WEBM, MKV video formats online for free. Browser-based video converter. No signup required.',
     keywords:
       'video converter online free, mp4 to webm, mov to mp4, convert video format, avi to mp4, webm to mp4, mkv to mp4 online',
   },
-  '/tools/video/thumbnail': {
+  '/tools/video/thumbnail-generator': {
     title: 'Video Thumbnail Generator Free — EcomSathi',
     description:
       'Extract the perfect thumbnail from your product video at any timestamp. Free online video thumbnail generator. Save as JPEG for marketplace listings.',
@@ -335,19 +335,12 @@ export const SEO_CONFIG: Record<string, SEOProps> = {
   },
 
   // ─── GST Tools (individual) ───────────────────────────────────────────────
-  '/tools/gst/search': {
-    title: 'GST Search — Verify GSTIN Free — EcomSathi',
-    description:
-      'Search and verify GSTIN numbers instantly. Free GST number verification tool for Indian sellers. Check business name, address, and filing status.',
-    keywords:
-      'gst search, gstin verification, verify gst number, gst number check, gstin lookup india',
-  },
   '/tools/gst/verify': {
-    title: 'GSTIN Verifier — EcomSathi',
+    title: 'GST Verification Tool — Validate & Verify GSTIN Free — EcomSathi',
     description:
-      'Instantly verify if a GSTIN is valid and active on the GST portal. Free online GSTIN verification tool for Indian sellers.',
+      'Free GSTIN verification tool. Validate format, checksum, state code & PAN structure instantly — then verify live status on the GSTN government portal.',
     keywords:
-      'gstin verifier, verify gstin online, gst number active check, gstin validity checker india',
+      'gst verification, gstin validator, verify gstin online, gst number check, gstin format validation, gstin lookup india',
   },
   '/tools/gst/calculator': {
     title: 'GST Calculator — EcomSathi',
@@ -376,13 +369,6 @@ export const SEO_CONFIG: Record<string, SEOProps> = {
       'Look up the 2-digit state code used in GSTIN numbers. Free GST state code finder for all Indian states and UTs.',
     keywords:
       'gst state code lookup, gstin state code, indian state gst code, 2 digit state code gstin',
-  },
-  '/tools/gst/gstin-validator': {
-    title: 'GSTIN Validator — EcomSathi',
-    description:
-      'Validate GSTIN format and checksum without an API call. Free offline GSTIN format validator.',
-    keywords:
-      'gstin validator, validate gstin format, gstin checksum checker, gstin format validation free',
   },
   '/tools/gst/pan-validator': {
     title: 'PAN Card Validator — EcomSathi',

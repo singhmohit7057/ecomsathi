@@ -16,7 +16,7 @@ const FAQS = [
 ];
 
 const MAX_SIZE_BYTES = 20 * 1024 * 1024;
-const PROCESSING_API_URL = import.meta.env.VITE_PROCESSING_API_URL as string;
+const PROCESSING_API_URL = import.meta.env.VITE_PROCESSING_API_URL ?? 'http://localhost:3001';
 
 function formatBytes(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;

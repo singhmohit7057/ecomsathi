@@ -39,7 +39,7 @@ const RELATED_TOOLS = [
   { label: 'HSN Code Search', to: '/gst/hsn-search' },
   { label: 'GST Rate Finder', to: '/gst/rate-finder' },
   { label: 'GST Calculator',  to: '/gst/calculator' },
-  { label: 'GST Search',      to: '/gst/search' },
+  { label: 'GST Verification', to: '/gst/verification' },
 ]
 
 export default function SACSearch() {

@@ -17,7 +17,6 @@ interface SidebarLink {
 }
 
 const ALL_TOOLS: SidebarLink[] = [
-  { label: 'GST Search',             to: '/gst/search',            icon: <Search size={14} /> },
   { label: 'GST Verification',       to: '/gst/verification',      icon: <Shield size={14} /> },
   { label: 'GST Calculator',         to: '/gst/calculator',        icon: <Calculator size={14} /> },
   { label: 'Reverse GST Calculator', to: '/gst/reverse-calculator',icon: <Divide size={14} /> },

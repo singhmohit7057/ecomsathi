@@ -239,7 +239,7 @@ export const VideoHub: React.FC = () => {
               { label: 'Background Remover', to: '/tools/image/background-remover' },
               { label: 'Compress Image', to: '/tools/image/compress' },
               { label: 'GST Calculator', to: '/tools/gst/calculator' },
-              { label: 'Label Crop', to: '/tools/label-crop' },
+              { label: 'Label Crop', to: '/label-crop' },
             ].map((link) => (
               <Link
                 key={link.to}

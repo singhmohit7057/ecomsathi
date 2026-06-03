@@ -331,33 +331,26 @@ export const ALL_TOOLS: Tool[] = [
   {
     name: 'Video Converter',
     description: 'Convert videos between MP4, WebM, MOV, and other formats',
-    path: '/tools/video/convert',
+    path: '/tools/video/converter',
     icon: <RefreshCw size={20} />,
     category: 'Video Tools',
   },
   {
     name: 'Thumbnail Generator',
     description: 'Auto-generate eye-catching video thumbnails for your listings',
-    path: '/tools/video/thumbnail',
+    path: '/tools/video/thumbnail-generator',
     icon: <ImagePlus size={20} />,
     category: 'Video Tools',
   },
 
   // ── GST Tools ─────────────────────────────────────────────
   {
-    name: 'GST Search',
-    description: 'Search and verify GSTIN details by business name or tax number',
-    path: '/tools/gst/search',
-    icon: <Search size={20} />,
-    category: 'GST Tools',
-    isPopular: true,
-  },
-  {
-    name: 'GSTIN Verifier',
-    description: 'Instantly verify if a GSTIN is valid and active on the GST portal',
+    name: 'GST Verification',
+    description: 'Validate GSTIN format, checksum & verify live status on the GSTN portal',
     path: '/tools/gst/verify',
     icon: <CheckCircle size={20} />,
     category: 'GST Tools',
+    isPopular: true,
   },
   {
     name: 'GST Calculator',
@@ -389,13 +382,6 @@ export const ALL_TOOLS: Tool[] = [
     category: 'GST Tools',
   },
   {
-    name: 'GSTIN Validator',
-    description: 'Validate GSTIN format and checksum without an API call',
-    path: '/tools/gst/gstin-validator',
-    icon: <ShieldCheck size={20} />,
-    category: 'GST Tools',
-  },
-  {
     name: 'PAN Validator',
     description: 'Validate PAN card numbers for individuals and businesses',
     path: '/tools/gst/pan-validator',
@@ -421,7 +407,7 @@ export const ALL_TOOLS: Tool[] = [
   {
     name: 'Label Crop',
     description: 'Crop shipping labels from marketplace PDFs — Amazon, Flipkart, Meesho',
-    path: '/tools/label-crop',
+    path: '/label-crop',
     icon: <ScissorsLineDashed size={20} />,
     category: 'Label Crop',
     isPopular: true,

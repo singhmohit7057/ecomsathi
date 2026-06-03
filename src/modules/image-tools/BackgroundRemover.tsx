@@ -15,7 +15,7 @@ const FAQS = [
   { q: 'What should I do if the result is not accurate?', a: 'Results vary based on image complexity. For best quality, use images with a clear subject against a simple background. You can then use the White Background tool to add a clean white background.' },
 ];
 
-const PROCESSING_API_URL = import.meta.env.VITE_PROCESSING_API_URL as string;
+const PROCESSING_API_URL = import.meta.env.VITE_PROCESSING_API_URL ?? 'http://localhost:3001';
 const MAX_SIZE_MB = 20;
 const MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024;
 

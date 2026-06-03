@@ -47,7 +47,7 @@ const RELATED_TOOLS = [
   { label: 'Reverse GST Calculator', to: '/gst/reverse-calculator' },
   { label: 'GST Rate Finder',        to: '/gst/rate-finder' },
   { label: 'HSN Code Search',        to: '/gst/hsn-search' },
-  { label: 'GST Search',             to: '/gst/search' },
+  { label: 'GST Verification',       to: '/gst/verification' },
 ]
 
 export default function GSTCalculator() {

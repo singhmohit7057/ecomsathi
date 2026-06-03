@@ -2,13 +2,15 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, CheckCircle2 } from 'lucide-react';
 import type { MarketplaceInfo } from '../types';
+import { getMarketplaceLogo } from './MarketplaceLogos';
 
 interface MarketplaceCardProps {
   marketplace: MarketplaceInfo;
 }
 
 export const MarketplaceCard: React.FC<MarketplaceCardProps> = ({ marketplace }) => {
-  const { slug, name, emoji, tagline, features, hasInvoice, color, bgColor } = marketplace;
+  const { slug, name, tagline, features, hasInvoice, color } = marketplace;
+  const Logo = getMarketplaceLogo(slug);
 
   return (
     <Link
@@ -18,11 +20,8 @@ export const MarketplaceCard: React.FC<MarketplaceCardProps> = ({ marketplace })
     >
       {/* Header */}
       <div className="flex items-center gap-3">
-        <div
-          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[8px] text-2xl"
-          style={{ backgroundColor: bgColor }}
-        >
-          {emoji}
+        <div className="shrink-0">
+          <Logo size={44} />
         </div>
         <div className="min-w-0 flex-1">
           <h3 className="text-sm font-bold text-[#0F172A] group-hover:text-[#2563EB] transition-colors">

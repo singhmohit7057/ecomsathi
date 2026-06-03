@@ -14,6 +14,7 @@ import {
 import SEO from '../../../components/common/SEO';
 import { MarketplaceCard } from '../components/MarketplaceCard';
 import { ALL_MARKETPLACES } from '../platforms/marketplaceMeta';
+import { getMarketplaceLogo } from '../components/MarketplaceLogos';
 
 const FEATURES = [
   {
@@ -193,18 +194,21 @@ export const LabelCropHub: React.FC = () => {
         <section className="rounded-[8px] border border-[#E2E8F0] bg-[#F8FAFC] p-6">
           <h2 className="text-lg font-bold text-[#0F172A] mb-4">Supported Platforms</h2>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
-            {ALL_MARKETPLACES.map((mp) => (
-              <Link
-                key={mp.slug}
-                to={`/label-crop/${mp.slug}`}
-                className="flex flex-col items-center gap-2 rounded-[8px] border border-[#E2E8F0] bg-white p-3 text-center transition-all hover:border-[#93C5FD] hover:shadow-sm group"
-              >
-                <span className="text-2xl">{mp.emoji}</span>
-                <span className="text-xs font-semibold text-[#0F172A] group-hover:text-[#2563EB] transition-colors">
-                  {mp.name}
-                </span>
-              </Link>
-            ))}
+            {ALL_MARKETPLACES.map((mp) => {
+              const Logo = getMarketplaceLogo(mp.slug);
+              return (
+                <Link
+                  key={mp.slug}
+                  to={`/label-crop/${mp.slug}`}
+                  className="flex flex-col items-center gap-2 rounded-[8px] border border-[#E2E8F0] bg-white p-4 text-center transition-all hover:border-[#93C5FD] hover:shadow-sm group"
+                >
+                  <Logo size={48} />
+                  <span className="text-xs font-semibold text-[#0F172A] group-hover:text-[#2563EB] transition-colors">
+                    {mp.name}
+                  </span>
+                </Link>
+              );
+            })}
           </div>
         </section>
 

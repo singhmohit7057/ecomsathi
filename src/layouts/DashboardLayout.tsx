@@ -15,7 +15,6 @@ import {
   LogOut,
   ShoppingCart,
   Store,
-  Layers,
   BarChart2,
   Boxes,
   ClipboardList,
@@ -50,11 +49,10 @@ const NAV_ITEMS: NavItem[] = [
     to: '/reconciliation',
     icon: <RefreshCw size={18} />,
     children: [
-      { label: 'Amazon', to: '/reconciliation/amazon', icon: <ShoppingBag size={16} /> },
-      { label: 'Flipkart', to: '/reconciliation/flipkart', icon: <ShoppingCart size={16} /> },
-      { label: 'Myntra', to: '/reconciliation/myntra', icon: <Store size={16} /> },
-      { label: 'Meesho', to: '/reconciliation/meesho', icon: <Layers size={16} /> },
-      { label: 'AJIO', to: '/reconciliation/ajio', icon: <BarChart2 size={16} /> },
+      { label: 'Import',       to: '/reconciliation/import',       icon: <ShoppingBag size={16} /> },
+      { label: 'Orders',       to: '/reconciliation/orders',       icon: <ShoppingCart size={16} /> },
+      { label: 'Settlements',  to: '/reconciliation/settlements',  icon: <Store size={16} /> },
+      { label: 'Missing',      to: '/reconciliation/missing',      icon: <BarChart2 size={16} /> },
     ],
   },
   {

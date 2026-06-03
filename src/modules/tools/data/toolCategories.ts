@@ -45,8 +45,8 @@ export const TOOL_CATEGORIES: ToolCategoryData[] = [
       { name: 'Frame Extractor',     path: '/tools/video/frame-extractor',iconName: 'Camera' },
       { name: 'Compress Video',      path: '/tools/video/compress',       iconName: 'Video' },
       { name: 'Resize Video',        path: '/tools/video/resize',         iconName: 'Maximize' },
-      { name: 'Video Converter',     path: '/tools/video/convert',        iconName: 'RefreshCcw' },
-      { name: 'Thumbnail Generator', path: '/tools/video/thumbnail',      iconName: 'ImageIcon' },
+      { name: 'Video Converter',     path: '/tools/video/converter',        iconName: 'RefreshCcw' },
+      { name: 'Thumbnail Generator', path: '/tools/video/thumbnail-generator',      iconName: 'ImageIcon' },
     ],
   },
   {
@@ -57,7 +57,6 @@ export const TOOL_CATEGORIES: ToolCategoryData[] = [
     buttonText: 'View All GST Tools',
     colorScheme: 'cyan',
     tools: [
-      { name: 'GST Search',             path: '/tools/gst/search',      iconName: 'Search' },
       { name: 'GST Verification',       path: '/tools/gst/verify',      iconName: 'ShieldCheck' },
       { name: 'GST Calculator',         path: '/tools/gst/calculator',  iconName: 'Calculator' },
       { name: 'Reverse GST Calculator', path: '/tools/gst/reverse',     iconName: 'RotateCcw' },
@@ -122,14 +121,14 @@ export const POPULAR_TOOLS: PopularToolData[] = [
   {
     name: 'Amazon Label Crop',
     description: 'Auto-crop Amazon shipping labels from multi-label PDFs.',
-    path: '/tools/label-crop/amazon',
+    path: '/label-crop',
     category: 'Label Crop',
     colorScheme: 'amber',
   },
   {
     name: 'Flipkart Label Crop',
     description: 'Auto-crop Flipkart shipping labels in seconds.',
-    path: '/tools/label-crop/flipkart',
+    path: '/label-crop',
     category: 'Label Crop',
     colorScheme: 'amber',
   },

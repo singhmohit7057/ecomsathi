@@ -1,27 +1,40 @@
-import { useState } from 'react'
-import { Shield, CheckCircle, XCircle, Clock, Copy, CheckCheck } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import {
+  Shield,
+  CheckCircle,
+  XCircle,
+  Copy,
+  CheckCheck,
+  ExternalLink,
+  RefreshCw,
+} from 'lucide-react'
 import { Button } from '@/components/common/Button'
 import { Card } from '@/components/common/Card'
 import { Badge } from '@/components/common/Badge'
 import { Alert } from '@/components/common/Alert'
 import { InlineLoader } from '@/components/common/Loader'
-import { extractGSTINInfo, validateGSTINChecksum, getStateByCode } from '../data/gstConstants'
+import {
+  extractGSTINInfo,
+  validateGSTINChecksum,
+  getStateByCode,
+} from '../data/gstConstants'
 import GSTToolLayout from '../components/GSTToolLayout'
 import { InfoItem, InfoGrid } from '../components/GSTResultCard'
 
-const BACKEND_URL = import.meta.env.VITE_PROCESSING_API_URL as string
+// ─── Constants ───────────────────────────────────────────────────────────────
+
+const BACKEND_URL = import.meta.env.VITE_PROCESSING_API_URL ?? 'http://localhost:3001'
 const GSTIN_REGEX = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/
 
-type StepStatus = 'pending' | 'pass' | 'fail' | 'loading' | 'skipped'
+// ─── Types ────────────────────────────────────────────────────────────────────
 
-interface Step {
-  id: string
+interface ValidationStep {
   label: string
-  status: StepStatus
-  detail?: string
+  passed: boolean | null  // true=pass, false=fail, null=skipped/pending
+  detail: string
 }
 
-interface VerifyResult {
+interface LiveResult {
   legalName?: string
   tradeName?: string
   status?: string
@@ -34,289 +47,453 @@ interface VerifyResult {
   address?: string
 }
 
-function buildInitialSteps(): Step[] {
-  return [
-    { id: 'format',   label: 'Format Check',                        status: 'pending' },
-    { id: 'checksum', label: 'Checksum Verification',               status: 'pending' },
-    { id: 'live',     label: 'Live Government Portal Verification',  status: 'pending' },
-  ]
+// ─── 6-step deep validator ────────────────────────────────────────────────────
+
+function runValidation(gstin: string): ValidationStep[] {
+  const g = gstin.trim().toUpperCase()
+
+  // Step 1 — length
+  const lenOk = g.length === 15
+  const step1: ValidationStep = {
+    label: 'Length check (must be 15 characters)',
+    passed: g.length > 0 ? lenOk : null,
+    detail: g.length > 0 ? `Length: ${g.length}` : 'Enter GSTIN to validate',
+  }
+  if (!g.length) return [step1, ...Array(5).fill({ label: '', passed: null, detail: '' }).map((_, i) => ({
+    label: ['State code (01–38)', 'PAN format (chars 3–12)', 'Entity number (char 13)', "14th character is 'Z'", 'Checksum digit'][i],
+    passed: null as null,
+    detail: '—',
+  }))]
+
+  // Step 2 — state code
+  const sc = g.slice(0, 2)
+  const scNum = parseInt(sc, 10)
+  const scValid = /^\d{2}$/.test(sc) && scNum >= 1 && scNum <= 99
+  const stateObj = getStateByCode(sc)
+  const step2: ValidationStep = {
+    label: 'State code valid (01–38)',
+    passed: scValid && !!stateObj,
+    detail: stateObj ? `${sc} — ${stateObj.name}` : `Code ${sc} not recognised`,
+  }
+
+  // Step 3 — PAN
+  const pan = g.slice(2, 12)
+  const panOk = /^[A-Z]{3}[PCHABFTBLJG][A-Z]\d{4}[A-Z]$/.test(pan)
+  const step3: ValidationStep = {
+    label: 'PAN format valid (chars 3–12)',
+    passed: panOk,
+    detail: panOk ? pan : `"${pan}" — invalid PAN pattern`,
+  }
+
+  // Step 4 — entity number
+  const en = g[12]
+  const enOk = en !== undefined && /^[1-9A-Z]$/.test(en)
+  const step4: ValidationStep = {
+    label: 'Entity number valid (char 13, 1–9 or A–Z)',
+    passed: en !== undefined ? enOk : null,
+    detail: en ? `Value: ${en}` : 'Missing',
+  }
+
+  // Step 5 — Z marker
+  const zc = g[13]
+  const step5: ValidationStep = {
+    label: "14th character must be 'Z'",
+    passed: zc !== undefined ? zc === 'Z' : null,
+    detail: zc ? `Value: ${zc}` : 'Missing',
+  }
+
+  // Step 6 — checksum (only if all prior format checks can run)
+  let step6: ValidationStep
+  if (lenOk && step2.passed && step3.passed && step4.passed && step5.passed) {
+    const csOk = validateGSTINChecksum(g)
+    step6 = {
+      label: 'Checksum digit valid (position 15)',
+      passed: csOk,
+      detail: csOk ? 'Check digit is mathematically correct' : 'Check digit mismatch — GSTIN may be mistyped',
+    }
+  } else {
+    step6 = {
+      label: 'Checksum digit valid (position 15)',
+      passed: null,
+      detail: 'Cannot verify — earlier checks must pass first',
+    }
+  }
+
+  return [step1, step2, step3, step4, step5, step6]
 }
 
-function runFormatSteps(gstin: string): Step[] {
-  const upper = gstin.trim().toUpperCase()
-  const formatOk  = GSTIN_REGEX.test(upper)
-  const checksumOk = formatOk ? validateGSTINChecksum(upper) : false
-
-  return [
-    {
-      id: 'format',
-      label: 'Format Check',
-      status: formatOk ? 'pass' : 'fail',
-      detail: formatOk
-        ? 'Valid 15-character GSTIN pattern'
-        : 'Expected: 2 digits + 5 letters + 4 digits + 1 letter + 1 alphanumeric + Z + 1 alphanumeric',
-    },
-    {
-      id: 'checksum',
-      label: 'Checksum Verification',
-      status: formatOk ? (checksumOk ? 'pass' : 'fail') : 'skipped',
-      detail: formatOk
-        ? (checksumOk ? 'Check digit is mathematically correct' : 'Check digit mismatch — GSTIN may be mistyped')
-        : 'Skipped — format check failed',
-    },
-    {
-      id: 'live',
-      label: 'Live Government Portal Verification',
-      status: 'pending',
-      detail: 'Click "Verify Live" to check active status',
-    },
-  ]
-}
+// ─── SEO / page data ──────────────────────────────────────────────────────────
 
 const FAQS = [
   {
-    q: 'What is GST verification?',
-    a: 'GST verification is the process of confirming that a GSTIN is valid — both in format (structure and checksum) and live status (registered and active on the GSTN portal). Sellers should verify supplier GSTINs before processing input tax credit.',
+    q: 'What is GSTIN verification?',
+    a: 'GSTIN verification confirms a GST number is structurally valid (correct length, state code, PAN format, entity number, Z marker, checksum) and optionally confirms its active status on the GSTN government portal.',
   },
   {
-    q: 'Why does my GSTIN fail the checksum check?',
-    a: "The checksum digit (15th character) is mathematically derived from the first 14 characters. If it doesn't match, the GSTIN is either mistyped or invalid. Double-check for typos, especially confusing similar characters like 0/O or 1/I.",
+    q: 'What information is encoded in a GSTIN?',
+    a: 'A GSTIN is 15 characters: 2-digit state code, 10-character PAN of the business, 1-digit entity number (for multiple registrations under the same PAN), the letter Z, and a checksum digit.',
   },
   {
-    q: "What does the \"Active\" status mean in GST verification?",
-    a: 'An Active status from the GSTN portal means the business is currently registered under GST and eligible to charge and claim GST. A Cancelled status means registration was surrendered or revoked.',
+    q: "Why does my GSTIN fail the checksum check?",
+    a: "The checksum (15th character) is mathematically derived from the first 14 characters using the Luhn algorithm. A mismatch means the GSTIN is mistyped. Double-check similar-looking characters: 0 vs O, 1 vs I, 5 vs S.",
   },
   {
     q: "Can I verify a supplier's GSTIN before claiming ITC?",
-    a: 'Yes. Use this tool to first validate the GSTIN format locally (instant), then click "Verify Live" to check against the GSTN portal. This ensures you can safely claim Input Tax Credit.',
+    a: 'Yes. Validate the format offline first (instant), then click "Verify Live on GSTN Portal" to confirm the business is active. This ensures you can safely claim Input Tax Credit on B2B invoices.',
+  },
+  {
+    q: "What does an 'Active' status mean?",
+    a: "Active means the business is currently registered under GST and authorised to collect and remit GST. Cancelled means the registration was surrendered or revoked — do not accept GST invoices from a cancelled GSTIN.",
   },
 ]
 
 const RELATED_TOOLS = [
-  { label: 'GST Search', to: '/gst/search' },
-  { label: 'GST State Finder', to: '/gst/state-finder' },
-  { label: 'GST Calculator', to: '/gst/calculator' },
-  { label: 'HSN Search', to: '/gst/hsn-search' },
+  { label: 'GST State Finder',       to: '/gst/state-finder' },
+  { label: 'GST Calculator',         to: '/gst/calculator' },
+  { label: 'Reverse GST Calculator', to: '/gst/reverse-calculator' },
+  { label: 'HSN Code Search',        to: '/gst/hsn-search' },
+  { label: 'GST Rate Finder',        to: '/gst/rate-finder' },
 ]
 
-function StepIcon({ status }: { status: StepStatus }) {
-  if (status === 'pass')    return <CheckCircle size={20} className="text-[#16A34A] flex-shrink-0" />
-  if (status === 'fail')    return <XCircle size={20} className="text-[#DC2626] flex-shrink-0" />
-  if (status === 'loading') return <Clock size={20} className="text-[#2563EB] flex-shrink-0 animate-pulse" />
-  if (status === 'skipped') return <span className="inline-block w-5 h-5 rounded-full bg-[#F1F5F9] border border-[#E2E8F0] flex-shrink-0" />
-  return <span className="inline-block w-5 h-5 rounded-full border-2 border-[#D1D5DB] flex-shrink-0" />
+// ─── Sub-components ───────────────────────────────────────────────────────────
+
+function StepRow({ step, last }: { step: ValidationStep; last: boolean }) {
+  if (!step.label) return null
+  return (
+    <div className="flex items-start gap-3">
+      <div className="flex flex-col items-center flex-shrink-0">
+        {step.passed === true  && <CheckCircle size={18} className="text-[#16A34A]" />}
+        {step.passed === false && <XCircle     size={18} className="text-[#DC2626]" />}
+        {step.passed === null  && (
+          <span className="inline-block w-[18px] h-[18px] rounded-full border-2 border-[#D1D5DB]" />
+        )}
+        {!last && (
+          <div className={[
+            'w-px flex-1 mt-1 min-h-[20px]',
+            step.passed === true  ? 'bg-[#BBF7D0]' :
+            step.passed === false ? 'bg-[#FECDD3]' : 'bg-[#E2E8F0]',
+          ].join(' ')} />
+        )}
+      </div>
+      <div className="flex-1 pb-3">
+        <p className={[
+          'text-sm font-medium',
+          step.passed === true  ? 'text-[#15803D]' :
+          step.passed === false ? 'text-[#DC2626]' : 'text-[#6B7280]',
+        ].join(' ')}>
+          {step.label}
+        </p>
+        {step.detail && step.detail !== '—' && (
+          <p className="text-xs text-[#9CA3AF] mt-0.5 font-mono">{step.detail}</p>
+        )}
+      </div>
+    </div>
+  )
 }
+
+function StatusBadge({ status }: { status?: string }) {
+  if (!status) return null
+  const s = status.toLowerCase()
+  if (s === 'active')        return <Badge variant="success">Active</Badge>
+  if (s.includes('cancel'))  return <Badge variant="error">Cancelled</Badge>
+  if (s.includes('suspend')) return <Badge variant="warning">Suspended</Badge>
+  return <Badge variant="default">{status}</Badge>
+}
+
+// ─── Main page ────────────────────────────────────────────────────────────────
 
 export default function GSTVerification() {
   const [input, setInput]           = useState('')
-  const [steps, setSteps]           = useState<Step[]>(buildInitialSteps())
-  const [loading, setLoading]       = useState(false)
-  const [result, setResult]         = useState<VerifyResult | null>(null)
+  const [steps, setSteps]           = useState<ValidationStep[]>([])
+  const [hasRun, setHasRun]         = useState(false)
+  const [liveLoading, setLiveLoading] = useState(false)
+  const [liveResult, setLiveResult] = useState<LiveResult | null>(null)
   const [liveError, setLiveError]   = useState('')
   const [copied, setCopied]         = useState(false)
-  const [hasValidated, setHasValidated] = useState(false)
 
-  const upper      = input.trim().toUpperCase()
-  const isFormatOk  = GSTIN_REGEX.test(upper)
-  const isChecksumOk = isFormatOk && validateGSTINChecksum(upper)
-  const info         = isChecksumOk ? extractGSTINInfo(upper) : null
-  const stateFromInput = upper.length >= 2 ? getStateByCode(upper.slice(0, 2)) : undefined
+  const upper = input.trim().toUpperCase()
 
-  const handleValidate = () => {
-    setSteps(runFormatSteps(upper))
-    setHasValidated(true)
-    setResult(null)
+  // Derive from steps
+  const allPassed  = steps.length === 6 && steps.every(s => s.passed === true)
+  const anyFailed  = steps.some(s => s.passed === false)
+  const info       = allPassed ? extractGSTINInfo(upper) : null
+  const stateObj   = upper.length >= 2 ? getStateByCode(upper.slice(0, 2)) : undefined
+
+  // Auto-run validation whenever input changes (once user starts)
+  useEffect(() => {
+    if (!upper) {
+      setHasRun(false)
+      setSteps([])
+      setLiveResult(null)
+      setLiveError('')
+      return
+    }
+    const result = runValidation(upper)
+    setSteps(result)
+    setHasRun(true)
+    // Reset live result if GSTIN changes
+    setLiveResult(null)
     setLiveError('')
-  }
+  }, [upper])
 
   const handleLiveVerify = async () => {
-    if (!isChecksumOk) return
-    setLoading(true)
+    if (!allPassed) return
+    setLiveLoading(true)
     setLiveError('')
-    setResult(null)
-    setSteps(prev =>
-      prev.map(s => s.id === 'live' ? { ...s, status: 'loading', detail: 'Contacting government portal…' } : s)
-    )
+    setLiveResult(null)
     try {
       const res  = await fetch(`${BACKEND_URL}/api/gst/verify?gstin=${encodeURIComponent(upper)}`)
-      const data = await res.json() as VerifyResult & { error?: string }
+      const data = await res.json() as LiveResult & { error?: string }
       if (res.ok && (data.status || data.legalName)) {
-        const statusLower = (data.status ?? data.gstinStatus ?? '').toLowerCase()
-        setResult(data)
-        setSteps(prev =>
-          prev.map(s => s.id === 'live'
-            ? { ...s, status: statusLower === 'active' ? 'pass' : 'fail',
-                detail: `Status: ${data.status ?? data.gstinStatus}${data.legalName ? ` — ${data.legalName}` : ''}` }
-            : s
-          )
-        )
+        setLiveResult(data)
       } else {
         setLiveError(data.error ?? 'GSTIN not found on the government portal.')
-        setSteps(prev =>
-          prev.map(s => s.id === 'live' ? { ...s, status: 'fail', detail: data.error ?? 'Not found' } : s)
-        )
       }
     } catch {
-      const msg = 'Cannot reach verification server. Check your connection.'
-      setLiveError(msg)
-      setSteps(prev =>
-        prev.map(s => s.id === 'live' ? { ...s, status: 'fail', detail: msg } : s)
-      )
+      setLiveError('Cannot reach verification server. Check your connection and try again.')
     } finally {
-      setLoading(false)
+      setLiveLoading(false)
     }
   }
 
   const handleCopy = async () => {
+    if (!upper) return
     await navigator.clipboard.writeText(upper)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
   }
 
-  const statusBadge = (status?: string) => {
-    const s = (status ?? '').toLowerCase()
-    if (s === 'active')         return <Badge variant="success">Active</Badge>
-    if (s.includes('cancel'))   return <Badge variant="error">Cancelled</Badge>
-    if (s.includes('suspend'))  return <Badge variant="warning">Suspended</Badge>
-    return status ? <Badge variant="default">{status}</Badge> : null
+  const handleReset = () => {
+    setInput('')
+    setSteps([])
+    setHasRun(false)
+    setLiveResult(null)
+    setLiveError('')
   }
+
+  // Border colour based on validation state
+  const inputBorderClass =
+    !hasRun || !upper          ? 'border-[#E2E8F0] focus:ring-[#2563EB]/30' :
+    allPassed                  ? 'border-[#16A34A] focus:ring-[#16A34A]/30' :
+    anyFailed                  ? 'border-[#DC2626] focus:ring-[#DC2626]/30' :
+                                 'border-[#E2E8F0] focus:ring-[#2563EB]/30'
 
   return (
     <GSTToolLayout
       title="GST Verification Tool"
-      metaTitle="GST Verification Tool | Verify GST Number Online | EcomSathi"
-      metaDescription="Verify any GSTIN online with step-by-step format check, checksum validation and live government portal status. Check active status, legal name, and jurisdiction."
-      metaKeywords="GST verification, verify GST number online, GSTIN active status, GST number verification India"
+      metaTitle="GST Verification Tool | Verify GSTIN Online Free | EcomSathi"
+      metaDescription="Free GSTIN verification tool. Validate GST number format, checksum, state code, PAN structure and verify live status on the government portal. All-in-one GSTIN checker."
+      metaKeywords="GST verification, GSTIN validator, verify GST number online, GSTIN format check, GST number search India"
       canonicalPath="/gst/verification"
       crumbs={[{ label: 'GST Tools', to: '/gst' }, { label: 'GST Verification' }]}
       relatedTools={RELATED_TOOLS}
       faqs={FAQS}
     >
-      <div className="max-w-2xl space-y-6">
+      <div className="max-w-2xl space-y-5">
+
+        {/* ── Header ── */}
         <div>
           <h1 className="text-2xl font-bold text-[#0F172A]">GST Verification Tool</h1>
           <p className="text-sm text-[#64748B] mt-1">
-            Step-by-step format, checksum, and live portal verification of any GSTIN.
+            Validate GSTIN format, checksum &amp; structure instantly — then verify live status on the GSTN portal.
           </p>
         </div>
 
+        {/* ── Input card ── */}
         <Card variant="shadowed" padding="lg">
           <div className="space-y-4">
+            {/* Input row */}
             <div>
-              <label className="block text-sm font-medium text-[#374151] mb-1.5">Enter GSTIN</label>
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  value={input}
-                  onChange={e => setInput(e.target.value.toUpperCase())}
-                  onKeyDown={e => { if (e.key === 'Enter') handleValidate() }}
-                  placeholder="e.g. 27AABCU9603R1ZX"
-                  maxLength={15}
-                  className="flex-1 border border-[#E2E8F0] rounded-lg px-3 py-2.5 text-base font-mono tracking-widest bg-white text-[#0F172A] placeholder-[#94A3B8] focus:outline-none focus:ring-2 focus:ring-[#2563EB]/30 transition-all"
-                />
-                <Button variant="ghost" onClick={handleCopy} disabled={!upper}
-                  leftIcon={copied ? <CheckCheck size={16} /> : <Copy size={16} />}>
+              <label className="block text-sm font-medium text-[#374151] mb-1.5">
+                Enter GSTIN
+              </label>
+              <div className="relative flex gap-2">
+                <div className="relative flex-1">
+                  <input
+                    type="text"
+                    value={input}
+                    onChange={e => setInput(e.target.value.toUpperCase())}
+                    onKeyDown={e => { if (e.key === 'Enter' && allPassed) handleLiveVerify() }}
+                    placeholder="e.g. 27AABCU9603R1ZX"
+                    maxLength={15}
+                    autoComplete="off"
+                    spellCheck={false}
+                    className={[
+                      'w-full pr-9 pl-4 py-3 text-base font-mono tracking-widest border rounded-lg bg-white text-[#0F172A] placeholder-[#94A3B8] focus:outline-none focus:ring-2 transition-all',
+                      inputBorderClass,
+                    ].join(' ')}
+                  />
+                  {/* inline ✓/✗ icon */}
+                  {hasRun && upper.length === 15 && (
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                      {allPassed
+                        ? <CheckCircle size={18} className="text-[#16A34A]" />
+                        : <XCircle    size={18} className="text-[#DC2626]" />
+                      }
+                    </span>
+                  )}
+                </div>
+                <Button
+                  variant="ghost"
+                  onClick={handleCopy}
+                  disabled={!upper}
+                  leftIcon={copied ? <CheckCheck size={15} /> : <Copy size={15} />}
+                >
                   {copied ? 'Copied' : 'Copy'}
                 </Button>
+                {hasRun && (
+                  <Button variant="ghost" onClick={handleReset} leftIcon={<RefreshCw size={15} />}>
+                    Reset
+                  </Button>
+                )}
               </div>
-              <p className="text-xs text-[#94A3B8] mt-1">{upper.length}/15 characters</p>
+              <p className="text-xs text-[#94A3B8] mt-1">{upper.length} / 15 characters</p>
             </div>
-            <div className="flex gap-3">
-              <Button onClick={handleValidate} disabled={!upper} leftIcon={<Shield size={16} />}>
-                Validate Format
-              </Button>
-              <Button variant="outline" onClick={handleLiveVerify} disabled={!isChecksumOk} loading={loading}>
-                Verify Live
-              </Button>
-            </div>
+
+            {/* Verify live button — primary CTA */}
+            <Button
+              onClick={handleLiveVerify}
+              loading={liveLoading}
+              disabled={!allPassed}
+              leftIcon={<ExternalLink size={16} />}
+              fullWidth
+            >
+              Verify Live on GSTN Portal
+            </Button>
+
+            {!allPassed && (
+              <p className="text-xs text-[#94A3B8] text-center">
+                {!upper
+                  ? 'Enter a 15-character GSTIN above to validate'
+                  : 'Fix the format issues below before live verification'}
+              </p>
+            )}
           </div>
         </Card>
 
-        {hasValidated && (
+        {/* ── 6-step validation ── */}
+        {hasRun && steps.length > 0 && (
           <Card variant="default" padding="lg">
-            <h2 className="text-base font-semibold text-[#0F172A] mb-4">Verification Steps</h2>
-            <div className="space-y-4">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-sm font-semibold text-[#0F172A]">Format Validation</h2>
+              {allPassed && <Badge variant="success">All checks passed</Badge>}
+              {anyFailed && <Badge variant="error">Format invalid</Badge>}
+            </div>
+            <div className="space-y-0">
               {steps.map((step, i) => (
-                <div key={step.id} className="flex items-start gap-3">
-                  <div className="flex flex-col items-center">
-                    <StepIcon status={step.status} />
-                    {i < steps.length - 1 && (
-                      <div className={[
-                        'w-0.5 flex-1 mt-1 min-h-[24px]',
-                        step.status === 'pass' ? 'bg-[#BBF7D0]' :
-                        step.status === 'fail' ? 'bg-[#FFE4E6]' : 'bg-[#E2E8F0]',
-                      ].join(' ')} />
-                    )}
-                  </div>
-                  <div className="flex-1 pb-4">
-                    <p className={[
-                      'text-sm font-semibold',
-                      step.status === 'pass'    ? 'text-[#15803D]' :
-                      step.status === 'fail'    ? 'text-[#DC2626]' :
-                      step.status === 'loading' ? 'text-[#2563EB]' :
-                      step.status === 'skipped' ? 'text-[#94A3B8]' : 'text-[#374151]',
-                    ].join(' ')}>
-                      {step.label}
-                    </p>
-                    {step.detail && <p className="text-xs text-[#6B7280] mt-0.5">{step.detail}</p>}
-                    {step.status === 'loading' && <div className="mt-1"><InlineLoader size={14} /></div>}
-                  </div>
-                </div>
+                <StepRow key={i} step={step} last={i === steps.length - 1} />
               ))}
             </div>
           </Card>
         )}
 
-        {isChecksumOk && info && hasValidated && (
+        {/* ── Extracted GSTIN info ── */}
+        {allPassed && info && (
           <Card variant="foam" padding="md">
             <p className="text-xs font-semibold text-[#16A34A] uppercase tracking-wide mb-3">
               Extracted from GSTIN
             </p>
             <InfoGrid>
-              <InfoItem label="State Code"  value={info.stateCode} />
-              <InfoItem label="State"       value={stateFromInput?.name ?? '—'} />
-              <InfoItem label="PAN"         value={info.pan} mono />
+              <InfoItem label="State Code"    value={info.stateCode} />
+              <InfoItem label="State"         value={stateObj?.name ?? info.stateName} />
+              <InfoItem label="PAN Number"    value={info.pan} mono />
               <InfoItem label="Taxpayer Type" value={info.entityType} />
+              <InfoItem label="Entity Number" value={info.entityNumber} />
+              <InfoItem label="Check Digit"   value={info.checkDigit} />
             </InfoGrid>
           </Card>
         )}
 
-        {liveError && (
-          <Alert variant="error" title="Live Verification Error" message={liveError} onClose={() => setLiveError('')} />
+        {/* ── Invalid banner ── */}
+        {anyFailed && hasRun && (
+          <div className="rounded-lg bg-[#FFF1F2] border border-[#FECDD3] px-4 py-3 text-sm text-[#991B1B]">
+            <span className="font-semibold">Invalid GSTIN.</span>{' '}
+            Check the failed steps above. Common mistakes: typos, extra spaces, or copy-paste errors with similar-looking characters (0/O, 1/I).
+          </div>
         )}
 
-        {result && (
+        {/* ── Live verification loading ── */}
+        {liveLoading && (
+          <div className="flex items-center justify-center py-6">
+            <InlineLoader label="Contacting GSTN government portal…" />
+          </div>
+        )}
+
+        {/* ── Live error ── */}
+        {liveError && (
+          <Alert
+            variant="error"
+            title="Live Verification Failed"
+            message={liveError}
+            onClose={() => setLiveError('')}
+          />
+        )}
+
+        {/* ── Live result ── */}
+        {liveResult && (
           <Card variant="sky" padding="lg">
-            <div className="flex items-start justify-between flex-wrap gap-3 mb-4">
+            {/* Business name + status */}
+            <div className="flex items-start justify-between flex-wrap gap-3 mb-5">
               <div>
+                <p className="text-xs text-[#0369A1] font-medium uppercase tracking-wide mb-1">
+                  GSTN Portal Result
+                </p>
                 <h2 className="text-lg font-bold text-[#0F172A]">
-                  {result.legalName ?? result.tradeName ?? '—'}
+                  {liveResult.legalName ?? liveResult.tradeName ?? '—'}
                 </h2>
-                {result.tradeName && result.tradeName !== result.legalName && (
-                  <p className="text-sm text-[#64748B]">Trade name: {result.tradeName}</p>
+                {liveResult.tradeName && liveResult.tradeName !== liveResult.legalName && (
+                  <p className="text-sm text-[#475569] mt-0.5">
+                    Trade name: {liveResult.tradeName}
+                  </p>
                 )}
               </div>
-              {statusBadge(result.status ?? result.gstinStatus)}
+              <StatusBadge status={liveResult.status ?? liveResult.gstinStatus} />
             </div>
+
+            {/* Details grid */}
             <InfoGrid>
-              {result.constitutionOfBusiness && (
-                <InfoItem label="Type of Business"  value={result.constitutionOfBusiness} />
+              {liveResult.constitutionOfBusiness && (
+                <InfoItem label="Constitution of Business" value={liveResult.constitutionOfBusiness} />
               )}
-              {result.registrationDate && (
-                <InfoItem label="Registration Date"  value={result.registrationDate} />
+              {liveResult.registrationDate && (
+                <InfoItem label="Registration Date" value={liveResult.registrationDate} />
               )}
-              {result.stateJurisdiction && (
-                <InfoItem label="State Jurisdiction"  value={result.stateJurisdiction} />
+              {liveResult.cancellationDate && (
+                <InfoItem label="Cancellation Date" value={liveResult.cancellationDate} />
               )}
-              {result.centerJurisdiction && (
-                <InfoItem label="Centre Jurisdiction" value={result.centerJurisdiction} />
+              {liveResult.stateJurisdiction && (
+                <InfoItem label="State Jurisdiction" value={liveResult.stateJurisdiction} />
               )}
-              {result.address && (
-                <InfoItem label="Registered Address" value={result.address} span2 />
+              {liveResult.centerJurisdiction && (
+                <InfoItem label="Centre Jurisdiction" value={liveResult.centerJurisdiction} />
+              )}
+              {liveResult.address && (
+                <InfoItem label="Registered Address" value={liveResult.address} span2 />
               )}
             </InfoGrid>
+
+            {/* Verified GSTIN */}
+            <div className="mt-4 pt-4 border-t border-[#BAE6FD] flex items-center gap-2">
+              <Shield size={13} className="text-[#0369A1]" />
+              <span className="text-xs text-[#0369A1] font-mono">{upper}</span>
+              <span className="text-xs text-[#94A3B8]">verified via GSTN portal</span>
+            </div>
           </Card>
         )}
+
+        {/* ── Info note ── */}
+        {!hasRun && (
+          <Card variant="highlight" padding="sm">
+            <div className="flex items-start gap-2 text-xs text-[#78350F]">
+              <Shield size={13} className="mt-0.5 flex-shrink-0" />
+              <p>
+                Format validation (6 checks) runs instantly in your browser — no internet needed.
+                Live verification calls the official GSTN portal via our secure backend; no API key is exposed.
+              </p>
+            </div>
+          </Card>
+        )}
+
       </div>
     </GSTToolLayout>
   )

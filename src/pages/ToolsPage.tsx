@@ -84,7 +84,7 @@ const CATEGORY_CONFIG: Record<
   },
   'Label Crop': {
     label: 'Label Crop',
-    href: '/tools/label-crop',
+    href: '/label-crop',
     description: 'Crop shipping labels from Amazon, Flipkart, Meesho PDFs',
     icon: <ScissorsLineDashed size={18} />,
     iconBg: 'bg-green-50',

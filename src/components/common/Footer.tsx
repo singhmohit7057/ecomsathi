@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Linkedin, Twitter, Github, ChevronDown, Mail, ArrowRight } from 'lucide-react';
+import { Linkedin, Twitter, Github, ChevronDown, ArrowRight } from 'lucide-react';
 
 // ─── Data ──────────────────────────────────────────────────────────────────────
 
@@ -25,7 +25,7 @@ const pdfImageLinks = [
 
 const gstSkuLinks = [
   { label: 'GST Calculator',    href: '/tools/gst/calculator'   },
-  { label: 'GST Search',        href: '/tools/gst/search'       },
+  { label: 'GST Verification',  href: '/tools/gst/verify'       },
   { label: 'HSN Search',        href: '/tools/gst/hsn-search'   },
   { label: 'SKU Generator',     href: '/tools/sku/generator'    },
   { label: 'Barcode Generator', href: '/tools/sku/barcode'      },
@@ -122,18 +122,7 @@ function LinkColumn({ id, title, links, viewAllHref, viewAllLabel, expandedSecti
 // ─── Footer ───────────────────────────────────────────────────────────────────
 
 export const Footer: React.FC = () => {
-  const [email, setEmail]             = useState('');
-  const [subscribed, setSubscribed]   = useState(false);
   const [expandedSections, setExpanded] = useState<Set<string>>(new Set());
-
-  const handleSubscribe = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email) return;
-    console.log('Newsletter subscribe:', email);
-    setEmail('');
-    setSubscribed(true);
-    setTimeout(() => setSubscribed(false), 3000);
-  };
 
   const toggleSection = (id: string) => {
     setExpanded((prev) => {
@@ -145,73 +134,6 @@ export const Footer: React.FC = () => {
 
   return (
     <footer className="bg-white">
-
-      {/* ── Newsletter Strip ──────────────────────────────────────────────── */}
-      <div
-        className="relative overflow-hidden"
-        style={{ background: 'linear-gradient(135deg, #1E40AF 0%, #2563EB 45%, #0891B2 100%)' }}
-      >
-        {/* Decorative circles */}
-        <div className="pointer-events-none absolute -left-16 -top-16 w-64 h-64 rounded-full bg-white/5" />
-        <div className="pointer-events-none absolute -right-8 -bottom-12 w-48 h-48 rounded-full bg-white/5" />
-
-        <div className="relative max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-14">
-          {/* Centered card layout */}
-          <div className="max-w-2xl mx-auto text-center">
-            {/* Icon */}
-            <div className="inline-flex items-center justify-center w-12 h-12 rounded-[10px] bg-white/15 mb-5">
-              <Mail size={22} className="text-white" />
-            </div>
-
-            <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2 leading-tight">
-              Stay updated with new tools &amp; features
-            </h2>
-            <p className="text-blue-100 text-base mb-8">
-              Get notified when we launch new ecommerce tools. No spam, unsubscribe anytime.
-            </p>
-
-            {/* Form */}
-            {subscribed ? (
-              <div className="inline-flex items-center gap-2 bg-white/20 text-white text-sm font-semibold px-6 py-3 rounded-[8px]">
-                <span className="text-green-200">✓</span>
-                You're subscribed! Thanks.
-              </div>
-            ) : (
-              <form
-                onSubmit={handleSubscribe}
-                className="flex flex-col sm:flex-row items-stretch gap-3 max-w-md mx-auto"
-              >
-                <div className="flex-1 relative">
-                  <Mail
-                    size={16}
-                    className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#94A3B8] pointer-events-none"
-                  />
-                  <input
-                    type="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="your@email.com"
-                    className="w-full pl-10 pr-4 py-3 text-sm bg-white text-[#0F172A] rounded-[8px] border-0 outline-none placeholder:text-[#94A3B8] focus:ring-2 focus:ring-white/60 shadow-[#1E293B_2px_2px_0px_0px]"
-                  />
-                </div>
-                <button
-                  type="submit"
-                  className="px-6 py-3 text-sm font-bold bg-white text-[#2563EB] rounded-[8px] hover:bg-blue-50 transition-colors whitespace-nowrap shadow-[#1E293B_2px_2px_0px_0px] hover:shadow-[#1E293B_1px_1px_0px_0px] hover:translate-y-[1px] active:translate-y-[1px]"
-                >
-                  Subscribe
-                </button>
-              </form>
-            )}
-
-            {/* Trust note */}
-            <p className="mt-4 text-xs text-blue-200 flex items-center justify-center gap-1.5">
-              <span className="inline-block w-1.5 h-1.5 rounded-full bg-green-300" />
-              Trusted by 1,000+ Indian ecommerce sellers
-            </p>
-          </div>
-        </div>
-      </div>
 
       {/* ── Main Footer ───────────────────────────────────────────────────── */}
       <div className="bg-[#F8FAFC] border-t border-[#E2E8F0]">
@@ -311,15 +233,16 @@ export const Footer: React.FC = () => {
           {/* Left: single attribution line */}
           <p className="text-xs text-[#94A3B8] order-2 sm:order-1 text-center sm:text-left">
             &copy; {new Date().getFullYear()}{' '}
+            EcomSathi is a part of  - 
             <a
               href="https://tmmt.in"
               target="_blank"
               rel="noopener noreferrer"
               className="font-semibold text-[#2563EB] hover:underline"
             >
-              TMMT.in
+              TMMT
             </a>
-            {' '}— All rights reserved. EcomSathi is a part of TMMT.
+            {' '}All rights reserved.
           </p>
 
           {/* Right: legal links */}

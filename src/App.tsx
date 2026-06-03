@@ -3,6 +3,7 @@ import {
   createBrowserRouter,
   RouterProvider,
   Outlet,
+  Navigate,
   type RouteObject,
 } from 'react-router-dom'
 
@@ -48,6 +49,7 @@ const ContactPage        = lazy(() => import('./pages/ContactPage'))
 const FAQPage            = lazy(() => import('./pages/FAQPage'))
 const PrivacyPage        = lazy(() => import('./pages/PrivacyPage'))
 const TermsPage          = lazy(() => import('./pages/TermsPage'))
+const PricingPage        = lazy(() => import('./pages/PricingPage'))
 const LoginPage          = lazy(() => import('./pages/LoginPage'))
 const RegisterPage       = lazy(() => import('./pages/RegisterPage'))
 const ForgotPasswordPage = lazy(() => import('./pages/ForgotPasswordPage'))
@@ -57,20 +59,22 @@ const ToolsPage          = lazy(() => import('./pages/ToolsPage'))
 const ProfilePage        = lazy(() => import('./pages/ProfilePage'))
 const SettingsPage       = lazy(() => import('./pages/SettingsPage'))
 const NotFoundPage       = lazy(() => import('./pages/NotFoundPage'))
+const ToolErrorPage      = lazy(() => import('./pages/ToolErrorPage'))
 const SitemapPage        = lazy(() => import('./pages/SitemapPage'))
+const UnsubscribePage    = lazy(() => import('./pages/UnsubscribePage'))
 
 // ============================================================
 // Lazy imports — SKU Tools
 // ============================================================
 
 const SKUToolsIndex      = lazy(() => import('./modules/sku-tools/index'))
-const SingleSKUGenerator = lazy(() => import('./modules/sku-tools/SingleSKUGenerator'))
-const BulkSKUGenerator   = lazy(() => import('./modules/sku-tools/BulkSKUGenerator'))
-const VariantSKUGenerator= lazy(() => import('./modules/sku-tools/VariantSKUGenerator'))
-const CustomSKUGenerator = lazy(() => import('./modules/sku-tools/CustomSKUGenerator'))
-const BarcodeGenerator   = lazy(() => import('./modules/sku-tools/BarcodeGenerator'))
-const LabelGenerator     = lazy(() => import('./modules/sku-tools/LabelGenerator'))
-const LabelPrinter       = lazy(() => import('./modules/sku-tools/LabelPrinter'))
+const SingleSKUGenerator = lazy(() => import('./modules/sku-tools/pages/SKUGenerator'))
+const BulkSKUGenerator   = lazy(() => import('./modules/sku-tools/pages/BulkSKUGenerator'))
+const VariantSKUGenerator= lazy(() => import('./modules/sku-tools/pages/VariantSKUGenerator'))
+const CustomSKUGenerator = lazy(() => import('./modules/sku-tools/pages/CustomSKUGenerator'))
+const BarcodeGenerator   = lazy(() => import('./modules/sku-tools/pages/BarcodeGeneratorPage'))
+const LabelGenerator     = lazy(() => import('./modules/sku-tools/pages/LabelGeneratorPage'))
+const LabelPrinter       = lazy(() => import('./modules/sku-tools/pages/LabelPrinterPage'))
 
 // ============================================================
 // Lazy imports — PDF Tools
@@ -125,16 +129,16 @@ const ThumbnailGenerator   = lazy(() => import('./modules/video-tools/pages/Thum
 // ============================================================
 
 const GSTToolsIndex        = lazy(() => import('./modules/gst-tools/index'))
-const GSTSearch            = lazy(() => import('./modules/gst-tools/GSTSearch'))
-const GSTVerify            = lazy(() => import('./modules/gst-tools/GSTVerify'))
 const GSTCalculator        = lazy(() => import('./modules/gst-tools/GSTCalculator'))
 const ReverseGSTCalculator = lazy(() => import('./modules/gst-tools/ReverseGSTCalculator'))
 const GSTRateFinder        = lazy(() => import('./modules/gst-tools/GSTRateFinder'))
 const GSTStateFinder       = lazy(() => import('./modules/gst-tools/GSTStateFinder'))
-const GSTINValidator       = lazy(() => import('./modules/gst-tools/GSTINValidator'))
 const PANValidator         = lazy(() => import('./modules/gst-tools/PANValidator'))
 const HSNSearch            = lazy(() => import('./modules/gst-tools/HSNSearch'))
 const SACSearch            = lazy(() => import('./modules/gst-tools/SACSearch'))
+
+// GST Verification — unified page (merges search + verify + validator)
+const GSTVerificationPage  = lazy(() => import('./modules/gst-tools/pages/GSTVerification'))
 
 // ============================================================
 // Lazy imports — Label Crop
@@ -198,7 +202,9 @@ const routes: RouteObject[] = [
       { path: '/faq',     element: <S><FAQPage /></S> },
       { path: '/privacy', element: <S><PrivacyPage /></S> },
       { path: '/terms',   element: <S><TermsPage /></S> },
-      { path: '/sitemap', element: <S><SitemapPage /></S> },
+      { path: '/pricing', element: <S><PricingPage /></S> },
+      { path: '/sitemap',     element: <S><SitemapPage /></S> },
+      { path: '/unsubscribe', element: <S><UnsubscribePage /></S> },
     ],
   },
 
@@ -216,6 +222,7 @@ const routes: RouteObject[] = [
   {
     path: '/tools',
     element: <ToolsLayout />,
+    errorElement: <S><ToolErrorPage /></S>,
     children: [
       // /tools → overview (all tools)
       {
@@ -236,37 +243,117 @@ const routes: RouteObject[] = [
           {
             path: 'generator',
             element: <S><SingleSKUGenerator /></S>,
-            handle: { tool: 'SKU Generator', category: 'SKU Tools', crumbs: [{ label: 'SKU Tools', to: '/tools/sku' }] },
+            handle: {
+              tool: 'SKU Generator',
+              category: 'SKU Tools',
+              description: 'Generate unique SKUs from brand, category, color and size.',
+              crumbs: [{ label: 'SKU Tools', to: '/tools/sku' }],
+              relatedTools: [
+                { label: 'Bulk SKU Generator',    to: '/tools/sku/bulk-generator' },
+                { label: 'Variant SKU Generator', to: '/tools/sku/variant-generator' },
+                { label: 'Custom SKU Generator',  to: '/tools/sku/custom-generator' },
+                { label: 'Barcode Generator',     to: '/tools/sku/barcode' },
+              ],
+            },
           },
+          // Redirect old path → new path
+          { path: 'bulk', element: <Navigate to="/tools/sku/bulk-generator" replace /> },
           {
-            path: 'bulk',
+            path: 'bulk-generator',
             element: <S><BulkSKUGenerator /></S>,
-            handle: { tool: 'Bulk SKU Generator', category: 'SKU Tools', crumbs: [{ label: 'SKU Tools', to: '/tools/sku' }] },
+            handle: {
+              tool: 'Bulk SKU Generator',
+              category: 'SKU Tools',
+              description: 'Upload CSV or Excel to generate SKUs for all products at once.',
+              crumbs: [{ label: 'SKU Tools', to: '/tools/sku' }],
+              relatedTools: [
+                { label: 'SKU Generator',          to: '/tools/sku/generator' },
+                { label: 'Variant SKU Generator',  to: '/tools/sku/variant-generator' },
+                { label: 'Label Generator',        to: '/tools/sku/label-generator' },
+                { label: 'Label Printer',          to: '/tools/sku/label-printer' },
+              ],
+            },
           },
+          { path: 'variant', element: <Navigate to="/tools/sku/variant-generator" replace /> },
           {
-            path: 'variant',
+            path: 'variant-generator',
             element: <S><VariantSKUGenerator /></S>,
-            handle: { tool: 'Variant SKU Generator', category: 'SKU Tools', crumbs: [{ label: 'SKU Tools', to: '/tools/sku' }] },
+            handle: {
+              tool: 'Variant SKU Generator',
+              category: 'SKU Tools',
+              description: 'Generate all Color × Size × Material SKU combinations automatically.',
+              crumbs: [{ label: 'SKU Tools', to: '/tools/sku' }],
+              relatedTools: [
+                { label: 'SKU Generator',         to: '/tools/sku/generator' },
+                { label: 'Bulk SKU Generator',    to: '/tools/sku/bulk-generator' },
+                { label: 'Custom SKU Generator',  to: '/tools/sku/custom-generator' },
+                { label: 'Barcode Generator',     to: '/tools/sku/barcode' },
+              ],
+            },
           },
+          { path: 'custom', element: <Navigate to="/tools/sku/custom-generator" replace /> },
           {
-            path: 'custom',
+            path: 'custom-generator',
             element: <S><CustomSKUGenerator /></S>,
-            handle: { tool: 'Custom SKU Generator', category: 'SKU Tools', crumbs: [{ label: 'SKU Tools', to: '/tools/sku' }] },
+            handle: {
+              tool: 'Custom SKU Generator',
+              category: 'SKU Tools',
+              description: 'Build your own SKU pattern using token blocks. Save and reuse presets.',
+              crumbs: [{ label: 'SKU Tools', to: '/tools/sku' }],
+              relatedTools: [
+                { label: 'SKU Generator',          to: '/tools/sku/generator' },
+                { label: 'Variant SKU Generator',  to: '/tools/sku/variant-generator' },
+                { label: 'Bulk SKU Generator',     to: '/tools/sku/bulk-generator' },
+                { label: 'Barcode Generator',      to: '/tools/sku/barcode' },
+              ],
+            },
           },
           {
             path: 'barcode',
             element: <S><BarcodeGenerator /></S>,
-            handle: { tool: 'Barcode Generator', category: 'SKU Tools', crumbs: [{ label: 'SKU Tools', to: '/tools/sku' }] },
+            handle: {
+              tool: 'Barcode Generator',
+              category: 'SKU Tools',
+              description: 'Generate Code 128, EAN-13, EAN-8, UPC-A and QR Code barcodes from any SKU.',
+              crumbs: [{ label: 'SKU Tools', to: '/tools/sku' }],
+              relatedTools: [
+                { label: 'SKU Generator',     to: '/tools/sku/generator' },
+                { label: 'Label Generator',   to: '/tools/sku/label-generator' },
+                { label: 'Label Printer',     to: '/tools/sku/label-printer' },
+              ],
+            },
           },
           {
             path: 'label-generator',
             element: <S><LabelGenerator /></S>,
-            handle: { tool: 'Label Generator', category: 'SKU Tools', crumbs: [{ label: 'SKU Tools', to: '/tools/sku' }] },
+            handle: {
+              tool: 'Label Generator',
+              category: 'SKU Tools',
+              description: 'Create printable product labels with SKU, barcode, price and MRP.',
+              crumbs: [{ label: 'SKU Tools', to: '/tools/sku' }],
+              relatedTools: [
+                { label: 'Label Printer',          to: '/tools/sku/label-printer' },
+                { label: 'Barcode Generator',      to: '/tools/sku/barcode' },
+                { label: 'SKU Generator',          to: '/tools/sku/generator' },
+                { label: 'Bulk SKU Generator',     to: '/tools/sku/bulk-generator' },
+              ],
+            },
           },
           {
             path: 'label-printer',
             element: <S><LabelPrinter /></S>,
-            handle: { tool: 'Label Printer', category: 'SKU Tools', crumbs: [{ label: 'SKU Tools', to: '/tools/sku' }] },
+            handle: {
+              tool: 'Label Printer',
+              category: 'SKU Tools',
+              description: 'Print barcode labels in bulk — A4, thermal 80mm, thermal 58mm and sticker formats.',
+              crumbs: [{ label: 'SKU Tools', to: '/tools/sku' }],
+              relatedTools: [
+                { label: 'Label Generator',        to: '/tools/sku/label-generator' },
+                { label: 'Barcode Generator',      to: '/tools/sku/barcode' },
+                { label: 'SKU Generator',          to: '/tools/sku/generator' },
+                { label: 'Bulk SKU Generator',     to: '/tools/sku/bulk-generator' },
+              ],
+            },
           },
         ],
       },
@@ -557,8 +644,8 @@ const routes: RouteObject[] = [
               relatedTools: [
                 { label: 'Frame Extractor',      to: '/tools/video/frame-extractor' },
                 { label: 'Compress Video',       to: '/tools/video/compress' },
-                { label: 'Thumbnail Generator',  to: '/tools/video/thumbnail' },
-                { label: 'Video Converter',      to: '/tools/video/convert' },
+                { label: 'Thumbnail Generator',  to: '/tools/video/thumbnail-generator' },
+                { label: 'Video Converter',      to: '/tools/video/converter' },
                 { label: 'Resize Video',         to: '/tools/video/resize' },
               ],
             },
@@ -572,10 +659,10 @@ const routes: RouteObject[] = [
               description: 'Extract individual frames from any video as JPEG images.',
               crumbs: [{ label: 'Video Tools', to: '/tools/video' }],
               relatedTools: [
-                { label: 'Thumbnail Generator', to: '/tools/video/thumbnail' },
+                { label: 'Thumbnail Generator', to: '/tools/video/thumbnail-generator' },
                 { label: 'Video to GIF',        to: '/tools/video/to-gif' },
                 { label: 'Compress Video',      to: '/tools/video/compress' },
-                { label: 'Video Converter',     to: '/tools/video/convert' },
+                { label: 'Video Converter',     to: '/tools/video/converter' },
                 { label: 'Resize Video',        to: '/tools/video/resize' },
               ],
             },
@@ -590,9 +677,9 @@ const routes: RouteObject[] = [
               crumbs: [{ label: 'Video Tools', to: '/tools/video' }],
               relatedTools: [
                 { label: 'Resize Video',        to: '/tools/video/resize' },
-                { label: 'Video Converter',     to: '/tools/video/convert' },
+                { label: 'Video Converter',     to: '/tools/video/converter' },
                 { label: 'Video to GIF',        to: '/tools/video/to-gif' },
-                { label: 'Thumbnail Generator', to: '/tools/video/thumbnail' },
+                { label: 'Thumbnail Generator', to: '/tools/video/thumbnail-generator' },
                 { label: 'Frame Extractor',     to: '/tools/video/frame-extractor' },
               ],
             },
@@ -607,15 +694,15 @@ const routes: RouteObject[] = [
               crumbs: [{ label: 'Video Tools', to: '/tools/video' }],
               relatedTools: [
                 { label: 'Compress Video',      to: '/tools/video/compress' },
-                { label: 'Video Converter',     to: '/tools/video/convert' },
-                { label: 'Thumbnail Generator', to: '/tools/video/thumbnail' },
+                { label: 'Video Converter',     to: '/tools/video/converter' },
+                { label: 'Thumbnail Generator', to: '/tools/video/thumbnail-generator' },
                 { label: 'Video to GIF',        to: '/tools/video/to-gif' },
                 { label: 'Frame Extractor',     to: '/tools/video/frame-extractor' },
               ],
             },
           },
           {
-            path: 'convert',
+            path: 'converter',
             element: <S><VideoConverter /></S>,
             handle: {
               tool: 'Video Converter',
@@ -626,13 +713,13 @@ const routes: RouteObject[] = [
                 { label: 'Compress Video',      to: '/tools/video/compress' },
                 { label: 'Resize Video',        to: '/tools/video/resize' },
                 { label: 'Video to GIF',        to: '/tools/video/to-gif' },
-                { label: 'Thumbnail Generator', to: '/tools/video/thumbnail' },
+                { label: 'Thumbnail Generator', to: '/tools/video/thumbnail-generator' },
                 { label: 'Frame Extractor',     to: '/tools/video/frame-extractor' },
               ],
             },
           },
           {
-            path: 'thumbnail',
+            path: 'thumbnail-generator',
             element: <S><ThumbnailGenerator /></S>,
             handle: {
               tool: 'Thumbnail Generator',
@@ -644,7 +731,7 @@ const routes: RouteObject[] = [
                 { label: 'Video to GIF',     to: '/tools/video/to-gif' },
                 { label: 'Compress Video',   to: '/tools/video/compress' },
                 { label: 'Resize Video',     to: '/tools/video/resize' },
-                { label: 'Video Converter',  to: '/tools/video/convert' },
+                { label: 'Video Converter',  to: '/tools/video/converter' },
               ],
             },
           },
@@ -661,33 +748,19 @@ const routes: RouteObject[] = [
             handle: { tool: 'GST Tools', category: 'GST Tools', crumbs: [] },
           },
           {
-            path: 'search',
-            element: <S><GSTSearch /></S>,
-            handle: {
-              tool: 'GST Search',
-              category: 'GST Tools',
-              description: 'Search any GSTIN for instant format validation and live government portal verification.',
-              crumbs: [{ label: 'GST Tools', to: '/tools/gst' }],
-              relatedTools: [
-                { label: 'GST Verify',       to: '/tools/gst/verify' },
-                { label: 'GST State Finder', to: '/tools/gst/state-finder' },
-                { label: 'GST Calculator',   to: '/tools/gst/calculator' },
-                { label: 'HSN Code Search',  to: '/tools/gst/hsn-search' },
-              ],
-            },
-          },
-          {
+            // Unified: GST Search + GST Verify + GSTIN Validator merged
             path: 'verify',
-            element: <S><GSTVerify /></S>,
+            element: <S><GSTVerificationPage /></S>,
             handle: {
-              tool: 'GST Verify',
+              tool: 'GST Verification',
               category: 'GST Tools',
-              description: 'Step-by-step GSTIN verification with format check, checksum, and live status.',
+              description: 'Validate GSTIN format, checksum & all 6 structure checks — then verify live on the GSTN portal.',
               crumbs: [{ label: 'GST Tools', to: '/tools/gst' }],
               relatedTools: [
-                { label: 'GST Search',       to: '/tools/gst/search' },
-                { label: 'GST State Finder', to: '/tools/gst/state-finder' },
-                { label: 'GST Calculator',   to: '/tools/gst/calculator' },
+                { label: 'GST State Finder',       to: '/tools/gst/state-finder' },
+                { label: 'GST Calculator',         to: '/tools/gst/calculator' },
+                { label: 'Reverse GST Calculator', to: '/tools/gst/reverse' },
+                { label: 'HSN Code Search',        to: '/tools/gst/hsn-search' },
               ],
             },
           },
@@ -744,24 +817,9 @@ const routes: RouteObject[] = [
               description: 'Find state name and code from any 2-digit GST state code or full GSTIN.',
               crumbs: [{ label: 'GST Tools', to: '/tools/gst' }],
               relatedTools: [
-                { label: 'GST Search',      to: '/tools/gst/search' },
-                { label: 'GST Verify',      to: '/tools/gst/verify' },
+                { label: 'GST Verification', to: '/tools/gst/verify' },
+                { label: 'GST Verification', to: '/tools/gst/verify' },
                 { label: 'GST Calculator',  to: '/tools/gst/calculator' },
-              ],
-            },
-          },
-          {
-            path: 'gstin-validator',
-            element: <S><GSTINValidator /></S>,
-            handle: {
-              tool: 'GSTIN Validator',
-              category: 'GST Tools',
-              description: 'Validate GSTIN format and checksum without an API call.',
-              crumbs: [{ label: 'GST Tools', to: '/tools/gst' }],
-              relatedTools: [
-                { label: 'GST Search',      to: '/tools/gst/search' },
-                { label: 'GST Verify',      to: '/tools/gst/verify' },
-                { label: 'PAN Validator',   to: '/tools/gst/pan-validator' },
               ],
             },
           },
@@ -774,9 +832,8 @@ const routes: RouteObject[] = [
               description: 'Validate PAN card numbers for individuals and businesses.',
               crumbs: [{ label: 'GST Tools', to: '/tools/gst' }],
               relatedTools: [
-                { label: 'GSTIN Validator', to: '/tools/gst/gstin-validator' },
-                { label: 'GST Search',      to: '/tools/gst/search' },
-                { label: 'GST Verify',      to: '/tools/gst/verify' },
+                { label: 'GST Verification', to: '/tools/gst/verify' },
+                { label: 'GST Verification', to: '/tools/gst/verify' },
               ],
             },
           },
@@ -813,128 +870,126 @@ const routes: RouteObject[] = [
         ],
       },
 
-      // ── /tools/label-crop — Label Crop hub + marketplace pages ─
+    ],
+  },
+
+  // ----------------------------------------------------------------
+  // Label Crop — standalone /label-crop hub + marketplace pages
+  // ----------------------------------------------------------------
+  {
+    path: '/label-crop',
+    element: <ToolsLayout />,
+    errorElement: <S><ToolErrorPage /></S>,
+    children: [
       {
-        path: 'label-crop',
-        children: [
-          {
-            index: true,
-            element: <S><LabelCropHub /></S>,
-            handle: { tool: 'Label Crop', category: 'Label Tools', crumbs: [] },
-          },
-          {
-            path: 'amazon',
-            element: <S><AmazonLabelCrop /></S>,
-            handle: {
-              tool: 'Amazon Label Crop',
-              category: 'Label Tools',
-              description: 'Crop Amazon shipping labels to thermal or A4 format.',
-              crumbs: [{ label: 'Label Crop', to: '/tools/label-crop' }],
-              relatedTools: [
-                { label: 'Flipkart Label Crop', to: '/tools/label-crop/flipkart' },
-                { label: 'Myntra Label Crop',   to: '/tools/label-crop/myntra' },
-                { label: 'Meesho Label Crop',   to: '/tools/label-crop/meesho' },
-                { label: 'AJIO Label Crop',     to: '/tools/label-crop/ajio' },
-              ],
-            },
-          },
-          {
-            path: 'flipkart',
-            element: <S><FlipkartLabelCrop /></S>,
-            handle: {
-              tool: 'Flipkart Label Crop',
-              category: 'Label Tools',
-              description: 'Crop Flipkart shipping labels to thermal or A4 format.',
-              crumbs: [{ label: 'Label Crop', to: '/tools/label-crop' }],
-              relatedTools: [
-                { label: 'Amazon Label Crop',   to: '/tools/label-crop/amazon' },
-                { label: 'Myntra Label Crop',   to: '/tools/label-crop/myntra' },
-                { label: 'Meesho Label Crop',   to: '/tools/label-crop/meesho' },
-                { label: 'AJIO Label Crop',     to: '/tools/label-crop/ajio' },
-              ],
-            },
-          },
-          {
-            path: 'myntra',
-            element: <S><MyntraLabelCrop /></S>,
-            handle: {
-              tool: 'Myntra Label Crop',
-              category: 'Label Tools',
-              description: 'Crop Myntra shipping labels to thermal or A4 format.',
-              crumbs: [{ label: 'Label Crop', to: '/tools/label-crop' }],
-              relatedTools: [
-                { label: 'Amazon Label Crop',   to: '/tools/label-crop/amazon' },
-                { label: 'Flipkart Label Crop', to: '/tools/label-crop/flipkart' },
-                { label: 'Meesho Label Crop',   to: '/tools/label-crop/meesho' },
-                { label: 'Nykaa Label Crop',    to: '/tools/label-crop/nykaa' },
-              ],
-            },
-          },
-          {
-            path: 'meesho',
-            element: <S><MeeshoLabelCrop /></S>,
-            handle: {
-              tool: 'Meesho Label Crop',
-              category: 'Label Tools',
-              description: 'Crop Meesho shipping labels to thermal or A4 format.',
-              crumbs: [{ label: 'Label Crop', to: '/tools/label-crop' }],
-              relatedTools: [
-                { label: 'Amazon Label Crop',   to: '/tools/label-crop/amazon' },
-                { label: 'Flipkart Label Crop', to: '/tools/label-crop/flipkart' },
-                { label: 'AJIO Label Crop',     to: '/tools/label-crop/ajio' },
-                { label: 'Snapdeal Label Crop', to: '/tools/label-crop/snapdeal' },
-              ],
-            },
-          },
-          {
-            path: 'ajio',
-            element: <S><AjioLabelCrop /></S>,
-            handle: {
-              tool: 'AJIO Label Crop',
-              category: 'Label Tools',
-              description: 'Crop AJIO shipping labels to thermal or A4 format.',
-              crumbs: [{ label: 'Label Crop', to: '/tools/label-crop' }],
-              relatedTools: [
-                { label: 'Amazon Label Crop',   to: '/tools/label-crop/amazon' },
-                { label: 'Flipkart Label Crop', to: '/tools/label-crop/flipkart' },
-                { label: 'Myntra Label Crop',   to: '/tools/label-crop/myntra' },
-                { label: 'Snapdeal Label Crop', to: '/tools/label-crop/snapdeal' },
-              ],
-            },
-          },
-          {
-            path: 'nykaa',
-            element: <S><NykaaLabelCrop /></S>,
-            handle: {
-              tool: 'Nykaa Label Crop',
-              category: 'Label Tools',
-              description: 'Crop Nykaa shipping labels to thermal or A4 format.',
-              crumbs: [{ label: 'Label Crop', to: '/tools/label-crop' }],
-              relatedTools: [
-                { label: 'Myntra Label Crop',   to: '/tools/label-crop/myntra' },
-                { label: 'AJIO Label Crop',     to: '/tools/label-crop/ajio' },
-                { label: 'Meesho Label Crop',   to: '/tools/label-crop/meesho' },
-                { label: 'Amazon Label Crop',   to: '/tools/label-crop/amazon' },
-              ],
-            },
-          },
-          {
-            path: 'snapdeal',
-            element: <S><SnapdealLabelCrop /></S>,
-            handle: {
-              tool: 'Snapdeal Label Crop',
-              category: 'Label Tools',
-              description: 'Crop Snapdeal shipping labels to thermal or A4 format.',
-              crumbs: [{ label: 'Label Crop', to: '/tools/label-crop' }],
-              relatedTools: [
-                { label: 'Amazon Label Crop',   to: '/tools/label-crop/amazon' },
-                { label: 'Flipkart Label Crop', to: '/tools/label-crop/flipkart' },
-                { label: 'Meesho Label Crop',   to: '/tools/label-crop/meesho' },
-                { label: 'AJIO Label Crop',     to: '/tools/label-crop/ajio' },
-              ],
-            },
-          },
-        ],
+        index: true,
+        element: <S><LabelCropHub /></S>,
+        handle: { tool: 'Label Crop', category: 'Label Tools' },
+      },
+      {
+        path: 'amazon',
+        element: <S><AmazonLabelCrop /></S>,
+        handle: {
+          tool: 'Amazon Label Crop',
+          category: 'Label Tools',
+          description: 'Crop Amazon shipping labels to thermal or A4 format.',
+          relatedTools: [
+            { label: 'Flipkart Label Crop', to: '/label-crop/flipkart' },
+            { label: 'Myntra Label Crop',   to: '/label-crop/myntra' },
+            { label: 'Meesho Label Crop',   to: '/label-crop/meesho' },
+            { label: 'AJIO Label Crop',     to: '/label-crop/ajio' },
+          ],
+        },
+      },
+      {
+        path: 'flipkart',
+        element: <S><FlipkartLabelCrop /></S>,
+        handle: {
+          tool: 'Flipkart Label Crop',
+          category: 'Label Tools',
+          description: 'Crop Flipkart shipping labels to thermal or A4 format.',
+          relatedTools: [
+            { label: 'Amazon Label Crop',   to: '/label-crop/amazon' },
+            { label: 'Myntra Label Crop',   to: '/label-crop/myntra' },
+            { label: 'Meesho Label Crop',   to: '/label-crop/meesho' },
+            { label: 'AJIO Label Crop',     to: '/label-crop/ajio' },
+          ],
+        },
+      },
+      {
+        path: 'myntra',
+        element: <S><MyntraLabelCrop /></S>,
+        handle: {
+          tool: 'Myntra Label Crop',
+          category: 'Label Tools',
+          description: 'Crop Myntra shipping labels to thermal or A4 format.',
+          relatedTools: [
+            { label: 'Amazon Label Crop',   to: '/label-crop/amazon' },
+            { label: 'Flipkart Label Crop', to: '/label-crop/flipkart' },
+            { label: 'Meesho Label Crop',   to: '/label-crop/meesho' },
+            { label: 'Nykaa Label Crop',    to: '/label-crop/nykaa' },
+          ],
+        },
+      },
+      {
+        path: 'meesho',
+        element: <S><MeeshoLabelCrop /></S>,
+        handle: {
+          tool: 'Meesho Label Crop',
+          category: 'Label Tools',
+          description: 'Crop Meesho shipping labels to thermal or A4 format.',
+          relatedTools: [
+            { label: 'Amazon Label Crop',   to: '/label-crop/amazon' },
+            { label: 'Flipkart Label Crop', to: '/label-crop/flipkart' },
+            { label: 'AJIO Label Crop',     to: '/label-crop/ajio' },
+            { label: 'Snapdeal Label Crop', to: '/label-crop/snapdeal' },
+          ],
+        },
+      },
+      {
+        path: 'ajio',
+        element: <S><AjioLabelCrop /></S>,
+        handle: {
+          tool: 'AJIO Label Crop',
+          category: 'Label Tools',
+          description: 'Crop AJIO shipping labels to thermal or A4 format.',
+          relatedTools: [
+            { label: 'Amazon Label Crop',   to: '/label-crop/amazon' },
+            { label: 'Flipkart Label Crop', to: '/label-crop/flipkart' },
+            { label: 'Myntra Label Crop',   to: '/label-crop/myntra' },
+            { label: 'Snapdeal Label Crop', to: '/label-crop/snapdeal' },
+          ],
+        },
+      },
+      {
+        path: 'nykaa',
+        element: <S><NykaaLabelCrop /></S>,
+        handle: {
+          tool: 'Nykaa Label Crop',
+          category: 'Label Tools',
+          description: 'Crop Nykaa shipping labels to thermal or A4 format.',
+          relatedTools: [
+            { label: 'Myntra Label Crop',   to: '/label-crop/myntra' },
+            { label: 'AJIO Label Crop',     to: '/label-crop/ajio' },
+            { label: 'Meesho Label Crop',   to: '/label-crop/meesho' },
+            { label: 'Amazon Label Crop',   to: '/label-crop/amazon' },
+          ],
+        },
+      },
+      {
+        path: 'snapdeal',
+        element: <S><SnapdealLabelCrop /></S>,
+        handle: {
+          tool: 'Snapdeal Label Crop',
+          category: 'Label Tools',
+          description: 'Crop Snapdeal shipping labels to thermal or A4 format.',
+          relatedTools: [
+            { label: 'Amazon Label Crop',   to: '/label-crop/amazon' },
+            { label: 'Flipkart Label Crop', to: '/label-crop/flipkart' },
+            { label: 'Meesho Label Crop',   to: '/label-crop/meesho' },
+            { label: 'AJIO Label Crop',     to: '/label-crop/ajio' },
+          ],
+        },
       },
     ],
   },
@@ -944,9 +999,11 @@ const routes: RouteObject[] = [
   // ----------------------------------------------------------------
   {
     element: <ProtectedRoute />,
+    errorElement: <S><NotFoundPage /></S>,
     children: [
       {
         element: <DashboardLayout />,
+        errorElement: <S><NotFoundPage /></S>,
         children: [
           // Dashboard home
           { path: '/dashboard', element: <S><DashboardPage /></S> },

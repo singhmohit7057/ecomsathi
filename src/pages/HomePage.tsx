@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import NewsletterSection from '@/components/sections/NewsletterSection';
 import {
   Tag,
   FileText,
@@ -176,48 +177,6 @@ function HeroSection() {
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-// ─── Section 2: Marquee / Tools Strip ─────────────────────────────────────────
-
-const MARQUEE_TOOLS = [
-  { label: 'Merge PDF', href: '/tools/pdf/merge' },
-  { label: 'Background Remover', href: '/tools/image/background-remover' },
-  { label: 'GST Calculator', href: '/tools/gst/calculator' },
-  { label: 'SKU Generator', href: '/tools/sku/generator' },
-  { label: 'Label Crop', href: '/label-crop' },
-  { label: 'OCR PDF', href: '/tools/pdf/ocr' },
-  { label: 'Compress Image', href: '/tools/image/compress' },
-  { label: 'Video to GIF', href: '/tools/video/video-to-gif' },
-  { label: 'Barcode Generator', href: '/tools/sku/barcode' },
-  { label: 'HSN Search', href: '/tools/gst/hsn-search' },
-  { label: 'White Background', href: '/tools/image/white-background' },
-  { label: 'Compress PDF', href: '/tools/pdf/compress' },
-];
-
-function ToolsStrip() {
-  return (
-    <section className="border-y border-[#E2E8F0] bg-white py-4">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center gap-4">
-          <span className="shrink-0 text-xs font-semibold uppercase tracking-wider text-[#64748B]">
-            Popular tools:
-          </span>
-          <div className="flex gap-2 overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-            {MARQUEE_TOOLS.map((tool) => (
-              <Link
-                key={tool.label}
-                to={tool.href}
-                className="shrink-0 rounded-full border border-[#E2E8F0] bg-white px-4 py-1.5 text-sm font-medium text-[#334155] transition-colors hover:border-[#2563EB] hover:text-[#2563EB]"
-              >
-                {tool.label}
-              </Link>
-            ))}
           </div>
         </div>
       </div>
@@ -679,75 +638,7 @@ function PremiumModules() {
   );
 }
 
-// ─── Section 7: Marketplace Badges ────────────────────────────────────────────
-
-function MarketplaceBadges() {
-  return (
-    <section className="border-y border-[#E2E8F0] bg-[#F8FAFC] py-8">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col items-center gap-4 md:flex-row md:justify-center">
-          <span className="shrink-0 text-sm font-semibold text-[#64748B]">
-            Built for sellers on:
-          </span>
-          <div className="flex flex-wrap items-center justify-center gap-3">
-            {MARKETPLACES.map((mp) => (
-              <span
-                key={mp}
-                className="rounded-full border border-[#E2E8F0] bg-white px-4 py-1.5 text-sm font-semibold text-[#334155] shadow-[#1E293B_2px_2px_0px_0px]"
-              >
-                {mp}
-              </span>
-            ))}
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
 // ─── Section 8: Final CTA ──────────────────────────────────────────────────────
-
-function CtaSection() {
-  return (
-    <section className="bg-gradient-to-r from-[#2563EB] via-[#1D4ED8] to-[#0891B2] py-24">
-      <div className="mx-auto max-w-3xl px-4 text-center sm:px-6">
-        <h2 className="mb-3 text-3xl font-bold tracking-tight text-white md:text-5xl">
-          Start Selling Smarter Today
-        </h2>
-        <p className="mb-10 text-lg text-blue-100">
-          Join thousands of Indian ecommerce sellers using EcomSathi
-        </p>
-
-        {/* CTA buttons */}
-        <div className="mb-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-          <Link
-            to="/tools"
-            className="inline-flex items-center gap-2 rounded-[4px] border-2 border-white bg-white px-7 py-3.5 text-base font-bold text-[#2563EB] shadow-[#1E293B_3px_3px_0px_0px] transition-all hover:bg-blue-50 hover:shadow-[#1E293B_1px_1px_0px_0px]"
-          >
-            Explore Free Tools
-            <ArrowRight size={18} />
-          </Link>
-          <Link
-            to="/register"
-            className="inline-flex items-center gap-2 rounded-[4px] border-2 border-white bg-transparent px-7 py-3.5 text-base font-bold text-white transition-all hover:bg-white/10"
-          >
-            Create Free Account
-          </Link>
-        </div>
-
-        {/* Trust signals */}
-        <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-2 text-sm font-medium text-blue-200">
-          {['No credit card', 'Free forever', 'No login for tools'].map((item) => (
-            <span key={item} className="flex items-center gap-1.5">
-              <Check size={14} strokeWidth={2.5} className="text-blue-300" />
-              {item}
-            </span>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
 
 // ─── Page Export ───────────────────────────────────────────────────────────────
 
@@ -755,13 +646,11 @@ export default function HomePage() {
   return (
     <>
       <HeroSection />
-      <ToolsStrip />
       <ToolCategories />
       <LabelCropFeature />
       <HowItWorks />
       <PremiumModules />
-      <MarketplaceBadges />
-      <CtaSection />
+      <NewsletterSection />
     </>
   );
 }

@@ -43,7 +43,7 @@ const FAQS = [
 ]
 
 const RELATED_TOOLS = [
-  { label: 'GST Search',      to: '/gst/search' },
+  { label: 'GST Verification', to: '/gst/verification' },
   { label: 'GST Verification',to: '/gst/verification' },
   { label: 'GST Calculator',  to: '/gst/calculator' },
   { label: 'HSN Search',      to: '/gst/hsn-search' },

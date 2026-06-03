@@ -30,22 +30,13 @@ interface GSTTool {
 
 const GST_TOOLS: GSTTool[] = [
   {
-    name: 'GST Search',
-    href: '/tools/gst/search',
-    icon: <Search size={22} />,
-    desc: 'Search and verify any GSTIN number',
+    name: 'GST Verification',
+    href: '/tools/gst/verify',
+    icon: <Shield size={22} />,
+    desc: 'Validate GSTIN format, checksum & verify live on GSTN portal',
     color: 'text-[#2563EB]',
     iconBg: 'bg-[#EFF6FF]',
     badge: 'Live Verify',
-  },
-  {
-    name: 'GSTIN Validator',
-    href: '/tools/gst/gstin-validator',
-    icon: <CheckCircle size={22} />,
-    desc: 'Validate GSTIN format and checksum',
-    color: 'text-[#059669]',
-    iconBg: 'bg-[#ECFDF5]',
-    badge: 'Offline',
   },
   {
     name: 'GST Calculator',
@@ -102,15 +93,6 @@ const GST_TOOLS: GSTTool[] = [
     badge: 'Offline',
   },
   {
-    name: 'GST Verify',
-    href: '/tools/gst/verify',
-    icon: <Shield size={22} />,
-    desc: 'Live verify GSTIN with government data',
-    color: 'text-[#2563EB]',
-    iconBg: 'bg-[#EFF6FF]',
-    badge: 'Live Verify',
-  },
-  {
     name: 'PAN Validator',
     href: '/tools/gst/pan-validator',
     icon: <CreditCard size={22} />,
@@ -161,7 +143,7 @@ export default function GSTToolsHub() {
               </span>
             </div>
             <p className="mt-2 text-sm text-[#475569] sm:text-base">
-              {GST_TOOLS.length} free tools for Indian sellers — validate GSTINs, calculate tax,
+  8 free tools for Indian sellers — validate GSTINs, calculate tax,
               find HSN/SAC codes and more. Most tools work offline; live verification uses the GSTN
               portal via our secure backend.
             </p>

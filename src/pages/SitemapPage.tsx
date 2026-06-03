@@ -103,7 +103,6 @@ const SECTIONS: SitemapSection[] = [
     iconColor: 'text-[#0891B2]',
     links: [
       { label: 'GST Tools Hub',          path: '/gst' },
-      { label: 'GST Search',             path: '/gst/search' },
       { label: 'GST Verification',       path: '/gst/verification' },
       { label: 'GST Calculator',         path: '/gst/calculator' },
       { label: 'Reverse GST Calculator', path: '/gst/reverse-calculator' },

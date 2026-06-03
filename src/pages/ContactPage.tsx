@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import NewsletterSection from '@/components/sections/NewsletterSection';
 import {
   Mail,
   Clock,
@@ -317,6 +318,8 @@ export default function ContactPage() {
           </div>
         </div>
       </section>
+
+      <NewsletterSection />
     </div>
   );
 }

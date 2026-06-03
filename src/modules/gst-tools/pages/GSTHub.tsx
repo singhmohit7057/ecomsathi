@@ -1,5 +1,4 @@
 import {
-  Search,
   Shield,
   Calculator,
   Divide,
@@ -37,22 +36,13 @@ const HUB_SCHEMA = {
 
 const TOOLS = [
   {
-    title: 'GST Search',
-    description: 'Search any GSTIN and get instant format validation plus live government portal lookup.',
-    icon: <Search size={22} />,
-    to: '/gst/search',
-    badge: 'Live Verify',
-    badgeColor: 'blue' as const,
-    gradient: 'bg-gradient-to-r from-blue-50 to-blue-100',
-  },
-  {
     title: 'GST Verification',
-    description: 'Step-by-step GSTIN verification with format check, checksum, and active status badge.',
+    description: 'Validate GSTIN format, checksum & all structure checks — then verify live on the GSTN portal.',
     icon: <Shield size={22} />,
     to: '/gst/verification',
     badge: 'Live Verify',
     badgeColor: 'blue' as const,
-    gradient: 'bg-gradient-to-r from-indigo-50 to-indigo-100',
+    gradient: 'bg-gradient-to-r from-blue-50 to-indigo-100',
   },
   {
     title: 'GST Calculator',

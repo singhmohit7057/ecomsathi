@@ -5,6 +5,7 @@ import { LabelBreadcrumb } from './LabelBreadcrumb';
 import { MarketplaceLabelTool } from './MarketplaceLabelTool';
 import { LabelFAQ } from './LabelFAQ';
 import { RelatedLabelTools } from './RelatedLabelTools';
+import { getMarketplaceLogo } from './MarketplaceLogos';
 import type { MarketplaceInfo } from '../types';
 
 interface MarketplacePageLayoutProps {
@@ -62,6 +63,8 @@ export const MarketplacePageLayout: React.FC<MarketplacePageLayoutProps> = ({ in
     ],
   };
 
+  const Logo = getMarketplaceLogo(slug);
+
   return (
     <>
       <SEO
@@ -84,11 +87,8 @@ export const MarketplacePageLayout: React.FC<MarketplacePageLayoutProps> = ({ in
         {/* Tool header */}
         <div className="rounded-[8px] border border-[#E2E8F0] bg-white p-6 shadow-sm">
           <div className="flex flex-col sm:flex-row sm:items-start gap-4">
-            <div
-              className="flex h-13 w-13 shrink-0 items-center justify-center rounded-[8px] text-3xl"
-              style={{ backgroundColor: bgColor }}
-            >
-              {emoji}
+            <div className="shrink-0">
+              <Logo size={52} />
             </div>
             <div className="min-w-0 flex-1">
               <div className="flex flex-wrap items-center gap-2 mb-2">
