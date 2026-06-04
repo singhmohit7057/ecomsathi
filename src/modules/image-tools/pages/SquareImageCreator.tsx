@@ -331,15 +331,16 @@ export const SquareImageCreator: React.FC = () => {
           {/* Preview */}
           <div className="border border-[#E2E8F0] rounded-[6px] p-3 flex flex-col gap-2">
             <div className="flex items-center justify-between">
-              <p className="text-xs font-medium text-[#64748B]">Preview</p>
+              <p className="text-xs font-medium text-[#64748B]">Live Preview</p>
               <p className="text-xs text-[#64748B]">Output: {targetSize}×{targetSize}px</p>
             </div>
-            <div className="flex justify-center"
-              style={{ background: 'repeating-conic-gradient(#e2e8f0 0% 25%, #fff 0% 50%) 0 0 / 12px 12px' }}
+            <div
+              className="flex justify-center rounded overflow-hidden"
+              style={{ background: 'repeating-conic-gradient(#e2e8f0 0% 25%, #fff 0% 50%) 0 0 / 12px 12px', minHeight: '320px' }}
             >
               <canvas
                 ref={previewCanvasRef}
-                className="max-w-full max-h-64 object-contain"
+                className="max-w-full max-h-[480px] object-contain"
               />
             </div>
           </div>

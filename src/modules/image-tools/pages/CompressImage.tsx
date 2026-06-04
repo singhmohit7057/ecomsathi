@@ -186,6 +186,7 @@ export const CompressImage: React.FC = () => {
   const compressionRatio = file && resultBytes
     ? (((file.size - resultBytes) / file.size) * 100).toFixed(1)
     : null;
+  const isLarger = resultBytes !== null && file && resultBytes > file.size;
 
   const schema = {
     '@context': 'https://schema.org',
@@ -284,20 +285,31 @@ export const CompressImage: React.FC = () => {
           </div>
 
           {/* Target file size */}
-          <div className="flex flex-col gap-1">
-            <label className="text-sm font-medium text-[#0F172A]">Target File Size (optional)</label>
-            <div className="flex items-center gap-2">
+          <div className="flex flex-col gap-1.5">
+            <label className="text-sm font-medium text-[#0F172A]">Target File Size <span className="font-normal text-[#94A3B8]">(optional)</span></label>
+            <div className="flex items-center gap-3">
               <input
                 type="number"
                 min={1}
                 placeholder="e.g. 200"
                 value={targetSizeKB}
                 onChange={e => setTargetSizeKB(e.target.value)}
-                className="border border-[#E2E8F0] rounded-[4px] px-3 py-2 text-sm w-32 focus:outline-none focus:border-[#2563EB]"
+                className="border border-[#E2E8F0] rounded-[6px] px-3 py-2.5 text-sm font-semibold text-[#0F172A] w-36 focus:outline-none focus:border-[#2563EB] focus:ring-1 focus:ring-[#2563EB]/30"
               />
-              <span className="text-sm text-[#64748B]">KB</span>
+              <span className="text-sm font-semibold text-[#64748B]">KB</span>
+              {targetSizeKB && (
+                <button
+                  type="button"
+                  onClick={() => setTargetSizeKB('')}
+                  className="text-xs text-[#94A3B8] hover:text-[#DC2626] underline"
+                >
+                  Clear
+                </button>
+              )}
             </div>
-            <p className="text-xs text-[#94A3B8]">Leave blank to use quality slider.</p>
+            <p className="text-xs text-[#94A3B8]">
+              {targetSizeKB ? `Will find the best quality to stay under ${targetSizeKB} KB.` : 'Leave blank to use the quality slider above.'}
+            </p>
           </div>
 
           {/* Live preview comparison */}
@@ -320,20 +332,27 @@ export const CompressImage: React.FC = () => {
 
           {/* Stats */}
           {resultBytes !== null && file && (
-            <div className="bg-[#F0FDF4] border border-[#BBF7D0] rounded-[6px] p-3 flex flex-wrap gap-4 text-xs">
+            <div className={`border rounded-[6px] p-3 flex flex-wrap gap-4 text-xs ${isLarger ? 'bg-[#FFFBEB] border-[#FDE68A]' : 'bg-[#F0FDF4] border-[#BBF7D0]'}`}>
               <div>
                 <p className="text-[#64748B]">Original</p>
                 <p className="font-semibold text-[#0F172A]">{formatBytes(file.size)}</p>
               </div>
               <div className="text-[#94A3B8]">→</div>
               <div>
-                <p className="text-[#64748B]">Compressed</p>
+                <p className="text-[#64748B]">Output</p>
                 <p className="font-semibold text-[#0F172A]">{formatBytes(resultBytes)}</p>
               </div>
               <div>
-                <p className="text-[#64748B]">Saved</p>
-                <p className="font-semibold text-[#16A34A]">{compressionRatio}%</p>
+                <p className="text-[#64748B]">{isLarger ? 'Increased by' : 'Saved'}</p>
+                <p className={`font-semibold ${isLarger ? 'text-[#D97706]' : 'text-[#16A34A]'}`}>
+                  {Math.abs(Number(compressionRatio))}%
+                </p>
               </div>
+              {isLarger && (
+                <p className="w-full text-[11px] text-[#D97706]">
+                  ⚠ Output is larger — PNG is lossless so quality 100% may increase file size. Try lowering quality or switching to JPEG.
+                </p>
+              )}
             </div>
           )}
 

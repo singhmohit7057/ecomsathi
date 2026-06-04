@@ -93,7 +93,6 @@ export default function ReverseGSTCalculator() {
       metaKeywords="reverse GST calculator, extract GST from price, GST inclusive calculator, remove GST from amount"
       canonicalPath="/gst/reverse-calculator"
       crumbs={[{ label: 'GST Tools', to: '/gst' }, { label: 'Reverse GST Calculator' }]}
-      relatedTools={RELATED_TOOLS}
       faqs={FAQS}
     >
       <div className="max-w-2xl space-y-6">

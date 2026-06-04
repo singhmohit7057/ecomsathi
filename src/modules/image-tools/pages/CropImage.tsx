@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { UploadCloud, Download, Trash2, RotateCw, Crop } from 'lucide-react';
+import { UploadCloud, Download, Trash2, RotateCw, Crop, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/common/Button';
 import { Alert } from '@/components/common/Alert';
 import SEO from '@/components/common/SEO';
@@ -51,6 +51,7 @@ export const CropImage: React.FC = () => {
   const [resultUrl, setResultUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [naturalSize, setNaturalSize] = useState({ w: 0, h: 0 });
+  const [downloading, setDownloading] = useState(false);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const imageRef = useRef<HTMLImageElement | null>(null);
@@ -358,12 +359,14 @@ export const CropImage: React.FC = () => {
 
   const handleDownload = () => {
     if (!resultUrl || !file) return;
+    setDownloading(true);
     const a = document.createElement('a');
     a.href = resultUrl;
     const ext = file.name.split('.').pop() ?? 'jpg';
     const baseName = file.name.replace(/\.[^.]+$/, '');
     a.download = `${baseName}_cropped.${ext}`;
     a.click();
+    setTimeout(() => setDownloading(false), 1500);
   };
 
   const handleReset = () => {
@@ -475,6 +478,7 @@ export const CropImage: React.FC = () => {
               width={canvasSize.w}
               height={canvasSize.h}
               className="w-full rounded-[6px]"
+              style={{ imageRendering: 'crisp-edges' }}
               onMouseDown={handleMouseDown}
               onMouseMove={handleMouseMove}
               onMouseUp={handleMouseUp}
@@ -504,22 +508,23 @@ export const CropImage: React.FC = () => {
             {resultUrl && (
               <Button
                 variant="ghost"
-                leftIcon={<Download size={15} />}
+                leftIcon={downloading ? <CheckCircle2 size={15} className="text-[#16A34A]" /> : <Download size={15} />}
                 onClick={handleDownload}
               >
-                Download
+                {downloading ? 'Downloaded!' : 'Download'}
               </Button>
             )}
           </div>
 
           {/* Result preview */}
           {resultUrl && (
-            <div className="border border-[#E2E8F0] rounded-[6px] p-3">
-              <p className="text-xs font-medium text-[#64748B] mb-2">Cropped Result</p>
+            <div className="border border-[#E2E8F0] rounded-[6px] p-3 flex flex-col gap-2">
+              <p className="text-xs font-medium text-[#64748B]">Cropped Result</p>
               <img
                 src={resultUrl}
                 alt="Cropped"
-                className="max-h-48 rounded object-contain"
+                className="w-full max-h-80 rounded object-contain bg-[#F1F5F9]"
+                style={{ imageRendering: 'crisp-edges' }}
               />
             </div>
           )}

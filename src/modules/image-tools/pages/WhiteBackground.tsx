@@ -16,7 +16,7 @@ const FAQS = [
 ];
 
 const MAX_SIZE_BYTES = 20 * 1024 * 1024;
-const PROCESSING_API_URL = import.meta.env.VITE_PROCESSING_API_URL ?? 'http://localhost:3001';
+const PROCESSING_API_URL = import.meta.env.VITE_BACKEND_URL ?? import.meta.env.VITE_PROCESSING_API_URL ?? 'https://api.ecomsathi.in';
 
 function formatBytes(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
@@ -59,7 +59,7 @@ export const WhiteBackground: React.FC = () => {
     setError(null);
     try {
       const formData = new FormData();
-      formData.append('image', file);
+      formData.append('file', file);
       formData.append('sensitivity', String(sensitivity));
       const resp = await fetch(`${PROCESSING_API_URL}/api/image/white-background`, {
         method: 'POST',

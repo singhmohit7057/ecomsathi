@@ -1,6 +1,6 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { UploadCloud, Download, Trash2, Link, Unlink } from 'lucide-react';
+import { UploadCloud, Download, Trash2, Link, Unlink, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/common/Button';
 import { Alert } from '@/components/common/Alert';
 import SEO from '@/components/common/SEO';
@@ -56,6 +56,7 @@ export const ResizeImage: React.FC = () => {
   const [resultSize, setResultSize] = useState<{ w: number; h: number; bytes: number } | null>(null);
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [downloading, setDownloading] = useState(false);
   const imageRef = useRef<HTMLImageElement | null>(null);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -164,11 +165,13 @@ export const ResizeImage: React.FC = () => {
 
   const handleDownload = () => {
     if (!resultUrl || !file) return;
+    setDownloading(true);
     const a = document.createElement('a');
     a.href = resultUrl;
     const ext = file.name.split('.').pop() ?? 'jpg';
     a.download = `${file.name.replace(/\.[^.]+$/, '')}_resized.${ext}`;
     a.click();
+    setTimeout(() => setDownloading(false), 1500);
   };
 
   const handleReset = () => {
@@ -258,38 +261,42 @@ export const ResizeImage: React.FC = () => {
           {/* Mode controls */}
           {mode === 'dimensions' && (
             <div className="flex flex-col gap-4">
-              <div className="flex items-center gap-3 flex-wrap">
-                <div className="flex flex-col gap-1">
-                  <label className="text-xs font-medium text-[#64748B]">Width (px)</label>
-                  <input
-                    type="number"
-                    min={1}
-                    value={width}
-                    onChange={e => handleWidthChange(e.target.value)}
-                    className="border border-[#E2E8F0] rounded-[4px] px-3 py-2 text-sm w-28 focus:outline-none focus:border-[#2563EB]"
-                  />
+              <div className="grid grid-cols-[1fr_auto_1fr] items-end gap-3">
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-semibold text-[#64748B]">Width (px)</label>
+                  <div className="relative">
+                    <input
+                      type="number"
+                      min={1}
+                      value={width}
+                      onChange={e => handleWidthChange(e.target.value)}
+                      className="w-full border border-[#E2E8F0] rounded-[6px] px-3 py-2.5 text-sm font-semibold text-[#0F172A] focus:outline-none focus:border-[#2563EB] focus:ring-1 focus:ring-[#2563EB]/30"
+                      placeholder="0"
+                    />
+                  </div>
                 </div>
                 <button
                   type="button"
                   onClick={() => setMaintainAspect(v => !v)}
-                  className={`mt-4 p-1.5 rounded border transition-all ${maintainAspect ? 'border-[#2563EB] bg-[#EFF6FF] text-[#2563EB]' : 'border-[#E2E8F0] text-[#94A3B8]'}`}
+                  className={`mb-0.5 p-2 rounded-[6px] border-2 transition-all ${maintainAspect ? 'border-[#2563EB] bg-[#EFF6FF] text-[#2563EB]' : 'border-[#E2E8F0] text-[#94A3B8] hover:border-[#2563EB]'}`}
                   title={maintainAspect ? 'Unlock aspect ratio' : 'Lock aspect ratio'}
                 >
-                  {maintainAspect ? <Link size={14} /> : <Unlink size={14} />}
+                  {maintainAspect ? <Link size={16} /> : <Unlink size={16} />}
                 </button>
-                <div className="flex flex-col gap-1">
-                  <label className="text-xs font-medium text-[#64748B]">Height (px)</label>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-semibold text-[#64748B]">Height (px)</label>
                   <input
                     type="number"
                     min={1}
                     value={height}
                     onChange={e => handleHeightChange(e.target.value)}
-                    className="border border-[#E2E8F0] rounded-[4px] px-3 py-2 text-sm w-28 focus:outline-none focus:border-[#2563EB]"
+                    className="w-full border border-[#E2E8F0] rounded-[6px] px-3 py-2.5 text-sm font-semibold text-[#0F172A] focus:outline-none focus:border-[#2563EB] focus:ring-1 focus:ring-[#2563EB]/30"
+                    placeholder="0"
                   />
                 </div>
               </div>
               <p className="text-xs text-[#64748B]">
-                {maintainAspect ? 'Aspect ratio locked.' : 'Aspect ratio unlocked — enter any dimensions.'}
+                {maintainAspect ? '🔒 Aspect ratio locked — changing one value auto-adjusts the other.' : '🔓 Aspect ratio unlocked — enter any dimensions freely.'}
               </p>
             </div>
           )}
@@ -367,17 +374,21 @@ export const ResizeImage: React.FC = () => {
               {processing ? 'Resizing…' : 'Resize Image'}
             </Button>
             {resultUrl && (
-              <Button variant="ghost" leftIcon={<Download size={15} />} onClick={handleDownload}>
-                Download
+              <Button
+                variant="ghost"
+                leftIcon={downloading ? <CheckCircle2 size={15} className="text-[#16A34A]" /> : <Download size={15} />}
+                onClick={handleDownload}
+              >
+                {downloading ? 'Downloaded!' : 'Download'}
               </Button>
             )}
           </div>
 
           {/* Result preview */}
           {resultUrl && (
-            <div className="border border-[#E2E8F0] rounded-[6px] p-3">
-              <p className="text-xs font-medium text-[#64748B] mb-2">Result Preview</p>
-              <img src={resultUrl} alt="Resized" className="max-h-40 rounded object-contain" />
+            <div className="border border-[#E2E8F0] rounded-[6px] p-3 flex flex-col gap-2">
+              <p className="text-xs font-medium text-[#64748B]">Result Preview — {resultSize?.w}×{resultSize?.h}px</p>
+              <img src={resultUrl} alt="Resized" className="w-full max-h-80 rounded object-contain bg-[#F1F5F9]" />
             </div>
           )}
         </div>

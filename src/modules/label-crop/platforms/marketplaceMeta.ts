@@ -152,13 +152,13 @@ export const MARKETPLACE_META: Record<string, MarketplaceInfo> = {
     h1: 'Meesho Shipping Label Crop Tool',
     features: [
       'Meesho label auto-detection',
-      'Centre-top region extraction',
+      'Auto-detect "Fold Here" separator',
+      'Invoice extraction included',
       'Thermal and A4 output',
       'Bulk PDF processing',
-      'PNG and PDF export',
-      'High-resolution output',
+      'Blank whitespace trimming',
     ],
-    hasInvoice: false,
+    hasInvoice: true,
     color: '#9B2FF7',
     bgColor: '#F6EEFF',
     faqs: [

@@ -33,7 +33,7 @@ export default defineConfig({
     },
   },
   optimizeDeps: {
-    exclude: ["pdfjs-dist"],
+    exclude: ["pdfjs-dist", "@ffmpeg/ffmpeg", "@ffmpeg/util"],
   },
   server: {
     headers: {

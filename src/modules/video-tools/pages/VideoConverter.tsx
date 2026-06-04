@@ -14,11 +14,11 @@ import type { FAQItem, RelatedTool, VideoFormat, VideoQuality } from '../types'
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const RELATED_TOOLS: RelatedTool[] = [
-  { label: 'Compress Video',      to: '/video/compress',            description: 'Reduce file size' },
-  { label: 'Resize Video',        to: '/video/resize',              description: 'Change resolution' },
-  { label: 'Video to GIF',        to: '/video/video-to-gif',        description: 'Convert to GIF' },
-  { label: 'Thumbnail Generator', to: '/video/thumbnail-generator', description: 'Extract thumbnail' },
-  { label: 'Frame Extractor',     to: '/video/frame-extractor',     description: 'Extract frames' },
+  { label: 'Compress Video',      to: '/tools/video/compress',            description: 'Reduce file size' },
+  { label: 'Resize Video',        to: '/tools/video/resize',              description: 'Change resolution' },
+  { label: 'Video to GIF',        to: '/tools/video/to-gif',        description: 'Convert to GIF' },
+  { label: 'Thumbnail Generator', to: '/tools/video/thumbnail-generator', description: 'Extract thumbnail' },
+  { label: 'Frame Extractor',     to: '/tools/video/frame-extractor',     description: 'Extract frames' },
 ]
 
 const FORMAT_DETAILS: Record<VideoFormat, { label: string; note: string; accentClass: string }> = {

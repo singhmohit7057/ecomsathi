@@ -24,16 +24,16 @@ type Position =
   | 'middle-left' | 'center' | 'middle-right'
   | 'bottom-left' | 'bottom-center' | 'bottom-right';
 
-const POSITIONS: { value: Position; label: string }[] = [
-  { value: 'top-left', label: '↖' },
-  { value: 'top-center', label: '↑' },
-  { value: 'top-right', label: '↗' },
-  { value: 'middle-left', label: '←' },
-  { value: 'center', label: '·' },
-  { value: 'middle-right', label: '→' },
-  { value: 'bottom-left', label: '↙' },
-  { value: 'bottom-center', label: '↓' },
-  { value: 'bottom-right', label: '↘' },
+const POSITIONS: { value: Position; label: string; short: string }[] = [
+  { value: 'top-left',     label: 'Top Left',     short: 'TL' },
+  { value: 'top-center',   label: 'Top Center',   short: 'TC' },
+  { value: 'top-right',    label: 'Top Right',    short: 'TR' },
+  { value: 'middle-left',  label: 'Middle Left',  short: 'ML' },
+  { value: 'center',       label: 'Center',       short: 'C'  },
+  { value: 'middle-right', label: 'Middle Right', short: 'MR' },
+  { value: 'bottom-left',  label: 'Bottom Left',  short: 'BL' },
+  { value: 'bottom-center',label: 'Bottom Center',short: 'BC' },
+  { value: 'bottom-right', label: 'Bottom Right', short: 'BR' },
 ];
 
 function getPositionCoords(
@@ -340,22 +340,24 @@ export const ImageWatermark: React.FC = () => {
 
           {/* Position picker */}
           <div className="flex flex-col gap-2">
-            <label className="text-xs font-medium text-[#64748B]">Position</label>
-            <div className="grid grid-cols-3 gap-1 w-32">
+            <label className="text-xs font-medium text-[#64748B]">
+              Position — <span className="text-[#0F172A] font-semibold">{POSITIONS.find(p => p.value === position)?.label}</span>
+            </label>
+            <div className="grid grid-cols-3 gap-1.5 w-fit">
               {POSITIONS.map(p => (
                 <button
                   key={p.value}
                   type="button"
                   onClick={() => setPosition(p.value)}
-                  title={p.value}
+                  title={p.label}
                   className={[
-                    'w-10 h-10 text-lg border rounded-[4px] transition-all',
+                    'w-14 h-10 text-[11px] font-bold border rounded-[6px] transition-all',
                     position === p.value
-                      ? 'bg-[#2563EB] text-white border-[#2563EB]'
-                      : 'bg-white text-[#64748B] border-[#E2E8F0] hover:border-[#2563EB]',
+                      ? 'bg-[#2563EB] text-white border-[#2563EB] shadow-sm'
+                      : 'bg-white text-[#64748B] border-[#E2E8F0] hover:border-[#2563EB] hover:text-[#2563EB]',
                   ].join(' ')}
                 >
-                  {p.label}
+                  {p.short}
                 </button>
               ))}
             </div>
@@ -363,8 +365,8 @@ export const ImageWatermark: React.FC = () => {
 
           {/* Canvas preview */}
           <div className="border border-[#E2E8F0] rounded-[6px] overflow-hidden">
-            <p className="text-xs font-medium text-[#64748B] px-3 py-2 border-b border-[#E2E8F0]">Live Preview</p>
-            <canvas ref={previewCanvasRef} className="w-full max-h-64 object-contain" />
+            <p className="text-xs font-medium text-[#64748B] px-3 py-2 border-b border-[#E2E8F0]">Live Preview (updates as you change settings)</p>
+            <canvas ref={previewCanvasRef} className="w-full max-h-96 object-contain bg-[#F8FAFC]" />
           </div>
 
           {error && <Alert variant="error" message={error} onClose={() => setError(null)} />}

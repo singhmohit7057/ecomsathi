@@ -105,7 +105,7 @@ export const MARKETPLACE_CONFIGS: Record<string, MarketplaceCropConfig> = {
     slug: 'amazon',
     pageStrategy: 'multi_page',
     marginTrim: 0.01,
-    note: 'Amazon order PDFs have the shipping label on page 1 and the invoice on page 2. Pages 3+ (blank) are skipped automatically.',
+    note: 'Amazon PDFs: odd pages = shipping labels, even pages = invoices. Works with both single orders and merged multi-order PDFs.',
     outputSizes: {
       thermal: { width: 100, height: 150 },
       a4: { labelsPerPage: 4 },
@@ -115,17 +115,19 @@ export const MARKETPLACE_CONFIGS: Record<string, MarketplaceCropConfig> = {
   // =========================================================================
   // FLIPKART
   // Structure: single-page PDF — every page contains BOTH label and invoice.
-  //   • Label  — centred in the upper portion of each page
-  //   • Invoice — rotated 90° in the lower portion of each page
+  //   • Label  — full width, top ~43% (ends just above the dashed separator)
+  //   • Dashed separator sits at ~43–47%
+  //   • Invoice — full width, bottom 53% (y=0.47 to 1.0), rotated 90° to portrait
+  //     The cropped strip is landscape (210×125mm) so rotate:90 makes it portrait.
   // =========================================================================
   flipkart: {
     marketplace: 'Flipkart',
     slug: 'flipkart',
     pageStrategy: 'single_page',
-    labelRegion:   { x: 0.31,  y: 0.027, width: 0.381, height: 0.428 },
-    invoiceRegion: { x: 0.05,  y: 0.46,  width: 0.91,  height: 0.441, rotate: 90 },
-    marginTrim: 0,
-    note: 'Each Flipkart PDF page contains both the shipping label (top) and the invoice (bottom, rotated). Enable "Include invoice" to extract both.',
+    labelRegion:   { x: 0.31, y: 0.027, width: 0.381, height: 0.428 },
+    invoiceRegion: { x: 0.06, y: 0.46, width: 0.88, height: 0.44, rotate: 90 },
+    marginTrim: 0.005,
+    note: 'Each Flipkart PDF page has the shipping label on the top half and the tax invoice on the bottom half, separated by a dashed line.',
     outputSizes: {
       thermal: { width: 100, height: 150 },
       a4: { labelsPerPage: 4 },
@@ -143,7 +145,7 @@ export const MARKETPLACE_CONFIGS: Record<string, MarketplaceCropConfig> = {
     marketplace: 'Myntra',
     slug: 'myntra',
     pageStrategy: 'full_page',
-    marginTrim: 0.012,
+    marginTrim: 0,
     note: 'Myntra provides a separate label PDF and a separate invoice PDF. Upload the label PDF here — each page becomes one print-ready label. For invoices, upload the invoice PDF in a separate session.',
     outputSizes: {
       thermal: { width: 100, height: 150 },
@@ -153,17 +155,25 @@ export const MARKETPLACE_CONFIGS: Record<string, MarketplaceCropConfig> = {
 
   // =========================================================================
   // MEESHO
-  // Structure: single-page PDF — label at top, invoice below, but the
-  // label HEIGHT is dynamic (depends on address / product name length).
-  // The engine auto-detects the horizontal separator row.
+  // Structure: single-page PDF — one order per page.
+  //   • Label (top ~50–58%) — Customer address, courier, QR code, AWB
+  //     barcode, Product Details (SKU/Size/Qty/Color/Order No.)
+  //   • "Fold Here" dashed line separator — varies 50–58% based on address
+  //     length and courier destination code length
+  //   • Invoice (below fold, ends ~85–90%) — TAX INVOICE with Bill To /
+  //     Ship To / line items / total
+  //   • Blank whitespace — remaining ~10–15% at bottom, excluded from crop
+  //
+  // Scan range 0.44–0.62 targets the "Fold Here" zone accurately.
+  // marginTrim trims page edges and blank bottom space.
   // =========================================================================
   meesho: {
     marketplace: 'Meesho',
     slug: 'meesho',
     pageStrategy: 'dynamic_split',
-    marginTrim: 0.01,
-    splitScanRange: [0.18, 0.65],
-    note: 'Meesho labels vary in height depending on the shipping address length. The tool auto-detects the separator line between label and invoice on each page.',
+    marginTrim: 0.008,
+    splitScanRange: [0.20, 0.72],
+    note: 'Each Meesho page has the shipping label on top and the tax invoice below, separated by a "Fold Here" dashed line. Label height varies per order — the tool auto-detects the separator on each page.',
     outputSizes: {
       thermal: { width: 100, height: 150 },
       a4: { labelsPerPage: 4 },
@@ -230,16 +240,16 @@ export const MARKETPLACE_CONFIGS: Record<string, MarketplaceCropConfig> = {
 
   // =========================================================================
   // SHOPSY (by Flipkart)
-  // Identical PDF structure to Flipkart.
+  // Identical PDF structure to Flipkart — label top 47%, invoice bottom 53%.
   // =========================================================================
   shopsy: {
     marketplace: 'Shopsy',
     slug: 'shopsy',
     pageStrategy: 'single_page',
-    labelRegion:   { x: 0.31,  y: 0.027, width: 0.381, height: 0.428 },
-    invoiceRegion: { x: 0.05,  y: 0.46,  width: 0.91,  height: 0.441, rotate: 90 },
-    marginTrim: 0,
-    note: 'Shopsy (by Flipkart) uses the same PDF layout as Flipkart — label at top-centre, invoice rotated at the bottom of each page.',
+    labelRegion:   { x: 0.31, y: 0.027, width: 0.381, height: 0.428 },
+    invoiceRegion: { x: 0.06, y: 0.46, width: 0.88, height: 0.44, rotate: 90 },
+    marginTrim: 0.005,
+    note: 'Shopsy (by Flipkart) uses the same PDF layout as Flipkart — shipping label on the top half, tax invoice on the bottom half.',
     outputSizes: {
       thermal: { width: 100, height: 150 },
       a4: { labelsPerPage: 4 },

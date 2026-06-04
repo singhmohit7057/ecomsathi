@@ -58,9 +58,9 @@ export const VideoSidebar: React.FC<VideoSidebarProps> = ({
         <ul className="flex flex-col gap-1.5 text-sm">
           {[
             { label: 'Image Tools', to: '/image' },
-            { label: 'PDF Tools', to: '/pdf' },
-            { label: 'SKU Tools', to: '/sku' },
-            { label: 'GST Tools', to: '/gst' },
+            { label: 'PDF Tools',   to: '/tools/pdf' },
+            { label: 'SKU Tools',   to: '/tools/sku' },
+            { label: 'GST Tools',   to: '/gst' },
           ].map((link) => (
             <li key={link.to}>
               <Link

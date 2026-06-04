@@ -24,50 +24,52 @@ interface GSTINDetails {
   raw?: Record<string, unknown>;
 }
 
-/**
- * Normalizes the Cashfree GST API response to a consistent GSTINDetails object.
- */
 function normalizeGSTResponse(data: Record<string, unknown>): GSTINDetails {
   const d = (data as Record<string, Record<string, unknown>>);
   const gstDetails = (d.data || d) as Record<string, unknown>;
 
+  const pradr = gstDetails.pradr as Record<string, unknown> | undefined;
+  const principalAddress = pradr
+    ? (pradr.adr || pradr.addr || '') as string
+    : (gstDetails.principalPlaceOfBusiness || gstDetails.principal_place || '') as string;
+
+  const adadr = gstDetails.adadr;
+  const additionalAddresses: string[] = Array.isArray(adadr)
+    ? (adadr as Record<string, unknown>[]).map(a => (a.adr || a.addr || JSON.stringify(a)) as string)
+    : [];
+
   return {
     gstin: (gstDetails.gstin || gstDetails.GSTIN || '') as string,
-    legalName: (gstDetails.legalNameOfBusiness || gstDetails.legal_name || gstDetails.lgnm || '') as string,
-    tradeName: (gstDetails.tradeName || gstDetails.trade_name || gstDetails.tradeNam || '') as string,
-    status: (gstDetails.gstinStatus || gstDetails.status || gstDetails.sts || 'UNKNOWN') as string,
-    registrationDate: (gstDetails.dateOfRegistration || gstDetails.registration_date || gstDetails.rgdt || '') as string,
-    taxpayerType: (gstDetails.taxpayerType || gstDetails.taxpayer_type || gstDetails.dty || '') as string,
-    stateCode: (gstDetails.stateCode || gstDetails.state_code || gstDetails.stj_cd || '') as string,
-    stateJurisdiction: (gstDetails.stateJurisdiction || gstDetails.state_jurisdiction || gstDetails.stj || '') as string,
-    centreJurisdiction: (gstDetails.centreJurisdiction || gstDetails.centre_jurisdiction || gstDetails.ctj || '') as string,
-    constitutionOfBusiness: (gstDetails.constitutionOfBusiness || gstDetails.constitution || gstDetails.ctb || '') as string,
-    principalPlaceOfBusiness: (gstDetails.principalPlaceOfBusiness || gstDetails.principal_place || gstDetails.pradr || '') as string,
-    additionalPlacesOfBusiness: (Array.isArray(gstDetails.additionalPlacesOfBusiness)
-      ? gstDetails.additionalPlacesOfBusiness
-      : gstDetails.adadr
-      ? [gstDetails.adadr]
-      : []) as string[],
-    cancellationDate: (gstDetails.dateOfCancellation || gstDetails.cancellation_date || gstDetails.cxdt) as string | undefined,
+    legalName: (gstDetails.lgnm || gstDetails.legalNameOfBusiness || gstDetails.legal_name || '') as string,
+    tradeName: (gstDetails.tradeNam || gstDetails.tradeName || gstDetails.trade_name || '') as string,
+    status: (gstDetails.sts || gstDetails.gstinStatus || gstDetails.status || 'UNKNOWN') as string,
+    registrationDate: (gstDetails.rgdt || gstDetails.dateOfRegistration || gstDetails.registration_date || '') as string,
+    taxpayerType: (gstDetails.dty || gstDetails.taxpayerType || gstDetails.taxpayer_type || '') as string,
+    stateCode: (gstDetails.stj_cd || gstDetails.stateCode || gstDetails.state_code || '') as string,
+    stateJurisdiction: (gstDetails.stj || gstDetails.stateJurisdiction || gstDetails.state_jurisdiction || '') as string,
+    centreJurisdiction: (gstDetails.ctj || gstDetails.centreJurisdiction || gstDetails.centre_jurisdiction || '') as string,
+    constitutionOfBusiness: (gstDetails.ctb || gstDetails.constitutionOfBusiness || gstDetails.constitution || '') as string,
+    principalPlaceOfBusiness: principalAddress,
+    additionalPlacesOfBusiness: additionalAddresses,
+    cancellationDate: (gstDetails.cxdt || gstDetails.dateOfCancellation || gstDetails.cancellation_date) as string | undefined,
     raw: gstDetails as Record<string, unknown>,
   };
 }
 
 // ---------------------------------------------------------------------------
-// POST /api/gst/verify
-// Verifies a GSTIN using the Cashfree GST verification API
+// GET /api/gst/verify?gstin=XXX  (also accepts POST with body)
+// Verifies a GSTIN using the GSTN public search API (free, no key required)
 // ---------------------------------------------------------------------------
-router.post(
+router.all(
   '/verify',
   asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
-    const { gstin } = req.body as GSTVerifyRequest;
+    const { gstin } = (req.method === 'GET' ? req.query : req.body) as GSTVerifyRequest;
 
     if (!gstin) {
       res.status(400).json({ error: 'gstin is required' });
       return;
     }
 
-    // Basic GSTIN format validation (15-character alphanumeric)
     const gstinRegex = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/;
     if (!gstinRegex.test(gstin.toUpperCase())) {
       res.status(400).json({
@@ -76,65 +78,58 @@ router.post(
       return;
     }
 
-    const clientId = process.env.CASHFREE_CLIENT_ID;
-    const clientSecret = process.env.CASHFREE_CLIENT_SECRET;
-
-    if (!clientId || !clientSecret) {
-      res.status(503).json({
-        error: 'Live verification not configured',
-        message: 'GST verification service is not available. Please configure Cashfree credentials.',
-      });
-      return;
-    }
-
     try {
-      const response = await fetch('https://api.cashfree.com/verification/gst', {
-        method: 'POST',
+      const url = `https://services.gst.gov.in/services/api/search/taxpayerDetails?gstin=${gstin.toUpperCase()}`;
+
+      const response = await fetch(url, {
+        method: 'GET',
         headers: {
-          'Content-Type': 'application/json',
-          'x-api-version': '2023-08-01',
-          'x-client-id': clientId,
-          'x-client-secret': clientSecret,
+          'Accept': 'application/json, text/plain, */*',
+          'Accept-Language': 'en-US,en;q=0.9',
+          'Referer': 'https://services.gst.gov.in/services/searchtp',
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+          'Origin': 'https://services.gst.gov.in',
         },
-        body: JSON.stringify({ gstin: gstin.toUpperCase() }),
       });
+
+      if (response.status === 404 || response.status === 400) {
+        res.status(404).json({
+          error: 'GSTIN not found',
+          message: `No records found for GSTIN: ${gstin.toUpperCase()}`,
+        });
+        return;
+      }
 
       if (!response.ok) {
-        const errorBody = await response.json().catch(() => ({}));
-        const errorMsg = (errorBody as { message?: string }).message || `API returned status ${response.status}`;
-
-        if (response.status === 404) {
-          res.status(404).json({
-            error: 'GSTIN not found',
-            message: `No records found for GSTIN: ${gstin}`,
-          });
-          return;
-        }
-
-        if (response.status === 401 || response.status === 403) {
-          res.status(503).json({
-            error: 'Authentication failed',
-            message: 'GST verification service credentials are invalid',
-          });
-          return;
-        }
-
-        res.status(response.status).json({ error: errorMsg });
+        res.status(502).json({
+          error: 'GSTN portal returned an error',
+          message: `Status ${response.status}`,
+        });
         return;
       }
 
       const data = (await response.json()) as Record<string, unknown>;
+
+      // GSTN returns { errorCode: "SWEB_9035" } when GSTIN not found
+      if (data.errorCode || data.error) {
+        res.status(404).json({
+          error: 'GSTIN not found',
+          message: `No records found for GSTIN: ${gstin.toUpperCase()}`,
+        });
+        return;
+      }
+
       const normalized = normalizeGSTResponse(data);
 
+      // Spread details flat so frontend can read legalName, status etc directly
       res.json({
         success: true,
-        gstin: gstin.toUpperCase(),
-        details: normalized,
+        ...normalized,
       });
     } catch (err) {
-      console.error('[GST Verify] Error calling Cashfree API:', err);
+      console.error('[GST Verify] Error calling GSTN portal:', err);
       res.status(502).json({
-        error: 'Failed to connect to GST verification service',
+        error: 'Failed to connect to GSTN portal',
         message: err instanceof Error ? err.message : 'Unknown error',
       });
     }

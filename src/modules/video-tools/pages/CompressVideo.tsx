@@ -14,11 +14,11 @@ import type { FAQItem, RelatedTool, VideoQuality } from '../types'
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const RELATED_TOOLS: RelatedTool[] = [
-  { label: 'Resize Video',        to: '/video/resize',              description: 'Change resolution' },
-  { label: 'Video Converter',     to: '/video/converter',           description: 'Change format' },
-  { label: 'Video to GIF',        to: '/video/video-to-gif',        description: 'Convert to GIF' },
-  { label: 'Thumbnail Generator', to: '/video/thumbnail-generator', description: 'Extract thumbnail' },
-  { label: 'Frame Extractor',     to: '/video/frame-extractor',     description: 'Extract frames' },
+  { label: 'Resize Video',        to: '/tools/video/resize',              description: 'Change resolution' },
+  { label: 'Video Converter',     to: '/tools/video/converter',           description: 'Change format' },
+  { label: 'Video to GIF',        to: '/tools/video/to-gif',        description: 'Convert to GIF' },
+  { label: 'Thumbnail Generator', to: '/tools/video/thumbnail-generator', description: 'Extract thumbnail' },
+  { label: 'Frame Extractor',     to: '/tools/video/frame-extractor',     description: 'Extract frames' },
 ]
 
 const FAQS: FAQItem[] = [

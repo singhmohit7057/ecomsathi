@@ -94,7 +94,6 @@ export default function GSTCalculator() {
       metaKeywords="GST calculator, GST calculator online, CGST SGST calculator, IGST calculator, GST tax calculator India"
       canonicalPath="/gst/calculator"
       crumbs={[{ label: 'GST Tools', to: '/gst' }, { label: 'GST Calculator' }]}
-      relatedTools={RELATED_TOOLS}
       faqs={FAQS}
     >
       <div className="max-w-2xl space-y-6">

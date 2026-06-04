@@ -12,11 +12,11 @@ import type { FAQItem, RelatedTool } from '../types'
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const RELATED_TOOLS: RelatedTool[] = [
-  { label: 'Frame Extractor',  to: '/video/frame-extractor', description: 'Extract many frames' },
-  { label: 'Video to GIF',     to: '/video/video-to-gif',    description: 'Animate a clip' },
-  { label: 'Compress Video',   to: '/video/compress',        description: 'Reduce file size' },
-  { label: 'Resize Video',     to: '/video/resize',          description: 'Change resolution' },
-  { label: 'Video Converter',  to: '/video/converter',       description: 'Change format' },
+  { label: 'Frame Extractor',  to: '/tools/video/frame-extractor', description: 'Extract many frames' },
+  { label: 'Video to GIF',     to: '/tools/video/to-gif',    description: 'Animate a clip' },
+  { label: 'Compress Video',   to: '/tools/video/compress',        description: 'Reduce file size' },
+  { label: 'Resize Video',     to: '/tools/video/resize',          description: 'Change resolution' },
+  { label: 'Video Converter',  to: '/tools/video/converter',       description: 'Change format' },
 ]
 
 const FAQS: FAQItem[] = [

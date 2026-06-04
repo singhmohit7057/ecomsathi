@@ -24,7 +24,7 @@ export const VideoToolLayout: React.FC<VideoToolLayoutProps> = ({
 }) => {
   const defaultBreadcrumbs = [
     { label: 'Tools', to: '/tools' },
-    { label: 'Video Tools', to: '/video' },
+    { label: 'Video Tools', to: '/tools/video' },
     { label: title },
   ]
 

@@ -1,89 +1,78 @@
 /**
  * ffmpegService.ts
  * ─────────────────────────────────────────────────────────────
- * Thin wrapper around @ffmpeg/ffmpeg (WebAssembly build).
+ * Wrapper around @ffmpeg/ffmpeg v0.12.x (WebAssembly).
  *
- * IMPORTANT — browser-side FFmpeg.wasm notes:
- * ─────────────────────────────────────────────────────────────
- * 1. @ffmpeg/ffmpeg must be installed:
- *      npm install @ffmpeg/ffmpeg @ffmpeg/util
+ * Requirements:
+ *   npm install @ffmpeg/ffmpeg @ffmpeg/util
  *
- * 2. The WASM core files (ffmpeg-core.js, ffmpeg-core.wasm) are
- *    served from a CDN here to avoid bundling 30MB into the app.
- *    For production, self-host or use a well-known CDN.
+ * vite.config.ts must exclude these from dep-optimizer:
+ *   optimizeDeps: { exclude: ['@ffmpeg/ffmpeg', '@ffmpeg/util'] }
  *
- * 3. SharedArrayBuffer is required for multi-threading.
- *    Ensure the server sends these headers:
- *      Cross-Origin-Opener-Policy: same-origin
- *      Cross-Origin-Embedder-Policy: require-corp
- *
- * 4. If SharedArrayBuffer is unavailable (some browsers / hosts),
- *    a single-threaded build should be used instead.
- *
- * This service is a SINGLETON — load() is called once.
+ * Dev server must send COOP/COEP headers for SharedArrayBuffer:
+ *   Cross-Origin-Opener-Policy: same-origin
+ *   Cross-Origin-Embedder-Policy: require-corp
+ * (already set in the project's vite.config.ts)
  * ─────────────────────────────────────────────────────────────
  */
 
+import { FFmpeg } from '@ffmpeg/ffmpeg'
+import { toBlobURL } from '@ffmpeg/util'
 import type { ProcessingOptions, VideoFormat } from '../types'
-
-// Types only — runtime import via dynamic import below
-type FFmpegInstance = {
-  load: (opts: object) => Promise<void>
-  writeFile: (name: string, data: Uint8Array) => Promise<void>
-  readFile: (name: string) => Promise<Uint8Array | string>
-  deleteFile: (name: string) => Promise<void>
-  exec: (args: string[]) => Promise<number>
-  on: (event: string, cb: (data: unknown) => void) => void
-  off: (event: string, cb: (data: unknown) => void) => void
-  terminate: () => void
-}
 
 const CDN_BASE = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd'
 
-let ffmpegInstance: FFmpegInstance | null = null
-let loadPromise: Promise<FFmpegInstance> | null = null
+let ffmpegInstance: FFmpeg | null = null
+let loadPromise: Promise<FFmpeg> | null = null
 
-async function getFFmpeg(): Promise<FFmpegInstance> {
+async function getFFmpeg(): Promise<FFmpeg> {
   if (ffmpegInstance) return ffmpegInstance
   if (loadPromise) return loadPromise
 
   loadPromise = (async () => {
-    const { FFmpeg } = await import('@ffmpeg/ffmpeg' as string) as { FFmpeg: new () => FFmpegInstance }
-    const instance = new FFmpeg()
-    await instance.load({
-      coreURL: `${CDN_BASE}/ffmpeg-core.js`,
-      wasmURL: `${CDN_BASE}/ffmpeg-core.wasm`,
+    const ff = new FFmpeg()
+    await ff.load({
+      coreURL: await toBlobURL(`${CDN_BASE}/ffmpeg-core.js`,   'text/javascript'),
+      wasmURL: await toBlobURL(`${CDN_BASE}/ffmpeg-core.wasm`, 'application/wasm'),
     })
-    ffmpegInstance = instance
-    return instance
+    ffmpegInstance = ff
+    return ff
   })()
 
   return loadPromise
 }
 
-/** Read a File into Uint8Array */
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
 async function fileToUint8Array(file: File): Promise<Uint8Array> {
-  const buf = await file.arrayBuffer()
-  return new Uint8Array(buf)
+  return new Uint8Array(await file.arrayBuffer())
 }
 
-/** Build output filename */
 function outputName(inputName: string, suffix: string, ext: string): string {
-  const base = inputName.replace(/\.[^.]+$/, '')
+  const base = inputName.replace(/\.[^.]+$/, '').replace(/[^a-zA-Z0-9_-]/g, '_')
   return `${base}_${suffix}.${ext}`
 }
-
-// ─── Quality → CRF ────────────────────────────────────────────────────────────
 
 function qualityToCRF(quality: 'high' | 'medium' | 'low'): number {
   return { high: 18, medium: 26, low: 34 }[quality]
 }
 
-// ─── Public API ────────────────────────────────────────────────────────────────
+function formatToMime(format: VideoFormat): string {
+  const map: Record<VideoFormat, string> = {
+    mp4:  'video/mp4',
+    mov:  'video/quicktime',
+    avi:  'video/x-msvideo',
+    webm: 'video/webm',
+    mkv:  'video/x-matroska',
+  }
+  return map[format] ?? 'video/mp4'
+}
+
+// ─── Types ────────────────────────────────────────────────────────────────────
 
 export interface FFmpegProgressEvent {
-  progress: number  // 0–1
-  time: number      // microseconds processed
+  progress: number   // 0–1
+  time: number       // microseconds
 }
 
 export interface FFmpegTask {
@@ -92,41 +81,7 @@ export interface FFmpegTask {
   mimeType: string
 }
 
-// ── Convert video format ───────────────────────────────────────────────────────
-
-export async function convertVideo(
-  file: File,
-  targetFormat: VideoFormat,
-  opts: ProcessingOptions = {},
-  onProgress?: (p: FFmpegProgressEvent) => void,
-): Promise<FFmpegTask> {
-  const ff = await getFFmpeg()
-  const inName = `input.${file.name.split('.').pop() ?? 'mp4'}`
-  const outExt = targetFormat
-  const outName = outputName(file.name, 'converted', outExt)
-  const mime = formatToMime(targetFormat)
-
-  if (onProgress) ff.on('progress', onProgress as (d: unknown) => void)
-
-  try {
-    await ff.writeFile(inName, await fileToUint8Array(file))
-    const crf = qualityToCRF(opts.quality ?? 'medium')
-    const args = ['-i', inName, '-crf', String(crf), '-preset', 'fast']
-    if (targetFormat === 'webm') {
-      args.push('-c:v', 'libvpx-vp9', '-c:a', 'libopus')
-    }
-    args.push(outName)
-    await ff.exec(args)
-    const data = await ff.readFile(outName) as Uint8Array
-    await ff.deleteFile(inName)
-    await ff.deleteFile(outName)
-    return { result: data, outputName: outName, mimeType: mime }
-  } finally {
-    if (onProgress) ff.off('progress', onProgress as (d: unknown) => void)
-  }
-}
-
-// ── Compress video ─────────────────────────────────────────────────────────────
+// ─── Compress Video ───────────────────────────────────────────────────────────
 
 export async function compressVideo(
   file: File,
@@ -134,12 +89,15 @@ export async function compressVideo(
   onProgress?: (p: FFmpegProgressEvent) => void,
 ): Promise<FFmpegTask> {
   const ff = await getFFmpeg()
-  const inExt = file.name.split('.').pop() ?? 'mp4'
-  const inName = `input.${inExt}`
-  const outName = outputName(file.name, 'compressed', inExt)
+  const inExt = (file.name.split('.').pop() ?? 'mp4').toLowerCase()
+  const inName  = `in_compress.${inExt}`
+  const outName = `out_compress.mp4`
   const crf = qualityToCRF(opts.quality ?? 'medium')
 
-  if (onProgress) ff.on('progress', onProgress as (d: unknown) => void)
+  const cb = onProgress
+    ? (e: { progress: number; time: number }) => onProgress(e)
+    : null
+  if (cb) ff.on('progress', cb)
 
   try {
     await ff.writeFile(inName, await fileToUint8Array(file))
@@ -147,21 +105,22 @@ export async function compressVideo(
       '-i', inName,
       '-c:v', 'libx264',
       '-crf', String(crf),
-      '-preset', 'fast',
+      '-preset', 'ultrafast',
       '-c:a', 'aac',
       '-b:a', '128k',
+      '-movflags', '+faststart',
       outName,
     ])
     const data = await ff.readFile(outName) as Uint8Array
-    await ff.deleteFile(inName)
-    await ff.deleteFile(outName)
-    return { result: data, outputName: outName, mimeType: 'video/mp4' }
+    try { await ff.deleteFile(inName) }  catch { /* ok */ }
+    try { await ff.deleteFile(outName) } catch { /* ok */ }
+    return { result: data, outputName: outputName(file.name, 'compressed', 'mp4'), mimeType: 'video/mp4' }
   } finally {
-    if (onProgress) ff.off('progress', onProgress as (d: unknown) => void)
+    if (cb) ff.off('progress', cb)
   }
 }
 
-// ── Resize video ───────────────────────────────────────────────────────────────
+// ─── Resize Video ─────────────────────────────────────────────────────────────
 
 export async function resizeVideo(
   file: File,
@@ -170,35 +129,106 @@ export async function resizeVideo(
   onProgress?: (p: FFmpegProgressEvent) => void,
 ): Promise<FFmpegTask> {
   const ff = await getFFmpeg()
-  const inExt = file.name.split('.').pop() ?? 'mp4'
-  const inName = `input.${inExt}`
-  const outName = outputName(file.name, `${width}x${height}`, 'mp4')
+  const inExt  = (file.name.split('.').pop() ?? 'mp4').toLowerCase()
+  const inName  = `in_resize.${inExt}`
+  const outName = `out_resize.mp4`
 
-  if (onProgress) ff.on('progress', onProgress as (d: unknown) => void)
+  // ensure even dimensions (required by libx264)
+  const w = width  % 2 === 0 ? width  : width  - 1
+  const h = height % 2 === 0 ? height : height - 1
+  const scale = `scale=${w}:${h}:force_original_aspect_ratio=decrease,pad=${w}:${h}:(ow-iw)/2:(oh-ih)/2:color=black`
+
+  const cb = onProgress
+    ? (e: { progress: number; time: number }) => onProgress(e)
+    : null
+  if (cb) ff.on('progress', cb)
 
   try {
     await ff.writeFile(inName, await fileToUint8Array(file))
-    // vf scale: keep aspect ratio, pad to exact box if needed
-    const scale = `scale=${width}:${height}:force_original_aspect_ratio=decrease,pad=${width}:${height}:(ow-iw)/2:(oh-ih)/2`
     await ff.exec([
       '-i', inName,
       '-vf', scale,
       '-c:v', 'libx264',
       '-crf', '22',
-      '-preset', 'fast',
+      '-preset', 'ultrafast',
       '-c:a', 'copy',
+      '-movflags', '+faststart',
       outName,
     ])
     const data = await ff.readFile(outName) as Uint8Array
-    await ff.deleteFile(inName)
-    await ff.deleteFile(outName)
-    return { result: data, outputName: outName, mimeType: 'video/mp4' }
+    try { await ff.deleteFile(inName) }  catch { /* ok */ }
+    try { await ff.deleteFile(outName) } catch { /* ok */ }
+    return {
+      result: data,
+      outputName: outputName(file.name, `${w}x${h}`, 'mp4'),
+      mimeType: 'video/mp4',
+    }
   } finally {
-    if (onProgress) ff.off('progress', onProgress as (d: unknown) => void)
+    if (cb) ff.off('progress', cb)
   }
 }
 
-// ── Video to GIF ───────────────────────────────────────────────────────────────
+// ─── Convert Video Format ─────────────────────────────────────────────────────
+
+export async function convertVideo(
+  file: File,
+  targetFormat: VideoFormat,
+  opts: ProcessingOptions = {},
+  onProgress?: (p: FFmpegProgressEvent) => void,
+): Promise<FFmpegTask> {
+  const ff = await getFFmpeg()
+  const inExt  = (file.name.split('.').pop() ?? 'mp4').toLowerCase()
+  const inName  = `in_convert.${inExt}`
+  const outName = `out_convert.${targetFormat}`
+  const mime    = formatToMime(targetFormat)
+  const crf     = qualityToCRF(opts.quality ?? 'medium')
+
+  const cb = onProgress
+    ? (e: { progress: number; time: number }) => onProgress(e)
+    : null
+  if (cb) ff.on('progress', cb)
+
+  try {
+    await ff.writeFile(inName, await fileToUint8Array(file))
+
+    const args: string[] = ['-i', inName]
+
+    if (targetFormat === 'webm') {
+      args.push('-c:v', 'libvpx', '-crf', String(crf), '-b:v', '0', '-c:a', 'libopus')
+    } else if (targetFormat === 'mp4' || targetFormat === 'mov') {
+      args.push('-c:v', 'libx264', '-crf', String(crf), '-preset', 'ultrafast', '-c:a', 'aac', '-b:a', '128k')
+      if (targetFormat === 'mp4') args.push('-movflags', '+faststart')
+    } else if (targetFormat === 'avi') {
+      args.push('-c:v', 'libx264', '-crf', String(crf), '-preset', 'ultrafast', '-c:a', 'mp3')
+    } else {
+      // mkv — copy streams when possible
+      args.push('-c:v', 'libx264', '-crf', String(crf), '-preset', 'ultrafast', '-c:a', 'aac')
+    }
+
+    args.push(outName)
+    await ff.exec(args)
+    const data = await ff.readFile(outName) as Uint8Array
+    try { await ff.deleteFile(inName) }  catch { /* ok */ }
+    try { await ff.deleteFile(outName) } catch { /* ok */ }
+    return {
+      result: data,
+      outputName: outputName(file.name, 'converted', targetFormat),
+      mimeType: mime,
+    }
+  } finally {
+    if (cb) ff.off('progress', cb)
+  }
+}
+
+// ─── Video to GIF (two-pass palettegen) ───────────────────────────────────────
+//
+// Two-pass approach is required for high-quality GIFs:
+//   Pass 1 — generate optimal colour palette from the video frames
+//   Pass 2 — apply that palette when writing the GIF
+//
+// This reliably works in FFmpeg.wasm where the single-pass split
+// filtergraph (split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse)
+// is often unsupported.
 
 export async function videoToGif(
   file: File,
@@ -206,139 +236,103 @@ export async function videoToGif(
   onProgress?: (p: FFmpegProgressEvent) => void,
 ): Promise<FFmpegTask> {
   const ff = await getFFmpeg()
-  const inExt = file.name.split('.').pop() ?? 'mp4'
-  const inName = `input.${inExt}`
-  const outName = outputName(file.name, 'animated', 'gif')
-  const fps = opts.gifFps ?? 10
-  const gifWidth = opts.gifWidth ?? 480
-  const startTime = opts.startTime ?? 0
-  const endTime = opts.endTime ?? undefined
+  const inExt   = (file.name.split('.').pop() ?? 'mp4').toLowerCase()
+  const inName  = `in_gif.${inExt}`
+  const palette = 'palette.png'
+  const outName = `out_animated.gif`
 
-  if (onProgress) ff.on('progress', onProgress as (d: unknown) => void)
+  const fps      = opts.gifFps    ?? 10
+  const gifWidth = opts.gifWidth  ?? 480
+  const start    = opts.startTime ?? 0
+  const end      = opts.endTime
+
+  // ensure even width
+  const w = gifWidth % 2 === 0 ? gifWidth : gifWidth - 1
+
+  const cb = onProgress
+    ? (e: { progress: number; time: number }) => onProgress(e)
+    : null
+  if (cb) ff.on('progress', cb)
 
   try {
     await ff.writeFile(inName, await fileToUint8Array(file))
-    const args: string[] = ['-i', inName]
-    if (startTime > 0) args.push('-ss', String(startTime))
-    if (endTime !== undefined) args.push('-to', String(endTime))
-    args.push(
-      '-vf', `fps=${fps},scale=${gifWidth}:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse`,
-      '-loop', '0',
-      outName,
+
+    // ── Pass 1: generate palette ──────────────────────────────
+    const pass1: string[] = ['-i', inName]
+    if (start > 0)            pass1.push('-ss', String(start))
+    if (end !== undefined)    pass1.push('-to', String(end))
+    pass1.push(
+      '-vf', `fps=${fps},scale=${w}:-1:flags=lanczos,palettegen=max_colors=256:stats_mode=diff`,
+      '-y', palette,
     )
-    await ff.exec(args)
+    await ff.exec(pass1)
+
+    // ── Pass 2: apply palette → GIF ───────────────────────────
+    const pass2: string[] = ['-i', inName, '-i', palette]
+    if (start > 0)            pass2.push('-ss', String(start))
+    if (end !== undefined)    pass2.push('-to', String(end))
+    pass2.push(
+      '-lavfi', `fps=${fps},scale=${w}:-1:flags=lanczos [x];[x][1:v]paletteuse=dither=bayer:bayer_scale=5:diff_mode=rectangle`,
+      '-loop', '0',
+      '-y', outName,
+    )
+    await ff.exec(pass2)
+
     const data = await ff.readFile(outName) as Uint8Array
-    await ff.deleteFile(inName)
-    await ff.deleteFile(outName)
-    return { result: data, outputName: outName, mimeType: 'image/gif' }
+    try { await ff.deleteFile(inName) }  catch { /* ok */ }
+    try { await ff.deleteFile(palette) } catch { /* ok */ }
+    try { await ff.deleteFile(outName) } catch { /* ok */ }
+    return {
+      result: data,
+      outputName: outputName(file.name, 'animated', 'gif'),
+      mimeType: 'image/gif',
+    }
   } finally {
-    if (onProgress) ff.off('progress', onProgress as (d: unknown) => void)
+    if (cb) ff.off('progress', cb)
   }
 }
 
-// ── Extract thumbnail ──────────────────────────────────────────────────────────
+// ─── Extract Single Thumbnail ─────────────────────────────────────────────────
+// Note: ThumbnailGenerator uses the browser Canvas API (no FFmpeg needed).
+// This is kept for programmatic use only.
 
 export async function extractThumbnail(
   file: File,
   atSeconds = 1,
 ): Promise<FFmpegTask> {
   const ff = await getFFmpeg()
-  const inExt = file.name.split('.').pop() ?? 'mp4'
-  const inName = `input.${inExt}`
-  const outName = outputName(file.name, 'thumbnail', 'jpg')
+  const inExt  = (file.name.split('.').pop() ?? 'mp4').toLowerCase()
+  const inName  = `in_thumb.${inExt}`
+  const outName = `out_thumb.jpg`
 
   try {
     await ff.writeFile(inName, await fileToUint8Array(file))
     await ff.exec([
-      '-i', inName,
       '-ss', String(atSeconds),
+      '-i', inName,
       '-frames:v', '1',
       '-q:v', '2',
-      outName,
+      '-y', outName,
     ])
     const data = await ff.readFile(outName) as Uint8Array
-    await ff.deleteFile(inName)
-    await ff.deleteFile(outName)
-    return { result: data, outputName: outName, mimeType: 'image/jpeg' }
+    try { await ff.deleteFile(inName) }  catch { /* ok */ }
+    try { await ff.deleteFile(outName) } catch { /* ok */ }
+    return { result: data, outputName: outputName(file.name, 'thumbnail', 'jpg'), mimeType: 'image/jpeg' }
   } catch {
-    // If deleteFile fails it's fine
-    return { result: new Uint8Array(), outputName: outName, mimeType: 'image/jpeg' }
+    return { result: new Uint8Array(), outputName: 'thumbnail.jpg', mimeType: 'image/jpeg' }
   }
 }
 
-// ── Extract frames ─────────────────────────────────────────────────────────────
+// ─── Public helpers ───────────────────────────────────────────────────────────
 
-export async function extractFrames(
-  file: File,
-  opts: ProcessingOptions = {},
-  onProgress?: (p: FFmpegProgressEvent) => void,
-): Promise<FFmpegTask[]> {
-  const ff = await getFFmpeg()
-  const inExt = file.name.split('.').pop() ?? 'mp4'
-  const inName = `input.${inExt}`
-  const frameInterval = opts.frameInterval ?? 1  // every N seconds
-  const maxFrames = opts.maxFrames ?? 20
-
-  if (onProgress) ff.on('progress', onProgress as (d: unknown) => void)
-
-  try {
-    await ff.writeFile(inName, await fileToUint8Array(file))
-    // Use fps filter to extract one frame every N seconds
-    const outPattern = 'frame_%03d.jpg'
-    await ff.exec([
-      '-i', inName,
-      '-vf', `fps=1/${frameInterval}`,
-      '-vframes', String(maxFrames),
-      '-q:v', '2',
-      outPattern,
-    ])
-
-    const tasks: FFmpegTask[] = []
-    for (let i = 1; i <= maxFrames; i++) {
-      const frameName = `frame_${String(i).padStart(3, '0')}.jpg`
-      try {
-        const data = await ff.readFile(frameName) as Uint8Array
-        tasks.push({ result: data, outputName: frameName, mimeType: 'image/jpeg' })
-        await ff.deleteFile(frameName)
-      } catch {
-        break  // No more frames
-      }
-    }
-
-    await ff.deleteFile(inName)
-    return tasks
-  } finally {
-    if (onProgress) ff.off('progress', onProgress as (d: unknown) => void)
-  }
-}
-
-// ── Helpers ────────────────────────────────────────────────────────────────────
-
-function formatToMime(format: VideoFormat): string {
-  const map: Record<VideoFormat, string> = {
-    mp4: 'video/mp4',
-    mov: 'video/quicktime',
-    avi: 'video/x-msvideo',
-    webm: 'video/webm',
-    mkv: 'video/x-matroska',
-  }
-  return map[format] ?? 'video/mp4'
-}
-
-/**
- * Convert a Uint8Array result to a downloadable blob URL.
- */
 export function toObjectURL(data: Uint8Array, mimeType: string): string {
   return URL.createObjectURL(new Blob([data], { type: mimeType }))
 }
 
-/**
- * Trigger a browser download.
- */
 export function downloadBlob(data: Uint8Array, filename: string, mimeType: string): void {
   const url = toObjectURL(data, mimeType)
-  const a = document.createElement('a')
-  a.href = url
+  const a   = document.createElement('a')
+  a.href     = url
   a.download = filename
   a.click()
   setTimeout(() => URL.revokeObjectURL(url), 5000)

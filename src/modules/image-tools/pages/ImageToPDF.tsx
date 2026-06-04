@@ -167,8 +167,10 @@ export const ImageToPDF: React.FC = () => {
         </div>
 
         {status === 'error' && procError && (
-          <div className="flex items-center gap-2 px-4 py-3 bg-[#FFF1F2] border border-[#FFE4E6] rounded-[8px] text-sm text-[#DC2626]">
-            <span>⚠</span> {procError}
+          <div className="flex flex-col gap-1 px-4 py-3 bg-[#FFF1F2] border border-[#FFE4E6] rounded-[8px]">
+            <p className="text-sm font-semibold text-[#DC2626]">⚠ Conversion failed</p>
+            <p className="text-xs text-[#DC2626]">{procError}</p>
+            <p className="text-xs text-[#94A3B8] mt-1">This tool requires the EcomSathi API server. Please check your connection or try again shortly.</p>
           </div>
         )}
 

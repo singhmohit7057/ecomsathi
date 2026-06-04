@@ -74,7 +74,6 @@ export default function GSTRateFinder() {
       metaKeywords="GST rate finder, GST rate search, find GST rate, GST percentage finder, GST slab India"
       canonicalPath="/gst/rate-finder"
       crumbs={[{ label: 'GST Tools', to: '/gst' }, { label: 'GST Rate Finder' }]}
-      relatedTools={RELATED_TOOLS}
       faqs={FAQS}
     >
       <div className="max-w-3xl space-y-6">

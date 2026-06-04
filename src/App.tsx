@@ -15,6 +15,7 @@ import ToolsLayout from '@/layouts/ToolsLayout'
 import { PageLoader } from '@/components/common/Loader'
 import Analytics from '@/components/common/Analytics'
 import CookieBanner from '@/components/common/CookieBanner'
+import ScrollToTop from '@/components/common/ScrollToTop'
 
 // ============================================================
 // Suspense wrapper shorthand
@@ -32,6 +33,7 @@ function S({ children }: { children: React.ReactNode }) {
 function RootLayout() {
   return (
     <Fragment>
+      <ScrollToTop />
       <Analytics />
       <CookieBanner />
       <Outlet />
@@ -436,7 +438,7 @@ const routes: RouteObject[] = [
           {
             index: true,
             element: <S><ImageToolsIndex /></S>,
-            handle: { tool: 'Image Tools', category: 'Image Tools', crumbs: [] },
+            handle: { toolName: 'Image Tools', category: 'Image Tools', crumbs: [] },
           },
           {
             path: 'background-remover',
@@ -757,7 +759,6 @@ const routes: RouteObject[] = [
             handle: { tool: 'GST Tools', category: 'GST Tools', crumbs: [] },
           },
           {
-            // Unified: GST Search + GST Verify + GSTIN Validator merged
             path: 'verify',
             element: <S><GSTVerificationPage /></S>,
             handle: {
@@ -765,12 +766,6 @@ const routes: RouteObject[] = [
               category: 'GST Tools',
               description: 'Validate GSTIN format, checksum & all 6 structure checks — then verify live on the GSTN portal.',
               crumbs: [{ label: 'GST Tools', to: '/tools/gst' }],
-              relatedTools: [
-                { label: 'GST State Finder',       to: '/tools/gst/state-finder' },
-                { label: 'GST Calculator',         to: '/tools/gst/calculator' },
-                { label: 'Reverse GST Calculator', to: '/tools/gst/reverse' },
-                { label: 'HSN Code Search',        to: '/tools/gst/hsn-search' },
-              ],
             },
           },
           {
@@ -781,11 +776,6 @@ const routes: RouteObject[] = [
               category: 'GST Tools',
               description: 'Calculate CGST + SGST (intra-state) or IGST (inter-state) for any amount.',
               crumbs: [{ label: 'GST Tools', to: '/tools/gst' }],
-              relatedTools: [
-                { label: 'Reverse GST Calculator', to: '/tools/gst/reverse' },
-                { label: 'GST Rate Finder',        to: '/tools/gst/rate-finder' },
-                { label: 'HSN Code Search',        to: '/tools/gst/hsn-search' },
-              ],
             },
           },
           {
@@ -796,10 +786,6 @@ const routes: RouteObject[] = [
               category: 'GST Tools',
               description: 'Enter a GST-inclusive price to extract the base amount and tax breakdown.',
               crumbs: [{ label: 'GST Tools', to: '/tools/gst' }],
-              relatedTools: [
-                { label: 'GST Calculator',  to: '/tools/gst/calculator' },
-                { label: 'GST Rate Finder', to: '/tools/gst/rate-finder' },
-              ],
             },
           },
           {
@@ -810,11 +796,6 @@ const routes: RouteObject[] = [
               category: 'GST Tools',
               description: 'Find the applicable GST rate for any product (HSN) or service (SAC).',
               crumbs: [{ label: 'GST Tools', to: '/tools/gst' }],
-              relatedTools: [
-                { label: 'HSN Code Search', to: '/tools/gst/hsn-search' },
-                { label: 'SAC Code Search', to: '/tools/gst/sac-search' },
-                { label: 'GST Calculator',  to: '/tools/gst/calculator' },
-              ],
             },
           },
           {
@@ -825,11 +806,6 @@ const routes: RouteObject[] = [
               category: 'GST Tools',
               description: 'Find state name and code from any 2-digit GST state code or full GSTIN.',
               crumbs: [{ label: 'GST Tools', to: '/tools/gst' }],
-              relatedTools: [
-                { label: 'GST Verification', to: '/tools/gst/verify' },
-                { label: 'GST Verification', to: '/tools/gst/verify' },
-                { label: 'GST Calculator',  to: '/tools/gst/calculator' },
-              ],
             },
           },
           {
@@ -838,12 +814,8 @@ const routes: RouteObject[] = [
             handle: {
               tool: 'PAN Validator',
               category: 'GST Tools',
-              description: 'Validate PAN card numbers for individuals and businesses.',
+              description: 'Validate PAN format and extract entity type (Individual, Company, HUF etc.).',
               crumbs: [{ label: 'GST Tools', to: '/tools/gst' }],
-              relatedTools: [
-                { label: 'GST Verification', to: '/tools/gst/verify' },
-                { label: 'GST Verification', to: '/tools/gst/verify' },
-              ],
             },
           },
           {
@@ -854,11 +826,6 @@ const routes: RouteObject[] = [
               category: 'GST Tools',
               description: 'Find HSN codes for goods by code or description with GST rates.',
               crumbs: [{ label: 'GST Tools', to: '/tools/gst' }],
-              relatedTools: [
-                { label: 'SAC Code Search', to: '/tools/gst/sac-search' },
-                { label: 'GST Rate Finder', to: '/tools/gst/rate-finder' },
-                { label: 'GST Calculator',  to: '/tools/gst/calculator' },
-              ],
             },
           },
           {
@@ -869,11 +836,6 @@ const routes: RouteObject[] = [
               category: 'GST Tools',
               description: 'Search Service Accounting Codes by code or service description.',
               crumbs: [{ label: 'GST Tools', to: '/tools/gst' }],
-              relatedTools: [
-                { label: 'HSN Code Search', to: '/tools/gst/hsn-search' },
-                { label: 'GST Rate Finder', to: '/tools/gst/rate-finder' },
-                { label: 'GST Calculator',  to: '/tools/gst/calculator' },
-              ],
             },
           },
         ],

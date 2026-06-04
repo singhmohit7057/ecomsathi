@@ -60,7 +60,6 @@ export default function SACSearch() {
       metaKeywords="SAC code search, SAC code finder, SAC code list, GST rate for services, service accounting code India"
       canonicalPath="/gst/sac-search"
       crumbs={[{ label: 'GST Tools', to: '/gst' }, { label: 'SAC Code Search' }]}
-      relatedTools={RELATED_TOOLS}
       faqs={FAQS}
     >
       <div className="max-w-3xl space-y-6">

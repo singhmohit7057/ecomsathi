@@ -73,7 +73,6 @@ export default function HSNSearch() {
       metaKeywords="HSN code search, HSN code finder, HSN code list, GST rate by HSN, find HSN code India"
       canonicalPath="/gst/hsn-search"
       crumbs={[{ label: 'GST Tools', to: '/gst' }, { label: 'HSN Code Search' }]}
-      relatedTools={RELATED_TOOLS}
       faqs={FAQS}
     >
       <div className="max-w-3xl space-y-6">
