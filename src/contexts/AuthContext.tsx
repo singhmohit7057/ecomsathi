@@ -64,6 +64,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     let mounted = true
 
+    // Restore session from sessionStorage if Remember Me was off
+    const sbKey = Object.keys(sessionStorage).find((k) => k.includes('-auth-token'))
+    if (sbKey) {
+      const raw = sessionStorage.getItem(sbKey)
+      if (raw) localStorage.setItem(sbKey, raw)
+    }
+
     // Initialise from persisted session
     supabase.auth.getSession().then(async ({ data: { session: initialSession } }) => {
       if (!mounted) return

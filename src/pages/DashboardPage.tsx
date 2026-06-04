@@ -14,12 +14,9 @@ import {
   TrendingUp,
   Clock,
   ChevronRight,
-  Zap,
-  Star,
 } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 import { Card, Skeleton, Button, Badge } from '@/components/common'
-import { ToolCard, ALL_TOOLS } from '@/components/sections/ToolsGrid'
 import { supabase } from '@/supabase/client'
 
 // ============================================================
@@ -67,14 +64,18 @@ function timeAgo(iso: string): string {
 
 function activityLabel(log: ActivityLog): string {
   const type = log.entity_type ?? 'item'
+  const plan = (log.meta as Record<string, string> | null)?.plan
   switch (log.action) {
-    case 'create':    return `Created a new ${type}`
-    case 'update':    return `Updated ${type}`
-    case 'delete':    return `Deleted ${type}`
-    case 'import':    return `Imported ${type} data`
-    case 'export':    return `Exported ${type} report`
-    case 'reconcile': return `Reconciled ${type} orders`
-    default:          return log.action.replace(/_/g, ' ')
+    case 'account_created':        return 'Account created'
+    case 'joined_free':            return 'Joined on Free plan'
+    case 'subscription_activated': return `${plan ? plan.charAt(0).toUpperCase() + plan.slice(1) : 'Pro'} plan activated`
+    case 'create':                 return `Created a new ${type}`
+    case 'update':                 return `Updated ${type}`
+    case 'delete':                 return `Deleted ${type}`
+    case 'import':                 return `Imported ${type} data`
+    case 'export':                 return `Exported ${type} report`
+    case 'reconcile':              return `Reconciled ${type} orders`
+    default:                       return log.action.replace(/_/g, ' ')
   }
 }
 
@@ -206,8 +207,7 @@ export default function DashboardPage() {
   const [activityLogs, setActivityLogs] = useState<ActivityLog[]>([])
   const [activityLoading, setActivityLoading] = useState(true)
 
-  const popularTools = ALL_TOOLS.filter((t) => t.isPopular).slice(0, 6)
-  const isFree = !user?.subscription_status || user.subscription_status === 'free'
+const isFree = !user?.subscription_status || user.subscription_status === 'free'
   const firstName = user?.full_name?.split(' ')[0] ?? user?.email?.split('@')[0] ?? 'there'
 
   // ── Fetch dashboard stats ──────────────────────────────────
@@ -273,15 +273,59 @@ export default function DashboardPage() {
 
     async function fetchActivity() {
       try {
-        const { data, error } = await supabase
+        // 1. Real activity_logs rows
+        const { data: logs } = await supabase
           .from('activity_logs')
           .select('id, action, entity_type, entity_id, meta, created_at')
           .eq('org_id', user!.org_id)
           .order('created_at', { ascending: false })
-          .limit(5)
+          .limit(10)
 
-        if (error) throw error
-        setActivityLogs((data as ActivityLog[]) ?? [])
+        // 2. Account created event from profiles
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('id, created_at')
+          .eq('id', user!.id)
+          .single()
+
+        // 3. Subscription events
+        const { data: subs } = await supabase
+          .from('subscriptions')
+          .select('id, plan, status, created_at')
+          .eq('org_id', user!.org_id)
+          .order('created_at', { ascending: false })
+
+        // Build synthetic activity entries
+        const synthetic: ActivityLog[] = []
+
+        if (profile) {
+          synthetic.push({
+            id: `account-created-${profile.id}`,
+            action: 'account_created',
+            entity_type: 'account',
+            entity_id: profile.id,
+            meta: null,
+            created_at: profile.created_at,
+          })
+        }
+
+        if (subs) {
+          subs.forEach((sub) => {
+            synthetic.push({
+              id: `subscription-${sub.id}`,
+              action: sub.plan === 'free' ? 'joined_free' : 'subscription_activated',
+              entity_type: 'subscription',
+              entity_id: sub.id,
+              meta: { plan: sub.plan },
+              created_at: sub.created_at,
+            })
+          })
+        }
+
+        // Merge, sort by date, take top 8
+        const all = [...(logs ?? []), ...synthetic] as ActivityLog[]
+        all.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+        setActivityLogs(all.slice(0, 8))
       } catch (err) {
         console.error('[Dashboard] activity fetch error', err)
       } finally {
@@ -297,7 +341,7 @@ export default function DashboardPage() {
       {/* ── Welcome header ──────────────────────────────────── */}
       <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-[#0F172A]">
+          <h1 className="text-3xl font-extrabold text-[#0F172A]">
             Welcome back, {firstName} 👋
           </h1>
           <p className="mt-0.5 text-sm text-[#64748B]">{formatDate(new Date())}</p>
@@ -490,57 +534,6 @@ export default function DashboardPage() {
           </Card>
         </section>
 
-        {/* Popular Free Tools */}
-        <section className="lg:col-span-2" aria-labelledby="tools-heading">
-          <Card variant="shadowed" padding="none" className="flex flex-col overflow-hidden">
-            <div className="flex items-center justify-between border-b border-[#E2E8F0] px-5 py-4">
-              <div className="flex items-center gap-2">
-                <Star size={16} className="text-[#64748B]" />
-                <h2 id="tools-heading" className="text-sm font-bold text-[#0F172A]">
-                  Popular Free Tools
-                </h2>
-              </div>
-              <Link
-                to="/tools"
-                className="flex items-center gap-1 text-xs font-semibold text-[#2563EB] hover:underline"
-              >
-                View all <ChevronRight size={12} />
-              </Link>
-            </div>
-
-            {/* Horizontal scroll strip */}
-            <div className="overflow-x-auto px-5 py-4">
-              <div className="flex gap-3 pb-1" style={{ minWidth: 'max-content' }}>
-                {popularTools.map((tool) => (
-                  <div key={tool.path} className="w-[200px] shrink-0">
-                    <ToolCard tool={tool} compact />
-                  </div>
-                ))}
-              </div>
-            </div>
-          </Card>
-        </section>
-      </div>
-
-      {/* ── Explore tools CTA strip ──────────────────────────── */}
-      <div className="flex flex-col items-center gap-3 rounded-[8px] border border-dashed border-[#E2E8F0] bg-white py-10 text-center">
-        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#EFF6FF] text-[#2563EB]">
-          <Zap size={24} />
-        </div>
-        <div>
-          <p className="text-base font-bold text-[#0F172A]">50+ Free Ecommerce Tools</p>
-          <p className="mt-0.5 text-sm text-[#64748B]">
-            SKU generators, PDF utilities, image tools, GST helpers, and more
-          </p>
-        </div>
-        <Button
-          variant="outline"
-          size="sm"
-          rightIcon={<ChevronRight size={14} />}
-          onClick={() => navigate('/tools')}
-        >
-          Explore All Tools
-        </Button>
       </div>
     </div>
   )

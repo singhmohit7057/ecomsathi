@@ -114,9 +114,16 @@ export default function SettingsPage() {
   const [inviteRole, setInviteRole] = useState<'admin' | 'member' | 'viewer'>('member')
 
   // ── Notification prefs ─────────────────────────────────────
-  const [notifLowStock, setNotifLowStock] = useState(true)
-  const [notifReconDone, setNotifReconDone] = useState(true)
-  const [notifWeekly, setNotifWeekly] = useState(false)
+  const [notifLowStock, setNotifLowStock] = useState(
+    () => localStorage.getItem('notif_low_stock') !== 'false'
+  )
+  const [notifReconDone, setNotifReconDone] = useState(
+    () => localStorage.getItem('notif_recon_done') !== 'false'
+  )
+  const [notifWeekly, setNotifWeekly] = useState(
+    () => localStorage.getItem('notif_weekly') === 'true'
+  )
+  const [notifSaving, setNotifSaving] = useState(false)
 
   // ── Toast ──────────────────────────────────────────────────
   const [toast, setToast] = useState<string | null>(null)
@@ -124,6 +131,19 @@ export default function SettingsPage() {
   function showToast(msg: string) {
     setToast(msg)
     setTimeout(() => setToast(null), 3000)
+  }
+
+  async function handleSavePreferences() {
+    setNotifSaving(true)
+    try {
+      // Persist to localStorage for now (no DB column yet)
+      localStorage.setItem('notif_low_stock', String(notifLowStock))
+      localStorage.setItem('notif_recon_done', String(notifReconDone))
+      localStorage.setItem('notif_weekly', String(notifWeekly))
+      showToast('Notification preferences saved')
+    } finally {
+      setNotifSaving(false)
+    }
   }
 
   // ── Load org + members ──────────────────────────────────────
@@ -497,7 +517,8 @@ export default function SettingsPage() {
             <Button
               variant="primary"
               size="sm"
-              onClick={() => showToast('Notification preferences saved')}
+              loading={notifSaving}
+              onClick={handleSavePreferences}
             >
               Save Preferences
             </Button>

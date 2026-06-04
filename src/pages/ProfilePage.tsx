@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useCallback } from 'react'
 import {
   User,
   Mail,
@@ -14,6 +14,7 @@ import {
 import { useAuth } from '@/contexts/AuthContext'
 import { Card, Button, Input, Modal, Alert, Badge } from '@/components/common'
 import * as authService from '@/services/authService'
+import { uploadFile } from '@/supabase/storage'
 
 // ============================================================
 // Toggle (reuse from Settings)
@@ -47,6 +48,47 @@ export default function ProfilePage() {
   const [passwordSaving, setPasswordSaving] = useState(false)
   const [passwordSuccess, setPasswordSuccess] = useState(false)
   const [passwordError, setPasswordError]   = useState<string | null>(null)
+
+  // ── Avatar upload ─────────────────────────────────────────
+  const avatarInputRef = useRef<HTMLInputElement>(null)
+  const [avatarUploading, setAvatarUploading] = useState(false)
+  const [avatarError, setAvatarError] = useState<string | null>(null)
+  // Local preview so UI updates instantly without waiting for profile refetch
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null)
+
+  const handleAvatarChange = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file || !user?.id) return
+
+    if (!file.type.startsWith('image/')) {
+      setAvatarError('Please select an image file.')
+      return
+    }
+    if (file.size > 2 * 1024 * 1024) {
+      setAvatarError('Image must be under 2MB.')
+      return
+    }
+
+    // Show instant local preview
+    const localUrl = URL.createObjectURL(file)
+    setAvatarPreview(localUrl)
+
+    setAvatarUploading(true)
+    setAvatarError(null)
+    try {
+      // Always use .png extension to avoid duplicate files per user
+      const path = `avatars/${user.id}.png`
+      const url = await uploadFile('uploads', path, file)
+      // Add cache-bust so browser doesn't show stale avatar
+      await updateProfile({ avatar_url: `${url}?t=${Date.now()}` })
+    } catch (err) {
+      setAvatarPreview(null) // revert preview on error
+      setAvatarError(err instanceof Error ? err.message : 'Upload failed')
+    } finally {
+      setAvatarUploading(false)
+      if (avatarInputRef.current) avatarInputRef.current.value = ''
+    }
+  }, [user?.id, updateProfile])
 
   // ── Delete account modal ───────────────────────────────────
   const [deleteModalOpen, setDeleteModalOpen] = useState(false)
@@ -138,9 +180,9 @@ export default function ProfilePage() {
             {/* Avatar column */}
             <div className="flex shrink-0 flex-col items-center gap-3">
               <div className="relative">
-                {user?.avatar_url ? (
+                {(avatarPreview ?? user?.avatar_url) ? (
                   <img
-                    src={user.avatar_url}
+                    src={avatarPreview ?? user!.avatar_url!}
                     alt="Avatar"
                     className="h-20 w-20 rounded-full object-cover"
                   />
@@ -149,14 +191,30 @@ export default function ProfilePage() {
                     {initials}
                   </div>
                 )}
+                {/* Hidden file input */}
+                <input
+                  ref={avatarInputRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleAvatarChange}
+                />
                 <button
                   type="button"
-                  title="Change avatar (coming soon)"
-                  className="absolute -bottom-1 -right-1 flex h-7 w-7 items-center justify-center rounded-full border-2 border-white bg-[#2563EB] text-white shadow hover:bg-[#1D4ED8]"
+                  title="Change avatar"
+                  disabled={avatarUploading}
+                  onClick={() => avatarInputRef.current?.click()}
+                  className="absolute -bottom-1 -right-1 flex h-7 w-7 items-center justify-center rounded-full border-2 border-white bg-[#2563EB] text-white shadow hover:bg-[#1D4ED8] disabled:opacity-60"
                 >
-                  <Camera size={13} />
+                  {avatarUploading
+                    ? <span className="h-3 w-3 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                    : <Camera size={13} />
+                  }
                 </button>
               </div>
+              {avatarError && (
+                <p className="text-xs text-red-500">{avatarError}</p>
+              )}
               <div className="text-center">
                 <p className="text-sm font-semibold text-[#0F172A]">
                   {user?.full_name ?? '—'}

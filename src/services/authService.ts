@@ -64,6 +64,9 @@ export async function resetPassword(email: string): Promise<void> {
 
 // ─── Update the authenticated user's password ───────────────────────────────
 export async function updatePassword(newPassword: string): Promise<void> {
+  // Ensure we have a live session before calling updateUser
+  const { data: { session } } = await supabase.auth.getSession()
+  if (!session) throw new Error('updatePassword failed: No active session. Please sign in again.')
   const { error } = await supabase.auth.updateUser({ password: newPassword })
   if (error) throw new Error(`updatePassword failed: ${error.message}`)
 }
