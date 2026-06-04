@@ -6,7 +6,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import {
   FileText, Merge, Scissors, Crop, ScanText, FileArchive, Unlock,
-  RotateCw, FileMinus, LayoutGrid, ImageIcon, FilePlus, Stamp, Hash,
+  RotateCw, FileMinus, LayoutGrid, ImageIcon, Stamp, Hash,
   ChevronRight, CheckCircle2, Shield, Zap, Download,
   ArrowRight, Sparkles, Globe, Lock,
   FileDown, FileSearch, Layers,
@@ -148,17 +148,6 @@ const PDF_TOOLS = [
     example: 'PDF → PNG / JPEG',
   },
   {
-    name: 'Image to PDF',
-    href: '/tools/pdf/images-to-pdf',
-    icon: FilePlus,
-    desc: 'Combine JPG, PNG, or WEBP images into a single PDF file.',
-    color: 'text-[#D97706]',
-    iconBg: 'bg-[#FFFBEB]',
-    border: 'border-[#FDE68A]',
-    badge: null,
-    example: 'JPG + PNG → PDF',
-  },
-  {
     name: 'Watermark PDF',
     href: '/tools/pdf/watermark',
     icon: Stamp,
@@ -185,7 +174,7 @@ const PDF_TOOLS = [
 // ─── Stats ────────────────────────────────────────────────────────────────────
 
 const STATS = [
-  { value: '13',      label: 'Free Tools',      icon: <Sparkles size={16} className="text-[#2563EB]" /> },
+  { value: '12',      label: 'Free Tools',      icon: <Sparkles size={16} className="text-[#2563EB]" /> },
   { value: '50 MB',   label: 'Max File Size',   icon: <FileText size={16} className="text-[#7C3AED]" /> },
   { value: 'OCR',     label: 'Hindi Support',   icon: <ScanText size={16} className="text-[#059669]" /> },
   { value: '300 DPI', label: 'Image Quality',   icon: <ImageIcon size={16} className="text-[#D97706]" /> },
@@ -211,7 +200,7 @@ const FEATURES = [
 const FAQS: FAQItem[] = [
   {
     question: 'Are all PDF tools on EcomSathi completely free?',
-    answer: 'Yes. All 13 PDF tools on EcomSathi are 100% free to use. There are no hidden charges, no subscriptions, and no credit card required.',
+    answer: 'Yes. All 12 PDF tools on EcomSathi are 100% free to use. There are no hidden charges, no subscriptions, and no credit card required.',
   },
   {
     question: 'Do I need to create an account to use the PDF tools?',
@@ -251,7 +240,7 @@ export default function PDFHub() {
     <>
       <SEO
         title="Free PDF Tools for Ecommerce Sellers & Businesses — EcomSathi"
-        description="Merge, split, crop, compress, OCR and edit PDF files online for free. 13 free PDF tools — no registration required. Made for Indian ecommerce sellers."
+        description="Merge, split, crop, compress, OCR and edit PDF files online for free. 12 free PDF tools — no registration required. Made for Indian ecommerce sellers."
         keywords="free pdf tools online, merge pdf free, split pdf online, compress pdf, ocr pdf, pdf to image, image to pdf, rotate pdf, watermark pdf, extract pdf pages, pdf tools india"
         canonicalUrl={canonical('/tools/pdf')}
         schema={PAGE_SCHEMA}
@@ -290,7 +279,7 @@ export default function PDFHub() {
                   100% Free
                 </span>
                 <span className="inline-flex items-center rounded-full bg-white/10 px-2.5 py-0.5 text-[11px] font-semibold text-[#93C5FD] ring-1 ring-[#93C5FD]/30">
-                  13 Tools
+                  12 Tools
                 </span>
               </div>
 
@@ -400,7 +389,7 @@ export default function PDFHub() {
           <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
             {[
               { step: '01', title: 'Upload Your PDF',     desc: 'Drag and drop or click to upload. Supports PDFs up to 50 MB.',             color: 'bg-[#EFF6FF] border-[#BFDBFE] text-[#2563EB]' },
-              { step: '02', title: 'Choose a Tool',       desc: 'Select from 13 tools — merge, split, compress, OCR, watermark, and more.', color: 'bg-[#F5F3FF] border-[#DDD6FE] text-[#7C3AED]' },
+              { step: '02', title: 'Choose a Tool',       desc: 'Select from 12 tools — merge, split, compress, OCR, watermark, and more.', color: 'bg-[#F5F3FF] border-[#DDD6FE] text-[#7C3AED]' },
               { step: '03', title: 'Configure & Process', desc: 'Set options like pages, compression level, watermark text, or rotation.',  color: 'bg-[#ECFDF5] border-[#A7F3D0] text-[#059669]' },
               { step: '04', title: 'Download Instantly',  desc: 'Download the processed PDF or ZIP. Files are deleted from our server.',    color: 'bg-[#FFFBEB] border-[#FDE68A] text-[#D97706]' },
             ].map((s) => (

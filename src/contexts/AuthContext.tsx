@@ -69,13 +69,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (!mounted) return
 
       setSession(initialSession)
+      setLoading(false) // unblock routing immediately
 
       if (initialSession?.user) {
         const profile = await fetchProfile(initialSession.user.id)
         if (mounted) setUser(profile)
       }
-
-      setLoading(false)
     })
 
     // Subscribe to future auth events
@@ -109,8 +108,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // ----------------------------------------------------------
 
   const signIn = useCallback(async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password })
     if (error) throw new Error(error.message)
+    // Eagerly set session so ProtectedRoute sees it before navigate() fires
+    if (data.session) setSession(data.session)
   }, [])
 
   const signUp = useCallback(

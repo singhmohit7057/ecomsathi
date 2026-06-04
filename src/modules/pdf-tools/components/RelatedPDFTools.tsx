@@ -2,7 +2,7 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
   Merge, Scissors, Crop, ScanText, FileArchive, Unlock,
-  RotateCw, FileMinus, LayoutGrid, ImageIcon, FilePlus, Stamp, Hash,
+  RotateCw, FileMinus, LayoutGrid, ImageIcon, Stamp, Hash,
 } from 'lucide-react'
 import type { RelatedPDFTool } from '../types'
 
@@ -22,7 +22,6 @@ const ICON_MAP: Record<string, React.ReactNode> = {
   '/pdf/extract-pages':    <FileMinus size={18} />,
   '/pdf/rearrange-pages':  <LayoutGrid size={18} />,
   '/pdf/pdf-to-image':     <ImageIcon size={18} />,
-  '/pdf/image-to-pdf':     <FilePlus size={18} />,
   '/pdf/watermark':        <Stamp size={18} />,
   '/pdf/page-numbers':     <Hash size={18} />,
 }

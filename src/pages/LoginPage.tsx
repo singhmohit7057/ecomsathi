@@ -1,55 +1,104 @@
 import React, { useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
-import { Mail, Lock, Eye, EyeOff, AlertCircle } from 'lucide-react'
+import {
+  Mail,
+  Lock,
+  Eye,
+  EyeOff,
+  AlertCircle,
+  PackageSearch,
+  BarChart3,
+  ShieldCheck,
+  FileText,
+} from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 import { Button } from '@/components/common/Button'
 import { Input } from '@/components/common/Input'
-import { Card } from '@/components/common/Card'
 
-// ─── Alert component (inline, no separate file needed) ───────────────────────
-function Alert({ message }: { message: string }) {
+// ─── Shared helpers ───────────────────────────────────────────────────────────
+
+function ErrorAlert({ message }: { message: string }) {
   return (
     <div
       role="alert"
-      className="flex items-start gap-3 rounded-[6px] border border-[#FCA5A5] bg-[#FEF2F2] px-4 py-3 text-sm text-[#DC2626]"
+      className="flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600"
     >
-      <AlertCircle size={16} className="mt-0.5 flex-shrink-0" />
+      <AlertCircle size={15} className="mt-0.5 shrink-0" />
       <span>{message}</span>
     </div>
   )
 }
 
-// ─── EcomSathi wordmark ───────────────────────────────────────────────────────
-function EcomSathiLogo() {
+// ─── Brand panel (left side) ──────────────────────────────────────────────────
+
+const features = [
+  { icon: PackageSearch, text: 'Smart SKU & barcode generation for every product' },
+  { icon: FileText,      text: 'PDF, image & video tools built for sellers' },
+  { icon: BarChart3,     text: 'Payment reconciliation & inventory tracking' },
+  { icon: ShieldCheck,   text: 'GST lookup, validator & compliance toolkit' },
+]
+
+function BrandPanel() {
   return (
-    <div className="flex flex-col items-center gap-2">
-      {/* Icon mark */}
-      <div className="flex h-12 w-12 items-center justify-center rounded-[10px] bg-[#2563EB] shadow-[#1E293B_2px_2px_0px_0px]">
-        <svg
-          width="28"
-          height="28"
-          viewBox="0 0 28 28"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          aria-hidden="true"
-        >
-          <rect x="4" y="6" width="20" height="16" rx="2" stroke="white" strokeWidth="2" />
-          <path d="M4 11h20" stroke="white" strokeWidth="2" />
-          <path d="M9 6V4M19 6V4" stroke="white" strokeWidth="2" strokeLinecap="round" />
-          <circle cx="9" cy="16" r="1.5" fill="white" />
-          <path d="M13 16h6" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
-          <path d="M13 19h4" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
-        </svg>
+    <div className="relative hidden lg:flex lg:w-[52%] flex-col justify-between overflow-hidden bg-[#1E40AF] px-12 py-14 text-white">
+      {/* Background decoration */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="absolute -top-32 -right-32 h-[480px] w-[480px] rounded-full bg-white/5" />
+        <div className="absolute bottom-0 left-0 h-[320px] w-[320px] rounded-full bg-white/5" />
+        <div className="absolute top-1/2 left-1/2 h-[200px] w-[200px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/5" />
       </div>
-      {/* Wordmark */}
-      <span className="text-xl font-bold tracking-tight text-[#0F172A]">
-        Ecom<span className="text-[#2563EB]">Sathi</span>
-      </span>
+
+      {/* Logo */}
+      <div className="relative flex items-center gap-3">
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/20 backdrop-blur-sm">
+          <svg width="22" height="22" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+            <rect x="4" y="6" width="20" height="16" rx="2" stroke="white" strokeWidth="2" />
+            <path d="M4 11h20" stroke="white" strokeWidth="2" />
+            <path d="M9 6V4M19 6V4" stroke="white" strokeWidth="2" strokeLinecap="round" />
+            <circle cx="9" cy="16" r="1.5" fill="white" />
+            <path d="M13 16h6" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
+            <path d="M13 19h4" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
+          </svg>
+        </div>
+        <span className="text-xl font-bold tracking-tight">EcomSathi</span>
+      </div>
+
+      {/* Headline */}
+      <div className="relative">
+        <h2 className="text-4xl font-bold leading-tight">
+          Your eCommerce toolkit,<br />all in one place.
+        </h2>
+        <p className="mt-4 text-base text-blue-200 leading-relaxed">
+          Trusted by thousands of Indian sellers to manage products,
+          documents, GST compliance, and business operations.
+        </p>
+
+        {/* Feature list */}
+        <ul className="mt-8 flex flex-col gap-4">
+          {features.map(({ icon: Icon, text }) => (
+            <li key={text} className="flex items-start gap-3">
+              <div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-white/20">
+                <Icon size={13} />
+              </div>
+              <span className="text-sm text-blue-100 leading-snug">{text}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Footer quote */}
+      <div className="relative rounded-xl border border-white/20 bg-white/10 px-5 py-4 backdrop-blur-sm">
+        <p className="text-sm text-blue-100 leading-relaxed">
+          "EcomSathi saves us hours every week — from SKU generation to GST filing, it just works."
+        </p>
+        <p className="mt-2 text-xs font-medium text-white/70">— Priya M., Flipkart Seller</p>
+      </div>
     </div>
   )
 }
 
 // ─── LoginPage ────────────────────────────────────────────────────────────────
+
 export default function LoginPage() {
   const { signIn } = useAuth()
   const navigate = useNavigate()
@@ -67,27 +116,15 @@ export default function LoginPage() {
     e.preventDefault()
     setError(null)
 
-    if (!email.trim()) {
-      setError('Please enter your email address.')
-      return
-    }
-    if (!password) {
-      setError('Please enter your password.')
-      return
-    }
+    if (!email.trim()) { setError('Please enter your email address.'); return }
+    if (!password)      { setError('Please enter your password.');       return }
 
     setLoading(true)
     try {
-      // TODO: Add Turnstile widget using VITE_TURNSTILE_SITE_KEY
-      // Verify the Turnstile token before calling signIn, e.g.:
-      //   const turnstileToken = await getTurnstileToken()
-      //   await verifyTurnstile(turnstileToken)
-
       await signIn(email.trim(), password)
       navigate(redirectTo, { replace: true })
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Sign in failed. Please try again.'
-      // Surface friendly messages for common Supabase errors
       if (msg.toLowerCase().includes('invalid login')) {
         setError('Incorrect email or password. Please try again.')
       } else if (msg.toLowerCase().includes('email not confirmed')) {
@@ -101,30 +138,42 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#F8FAFC] px-4 py-12">
-      <div className="w-full max-w-md">
-        {/* Branding */}
-        <div className="mb-8 flex justify-center">
-          <EcomSathiLogo />
+    <div className="flex min-h-screen bg-white">
+      <BrandPanel />
+
+      {/* Form side */}
+      <div className="flex flex-1 flex-col justify-center px-6 py-12 sm:px-10 lg:px-16">
+        {/* Mobile logo */}
+        <div className="mb-10 flex items-center gap-2.5 lg:hidden">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#2563EB]">
+            <svg width="20" height="20" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+              <rect x="4" y="6" width="20" height="16" rx="2" stroke="white" strokeWidth="2" />
+              <path d="M4 11h20" stroke="white" strokeWidth="2" />
+              <path d="M9 6V4M19 6V4" stroke="white" strokeWidth="2" strokeLinecap="round" />
+              <circle cx="9" cy="16" r="1.5" fill="white" />
+              <path d="M13 16h6" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
+              <path d="M13 19h4" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
+            </svg>
+          </div>
+          <span className="text-lg font-bold text-[#0F172A]">
+            Ecom<span className="text-[#2563EB]">Sathi</span>
+          </span>
         </div>
 
-        <Card variant="shadowed" padding="lg">
+        <div className="mx-auto w-full max-w-[400px]">
           {/* Heading */}
-          <div className="mb-6 text-center">
-            <h1 className="text-2xl font-bold text-[#0F172A]">Welcome Back</h1>
-            <p className="mt-1 text-sm text-[#64748B]">Sign in to your EcomSathi account</p>
+          <div className="mb-8">
+            <h1 className="text-2xl font-bold text-[#0F172A]">Welcome back</h1>
+            <p className="mt-1.5 text-sm text-[#64748B]">
+              Sign in to your EcomSathi account
+            </p>
           </div>
 
           {/* Error */}
-          {error && (
-            <div className="mb-5">
-              <Alert message={error} />
-            </div>
-          )}
+          {error && <div className="mb-5"><ErrorAlert message={error} /></div>}
 
           {/* Form */}
           <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-4">
-            {/* Email */}
             <Input
               label="Email address"
               id="email"
@@ -133,24 +182,19 @@ export default function LoginPage() {
               placeholder="you@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              leftIcon={<Mail size={16} />}
+              leftIcon={<Mail size={15} />}
               disabled={loading}
               required
             />
 
-            {/* Password */}
             <div className="flex flex-col gap-1">
               <div className="flex items-center justify-between">
-                <label
-                  htmlFor="password"
-                  className="text-sm font-medium text-[#0F172A] leading-none"
-                >
+                <label htmlFor="password" className="text-sm font-medium text-[#0F172A] leading-none">
                   Password
                 </label>
                 <Link
                   to="/forgot-password"
                   className="text-xs font-medium text-[#2563EB] hover:underline"
-                  tabIndex={0}
                 >
                   Forgot password?
                 </Link>
@@ -162,7 +206,7 @@ export default function LoginPage() {
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                leftIcon={<Lock size={16} />}
+                leftIcon={<Lock size={15} />}
                 rightIcon={
                   <button
                     type="button"
@@ -171,7 +215,7 @@ export default function LoginPage() {
                     aria-label={showPassword ? 'Hide password' : 'Show password'}
                     tabIndex={-1}
                   >
-                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                    {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
                   </button>
                 }
                 disabled={loading}
@@ -179,14 +223,13 @@ export default function LoginPage() {
               />
             </div>
 
-            {/* Submit */}
             <Button
               type="submit"
               variant="primary"
               size="md"
               fullWidth
               loading={loading}
-              className="mt-1"
+              className="mt-1 rounded-lg py-2.5 text-sm font-semibold"
             >
               Sign In
             </Button>
@@ -195,24 +238,21 @@ export default function LoginPage() {
           {/* Divider */}
           <div className="my-6 flex items-center gap-3">
             <div className="h-px flex-1 bg-[#E2E8F0]" />
-            <span className="text-xs font-medium text-[#94A3B8]">OR</span>
+            <span className="text-xs text-[#94A3B8]">OR</span>
             <div className="h-px flex-1 bg-[#E2E8F0]" />
           </div>
 
           {/* Register link */}
           <p className="text-center text-sm text-[#64748B]">
             Don&apos;t have an account?{' '}
-            <Link
-              to="/register"
-              className="font-medium text-[#2563EB] hover:underline"
-            >
-              Register
+            <Link to="/register" className="font-semibold text-[#2563EB] hover:underline">
+              Create one free
             </Link>
           </p>
-        </Card>
+        </div>
 
-        {/* Footer note */}
-        <p className="mt-6 text-center text-xs text-[#94A3B8]">
+        {/* Footer */}
+        <p className="mt-12 text-center text-xs text-[#CBD5E1]">
           &copy; {new Date().getFullYear()} EcomSathi. All rights reserved.
         </p>
       </div>

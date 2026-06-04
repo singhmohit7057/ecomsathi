@@ -5,8 +5,8 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
-  Eraser, Crop, Expand, Minimize2, FileImage, Layers,
-  ArrowRightLeft, Stamp, Package, PaintBucket, Square,
+  Eraser, Crop, Expand, Minimize2, FileImage,
+  ArrowRightLeft, Stamp, Package, PaintBucket, Square, FilePlus, Wand2,
   ChevronRight, CheckCircle2, Shield, Zap, Download,
   ArrowRight, ImageIcon, Sparkles, Globe, RefreshCw, MonitorSmartphone,
   ChevronDown,
@@ -78,26 +78,15 @@ const IMAGE_TOOLS = [
     example: '2 MB → 200 KB',
   },
   {
-    name: 'JPG to PNG',
-    href: '/tools/image/jpg-to-png',
+    name: 'Image Converter',
+    href: '/tools/image/converter',
     icon: FileImage,
-    desc: 'Convert JPG/JPEG images to lossless PNG format. Batch conversion supported.',
+    desc: 'Convert between JPG and PNG in both directions. Batch conversion supported.',
     color: 'text-[#0284C7]',
     iconBg: 'bg-[#F0F9FF]',
     border: 'border-[#BAE6FD]',
     badge: 'Batch',
-    example: 'photo.jpg → photo.png',
-  },
-  {
-    name: 'PNG to JPG',
-    href: '/tools/image/png-to-jpg',
-    icon: Layers,
-    desc: 'Convert PNG to JPEG with custom background color for transparency. Batch ready.',
-    color: 'text-[#9333EA]',
-    iconBg: 'bg-[#FDF4FF]',
-    border: 'border-[#E9D5FF]',
-    badge: 'Batch',
-    example: 'logo.png → logo.jpg',
+    example: 'JPG ↔ PNG',
   },
   {
     name: 'WEBP Converter',
@@ -154,12 +143,34 @@ const IMAGE_TOOLS = [
     badge: null,
     example: '800×600 → 800×800',
   },
+  {
+    name: 'Image to PDF',
+    href: '/tools/image/image-to-pdf',
+    icon: FilePlus,
+    desc: 'Combine JPG, PNG, or WEBP images into a single PDF. Drag to reorder.',
+    color: 'text-[#2563EB]',
+    iconBg: 'bg-[#EFF6FF]',
+    border: 'border-[#BFDBFE]',
+    badge: null,
+    example: 'JPG + PNG → PDF',
+  },
+  {
+    name: 'Image Enhancer',
+    href: '/tools/image/enhance',
+    icon: Wand2,
+    desc: 'Sharpen blurry photos, boost contrast, brightness and saturation. Auto Enhance in one click.',
+    color: 'text-[#7C3AED]',
+    iconBg: 'bg-[#F5F3FF]',
+    border: 'border-[#DDD6FE]',
+    badge: 'Auto',
+    example: 'Sharpen · Contrast · Vivid',
+  },
 ]
 
 // ─── Stats ───────────────────────────────────────────────────
 
 const STATS = [
-  { value: '11',       label: 'Free Tools',       icon: <Sparkles size={16} className="text-[#2563EB]" /> },
+  { value: '12',       label: 'Free Tools',       icon: <Sparkles size={16} className="text-[#2563EB]" /> },
   { value: 'AI',       label: 'BG Removal',       icon: <Eraser size={16} className="text-[#DC2626]" /> },
   { value: 'Batch',    label: 'Conversion',        icon: <RefreshCw size={16} className="text-[#059669]" /> },
   { value: '4',        label: 'Marketplaces',      icon: <Package size={16} className="text-[#1D4ED8]" /> },
@@ -185,7 +196,7 @@ const FEATURES = [
 const FAQS = [
   {
     question: 'Are all image tools completely free?',
-    answer: 'Yes. All 11 image tools are 100% free with no login required. You can use them unlimited times.',
+    answer: 'Yes. All 12 image tools are 100% free with no login required. You can use them unlimited times.',
   },
   {
     question: 'Do images get uploaded to a server?',
@@ -201,7 +212,7 @@ const FAQS = [
   },
   {
     question: 'Can I convert multiple images at once?',
-    answer: 'Yes. JPG to PNG, PNG to JPG, and WEBP Converter all support batch conversion — drag multiple files at once and convert them all together.',
+    answer: 'Yes. The Image Converter (JPG ↔ PNG) and WEBP Converter both support batch conversion — drag multiple files at once and convert them all together.',
   },
   {
     question: 'What is the maximum file size?',
@@ -291,7 +302,7 @@ export const ImageToolsIndex: React.FC = () => {
     <>
       <SEO
         title="Free Image Tools for Ecommerce Sellers | EcomSathi"
-        description="Resize, compress, crop, convert and watermark product images for Indian marketplaces. 11 free browser-based image tools — no signup needed."
+        description="Resize, compress, crop, convert and watermark product images for Indian marketplaces. 12 free browser-based image tools — no signup needed."
         keywords="image tools online free, resize image, compress image, background remover, crop image, jpg to png, webp converter, product image optimizer, ecommerce image tools india"
         canonicalUrl="https://ecomsathi.vercel.app/image"
         schema={PAGE_SCHEMA}

@@ -91,7 +91,6 @@ const RotatePDF            = lazy(() => import('./modules/pdf-tools/pages/Rotate
 const ExtractPages         = lazy(() => import('./modules/pdf-tools/pages/ExtractPages'))
 const RearrangePages       = lazy(() => import('./modules/pdf-tools/pages/RearrangePages'))
 const PDFToImage           = lazy(() => import('./modules/pdf-tools/pages/PDFToImage'))
-const ImageToPDF           = lazy(() => import('./modules/pdf-tools/pages/ImageToPDF'))
 const WatermarkPDF         = lazy(() => import('./modules/pdf-tools/pages/WatermarkPDF'))
 const PageNumbersPDF       = lazy(() => import('./modules/pdf-tools/pages/PageNumbersPDF'))
 
@@ -104,13 +103,14 @@ const BackgroundRemover    = lazy(() => import('./modules/image-tools/pages/Back
 const CropImage            = lazy(() => import('./modules/image-tools/pages/CropImage'))
 const ResizeImage          = lazy(() => import('./modules/image-tools/pages/ResizeImage'))
 const CompressImage        = lazy(() => import('./modules/image-tools/pages/CompressImage'))
-const JPGtoPNG             = lazy(() => import('./modules/image-tools/pages/JPGtoPNG'))
-const PNGtoJPG             = lazy(() => import('./modules/image-tools/pages/PNGtoJPG'))
+const ImageConverter       = lazy(() => import('./modules/image-tools/pages/ImageConverter'))
 const WEBPConverter        = lazy(() => import('./modules/image-tools/pages/WEBPConverter'))
 const ImageWatermark       = lazy(() => import('./modules/image-tools/pages/ImageWatermark'))
 const ProductOptimizer     = lazy(() => import('./modules/image-tools/pages/ProductOptimizer'))
 const WhiteBackground      = lazy(() => import('./modules/image-tools/pages/WhiteBackground'))
 const SquareImageCreator   = lazy(() => import('./modules/image-tools/pages/SquareImageCreator'))
+const ImageToPDF           = lazy(() => import('./modules/image-tools/pages/ImageToPDF'))
+const EnhanceImage         = lazy(() => import('./modules/image-tools/pages/EnhanceImage'))
 
 // ============================================================
 // Lazy imports — Video Tools
@@ -417,11 +417,6 @@ const routes: RouteObject[] = [
             handle: { tool: 'PDF to Images', category: 'PDF Tools', description: 'Convert PDF pages to PNG or JPEG at 72, 150, or 300 DPI.', crumbs: [{ label: 'PDF Tools', to: '/tools/pdf' }] },
           },
           {
-            path: 'images-to-pdf',
-            element: <S><ImageToPDF /></S>,
-            handle: { tool: 'Images to PDF', category: 'PDF Tools', description: 'Combine JPG, PNG, or WEBP images into a single PDF.', crumbs: [{ label: 'PDF Tools', to: '/tools/pdf' }] },
-          },
-          {
             path: 'watermark',
             element: <S><WatermarkPDF /></S>,
             handle: { tool: 'Watermark PDF', category: 'PDF Tools', description: 'Add text watermark with custom color, opacity, and position.', crumbs: [{ label: 'PDF Tools', to: '/tools/pdf' }] },
@@ -502,41 +497,41 @@ const routes: RouteObject[] = [
               crumbs: [{ label: 'Image Tools', to: '/tools/image' }],
               relatedTools: [
                 { label: 'Resize Image',      to: '/tools/image/resize' },
-                { label: 'JPG to PNG',        to: '/tools/image/jpg-to-png' },
+                { label: 'Image Converter',  to: '/tools/image/converter' },
                 { label: 'WEBP Converter',    to: '/tools/image/webp' },
                 { label: 'Product Optimizer', to: '/tools/image/product-optimizer' },
               ],
             },
           },
           {
-            path: 'jpg-to-png',
-            element: <S><JPGtoPNG /></S>,
+            path: 'converter',
+            element: <S><ImageConverter /></S>,
             handle: {
-              tool: 'JPG to PNG',
+              tool: 'Image Converter',
               category: 'Image Tools',
-              description: 'Convert JPG/JPEG images to PNG format. Supports batch conversion.',
+              description: 'Convert between JPG and PNG formats. Batch conversion supported.',
               crumbs: [{ label: 'Image Tools', to: '/tools/image' }],
               relatedTools: [
-                { label: 'PNG to JPG',           to: '/tools/image/png-to-jpg' },
-                { label: 'WEBP Converter',       to: '/tools/image/webp' },
-                { label: 'Compress Image',       to: '/tools/image/compress' },
-                { label: 'Background Remover',   to: '/tools/image/background-remover' },
+                { label: 'WEBP Converter',    to: '/tools/image/webp' },
+                { label: 'Compress Image',    to: '/tools/image/compress' },
+                { label: 'Background Remover', to: '/tools/image/background-remover' },
+                { label: 'White Background',  to: '/tools/image/white-background' },
               ],
             },
           },
           {
-            path: 'png-to-jpg',
-            element: <S><PNGtoJPG /></S>,
+            path: 'enhance',
+            element: <S><EnhanceImage /></S>,
             handle: {
-              tool: 'PNG to JPG',
+              tool: 'Image Enhancer',
               category: 'Image Tools',
-              description: 'Convert PNG files to JPEG with custom background color for transparency.',
+              description: 'Sharpen, boost contrast and improve product image quality in your browser.',
               crumbs: [{ label: 'Image Tools', to: '/tools/image' }],
               relatedTools: [
-                { label: 'JPG to PNG',        to: '/tools/image/jpg-to-png' },
-                { label: 'WEBP Converter',    to: '/tools/image/webp' },
                 { label: 'Compress Image',    to: '/tools/image/compress' },
-                { label: 'White Background',  to: '/tools/image/white-background' },
+                { label: 'Resize Image',      to: '/tools/image/resize' },
+                { label: 'Background Remover', to: '/tools/image/background-remover' },
+                { label: 'Product Optimizer', to: '/tools/image/product-optimizer' },
               ],
             },
           },
@@ -549,8 +544,8 @@ const routes: RouteObject[] = [
               description: 'Convert between WEBP and PNG/JPG formats in both directions.',
               crumbs: [{ label: 'Image Tools', to: '/tools/image' }],
               relatedTools: [
-                { label: 'JPG to PNG',        to: '/tools/image/jpg-to-png' },
-                { label: 'PNG to JPG',        to: '/tools/image/png-to-jpg' },
+                { label: 'Image Converter',  to: '/tools/image/converter' },
+                { label: 'Image Enhancer',   to: '/tools/image/enhance' },
                 { label: 'Compress Image',    to: '/tools/image/compress' },
                 { label: 'Product Optimizer', to: '/tools/image/product-optimizer' },
               ],
@@ -617,6 +612,21 @@ const routes: RouteObject[] = [
                 { label: 'Crop Image',        to: '/tools/image/crop' },
                 { label: 'White Background',  to: '/tools/image/white-background' },
                 { label: 'Product Optimizer', to: '/tools/image/product-optimizer' },
+              ],
+            },
+          },
+          {
+            path: 'image-to-pdf',
+            element: <S><ImageToPDF /></S>,
+            handle: {
+              tool: 'Image to PDF',
+              category: 'Image Tools',
+              description: 'Combine JPG, PNG, or WEBP images into a single PDF. Drag to reorder.',
+              crumbs: [{ label: 'Image Tools', to: '/tools/image' }],
+              relatedTools: [
+                { label: 'Compress Image',     to: '/tools/image/compress' },
+                { label: 'Background Remover', to: '/tools/image/background-remover' },
+                { label: 'PDF to Image',       to: '/tools/pdf/to-images' },
               ],
             },
           },

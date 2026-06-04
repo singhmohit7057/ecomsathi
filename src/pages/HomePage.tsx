@@ -111,11 +111,11 @@ function HeroSection() {
             {/* Tool cards preview */}
             <div className="grid grid-cols-2 gap-4 p-5 sm:grid-cols-3">
               {[
-                { icon: FileText, label: 'PDF Tools',   count: '13 tools', color: '#2563EB', bg: '#EFF6FF' },
-                { icon: Image,    label: 'Image Tools',  count: '11 tools', color: '#16A34A', bg: '#F0FDF4' },
+                { icon: FileText, label: 'PDF Tools',   count: '12 tools', color: '#2563EB', bg: '#EFF6FF' },
+                { icon: Image,    label: 'Image Tools',  count: '12 tools', color: '#16A34A', bg: '#F0FDF4' },
                 { icon: Tag,      label: 'SKU Tools',    count: '7 tools',  color: '#7C3AED', bg: '#F5F3FF' },
-                { icon: Scissors, label: 'Label Crop',   count: '7 markets',color: '#D97706', bg: '#FFFBEB' },
-                { icon: Calculator,label:'GST Tools',    count: '10 tools', color: '#EA580C', bg: '#FFF7ED' },
+                { icon: Scissors, label: 'Label Crop',   count: '8 markets', color: '#D97706', bg: '#FFFBEB' },
+                { icon: Calculator,label:'GST Tools',    count: '8 tools',  color: '#EA580C', bg: '#FFF7ED' },
                 { icon: Video,    label: 'Video Tools',  count: '6 tools',  color: '#E11D48', bg: '#FFF1F2' },
               ].map(({ icon: Icon, label, count, color, bg }) => (
                 <div
@@ -162,7 +162,7 @@ function StatsBar() {
         <div className="grid grid-cols-2 gap-6 sm:grid-cols-4">
           {[
             { value: '50+',     label: 'Free Tools'           },
-            { value: '7',       label: 'Marketplace Support'  },
+            { value: '8',       label: 'Marketplace Support'  },
             { value: '1,000+',  label: 'Indian Sellers'       },
             { value: '100%',    label: 'Free, No Login'       },
           ].map(({ value, label }) => (
@@ -199,7 +199,7 @@ const CATEGORY_CARDS = [
     accent: '#2563EB',
     bg: '#EFF6FF',
     border: '#BFDBFE',
-    count: '13 tools',
+    count: '12 tools',
     chips: ['Merge', 'Compress', 'OCR', 'Rotate'],
   },
   {
@@ -210,7 +210,7 @@ const CATEGORY_CARDS = [
     accent: '#16A34A',
     bg: '#F0FDF4',
     border: '#BBF7D0',
-    count: '11 tools',
+    count: '12 tools',
     chips: ['BG Remover', 'Resize', 'Compress', 'White BG'],
   },
   {
@@ -243,7 +243,7 @@ const CATEGORY_CARDS = [
     accent: '#EA580C',
     bg: '#FFF7ED',
     border: '#FED7AA',
-    count: '10 tools',
+    count: '8 tools',
     chips: ['Calculator', 'GSTIN', 'HSN', 'SAC'],
   },
 ];
