@@ -9,14 +9,8 @@ import { usePDFFile } from '../hooks/usePDFFile'
 import { usePDFProcessor } from '../hooks/usePDFProcessor'
 import { watermarkPDF } from '../services/pdfApiService'
 import { canonical } from '../utils/pdfUtils'
-import type { FAQItem, RelatedPDFTool, WatermarkPosition } from '../types'
+import type { FAQItem, WatermarkPosition } from '../types'
 
-const RELATED: RelatedPDFTool[] = [
-  { label: 'Add Page Numbers', to: '/pdf/page-numbers', description: 'Add page numbers' },
-  { label: 'Merge PDF',        to: '/pdf/merge',        description: 'Combine PDFs' },
-  { label: 'Compress PDF',     to: '/pdf/compress',     description: 'Reduce file size' },
-  { label: 'Rotate PDF',       to: '/pdf/rotate',       description: 'Rotate pages' },
-]
 
 const FAQS: FAQItem[] = [
   {
@@ -98,7 +92,6 @@ export const WatermarkPDF: React.FC = () => {
       <PDFToolLayout
         title="Watermark PDF"
         description="Add a custom text watermark to all pages of your PDF. Control position, color, opacity, and rotation."
-        relatedTools={RELATED}
       >
         <div className="flex flex-col gap-6">
           <PDFUploader pdfFile={pdfFile} isLoading={isLoading} error={fileError} onDrop={onDrop} onReset={handleReset} />

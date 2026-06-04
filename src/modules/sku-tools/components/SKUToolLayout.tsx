@@ -5,7 +5,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { ChevronRight } from 'lucide-react'
-import SKUSidebar from './SKUSidebar'
 import type { RelatedSKUTool } from '../types'
 
 interface SKUToolLayoutProps {
@@ -18,7 +17,6 @@ interface SKUToolLayoutProps {
 export const SKUToolLayout: React.FC<SKUToolLayoutProps> = ({
   title,
   description,
-  relatedTools = [],
   children,
 }) => {
   return (
@@ -39,15 +37,7 @@ export const SKUToolLayout: React.FC<SKUToolLayoutProps> = ({
         <p className="text-sm text-[#64748B] mt-1 sm:text-base">{description}</p>
       </div>
 
-      <div className="flex gap-6 flex-col lg:flex-row">
-        <div className="min-w-0 flex-1">{children}</div>
-
-        {relatedTools.length > 0 && (
-          <div className="w-full lg:w-60 xl:w-64 shrink-0">
-            <SKUSidebar relatedTools={relatedTools} />
-          </div>
-        )}
-      </div>
+      <div className="min-w-0 w-full">{children}</div>
     </div>
   )
 }

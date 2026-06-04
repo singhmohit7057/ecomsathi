@@ -7,17 +7,10 @@ import VideoPreview from '../components/VideoPreview'
 import VideoFAQ from '../components/VideoFAQ'
 import { useVideoFile } from '../hooks/useVideoFile'
 import { extractFrames as extractFramesClient } from '../utils/videoUtils'
-import type { FAQItem, RelatedTool } from '../types'
+import type { FAQItem } from '../types'
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-const RELATED_TOOLS: RelatedTool[] = [
-  { label: 'Thumbnail Generator', to: '/tools/video/thumbnail-generator', description: 'One-click thumbnail' },
-  { label: 'Video to GIF',        to: '/tools/video/to-gif',         description: 'Animate a clip' },
-  { label: 'Compress Video',      to: '/tools/video/compress',             description: 'Reduce file size' },
-  { label: 'Video Converter',     to: '/tools/video/converter',            description: 'Change format' },
-  { label: 'Resize Video',        to: '/tools/video/resize',               description: 'Change resolution' },
-]
 
 const FAQS: FAQItem[] = [
   {
@@ -120,7 +113,6 @@ export const FrameExtractor: React.FC = () => {
       <VideoToolLayout
         title="Video Frame Extractor"
         description="Extract individual frames from any video as high-quality JPEG images."
-        relatedTools={RELATED_TOOLS}
       >
         <div className="flex flex-col gap-6">
           {/* Upload */}

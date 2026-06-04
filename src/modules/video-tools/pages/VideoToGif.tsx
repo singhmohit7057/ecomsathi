@@ -9,15 +9,8 @@ import { useVideoFile } from '../hooks/useVideoFile'
 import { useFFmpeg } from '../hooks/useFFmpeg'
 import { videoToGif, toObjectURL } from '../services/ffmpegService'
 import { formatDuration, formatBytes } from '../utils/formatBytes'
-import type { FAQItem, RelatedTool } from '../types'
+import type { FAQItem } from '../types'
 
-const RELATED_TOOLS: RelatedTool[] = [
-  { label: 'Frame Extractor',     to: '/tools/video/frame-extractor',     description: 'Extract frames as images' },
-  { label: 'Compress Video',      to: '/tools/video/compress',             description: 'Reduce video file size' },
-  { label: 'Thumbnail Generator', to: '/tools/video/thumbnail-generator', description: 'Extract video thumbnails' },
-  { label: 'Video Converter',     to: '/tools/video/converter',           description: 'Convert to MP4, WEBM, AVI…' },
-  { label: 'Resize Video',        to: '/tools/video/resize',              description: 'Change resolution' },
-]
 
 const FAQS: FAQItem[] = [
   {
@@ -126,7 +119,6 @@ export const VideoToGif: React.FC = () => {
       <VideoToolLayout
         title="Video to GIF Converter"
         description="Convert video clips to animated GIF for ecommerce product listings and social media."
-        relatedTools={RELATED_TOOLS}
       >
         <div className="flex flex-col gap-6">
 

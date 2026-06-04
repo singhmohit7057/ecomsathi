@@ -9,14 +9,8 @@ import { usePDFFile } from '../hooks/usePDFFile'
 import { usePDFProcessor } from '../hooks/usePDFProcessor'
 import { extractPages } from '../services/pdfApiService'
 import { canonical } from '../utils/pdfUtils'
-import type { FAQItem, RelatedPDFTool } from '../types'
+import type { FAQItem } from '../types'
 
-const RELATED: RelatedPDFTool[] = [
-  { label: 'Split PDF',       to: '/pdf/split',           description: 'Split into multiple files' },
-  { label: 'Rearrange Pages', to: '/pdf/rearrange-pages', description: 'Reorder pages' },
-  { label: 'Merge PDF',       to: '/pdf/merge',           description: 'Combine PDFs' },
-  { label: 'Compress PDF',    to: '/pdf/compress',        description: 'Reduce file size' },
-]
 
 const FAQS: FAQItem[] = [
   {
@@ -78,7 +72,6 @@ export const ExtractPages: React.FC = () => {
       <PDFToolLayout
         title="Extract PDF Pages"
         description="Select specific pages from a PDF and extract them into a new PDF document."
-        relatedTools={RELATED}
       >
         <div className="flex flex-col gap-6">
           <PDFUploader pdfFile={pdfFile} isLoading={isLoading} error={fileError} onDrop={onDrop} onReset={handleReset} />

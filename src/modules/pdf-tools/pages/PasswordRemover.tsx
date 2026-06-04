@@ -9,14 +9,8 @@ import { usePDFFile } from '../hooks/usePDFFile'
 import { usePDFProcessor } from '../hooks/usePDFProcessor'
 import { removePassword } from '../services/pdfApiService'
 import { canonical } from '../utils/pdfUtils'
-import type { FAQItem, RelatedPDFTool } from '../types'
+import type { FAQItem } from '../types'
 
-const RELATED: RelatedPDFTool[] = [
-  { label: 'Merge PDF',    to: '/pdf/merge',    description: 'Combine PDFs' },
-  { label: 'Compress PDF', to: '/pdf/compress', description: 'Reduce file size' },
-  { label: 'Split PDF',    to: '/pdf/split',    description: 'Split into parts' },
-  { label: 'Rotate PDF',   to: '/pdf/rotate',   description: 'Rotate pages' },
-]
 
 const FAQS: FAQItem[] = [
   {
@@ -83,7 +77,6 @@ export const PasswordRemover: React.FC = () => {
       <PDFToolLayout
         title="Remove PDF Password"
         description="Unlock a password-protected PDF you own. Enter the password to decrypt and download the unprotected file."
-        relatedTools={RELATED}
       >
         <div className="flex flex-col gap-6">
           {/* Legal notice */}

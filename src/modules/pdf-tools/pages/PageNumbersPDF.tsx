@@ -9,14 +9,8 @@ import { usePDFFile } from '../hooks/usePDFFile'
 import { usePDFProcessor } from '../hooks/usePDFProcessor'
 import { addPageNumbers } from '../services/pdfApiService'
 import { canonical } from '../utils/pdfUtils'
-import type { FAQItem, RelatedPDFTool, PageNumberPosition } from '../types'
+import type { FAQItem, PageNumberPosition } from '../types'
 
-const RELATED: RelatedPDFTool[] = [
-  { label: 'Watermark PDF', to: '/pdf/watermark', description: 'Add text watermark' },
-  { label: 'Merge PDF',     to: '/pdf/merge',     description: 'Combine PDFs' },
-  { label: 'Compress PDF',  to: '/pdf/compress',  description: 'Reduce file size' },
-  { label: 'Rotate PDF',    to: '/pdf/rotate',    description: 'Rotate pages' },
-]
 
 const FAQS: FAQItem[] = [
   {
@@ -99,7 +93,6 @@ export const PageNumbersPDF: React.FC = () => {
       <PDFToolLayout
         title="Add Page Numbers to PDF"
         description="Add page numbers with custom position, style, color, prefix, and suffix to every page."
-        relatedTools={RELATED}
       >
         <div className="flex flex-col gap-6">
           <PDFUploader pdfFile={pdfFile} isLoading={isLoading} error={fileError} onDrop={onDrop} onReset={handleReset} />

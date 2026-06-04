@@ -9,14 +9,8 @@ import { usePDFFile } from '../hooks/usePDFFile'
 import { usePDFProcessor } from '../hooks/usePDFProcessor'
 import { rearrangePages } from '../services/pdfApiService'
 import { canonical } from '../utils/pdfUtils'
-import type { FAQItem, RelatedPDFTool } from '../types'
+import type { FAQItem } from '../types'
 
-const RELATED: RelatedPDFTool[] = [
-  { label: 'Extract Pages', to: '/pdf/extract-pages', description: 'Extract specific pages' },
-  { label: 'Merge PDF',     to: '/pdf/merge',         description: 'Combine PDFs' },
-  { label: 'Split PDF',     to: '/pdf/split',         description: 'Split into parts' },
-  { label: 'Rotate PDF',    to: '/pdf/rotate',        description: 'Rotate pages' },
-]
 
 const FAQS: FAQItem[] = [
   {
@@ -80,7 +74,6 @@ export const RearrangePages: React.FC = () => {
       <PDFToolLayout
         title="Rearrange PDF Pages"
         description="Reorder, delete, or duplicate pages in a PDF by specifying a new page order."
-        relatedTools={RELATED}
       >
         <div className="flex flex-col gap-6">
           <PDFUploader pdfFile={pdfFile} isLoading={isLoading} error={fileError} onDrop={onDrop} onReset={handleReset} />

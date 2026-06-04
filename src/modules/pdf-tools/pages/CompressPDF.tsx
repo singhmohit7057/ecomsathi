@@ -9,14 +9,8 @@ import { usePDFFile } from '../hooks/usePDFFile'
 import { usePDFProcessor } from '../hooks/usePDFProcessor'
 import { compressPDF } from '../services/pdfApiService'
 import { canonical } from '../utils/pdfUtils'
-import type { FAQItem, RelatedPDFTool, CompressionLevel } from '../types'
+import type { FAQItem, CompressionLevel } from '../types'
 
-const RELATED: RelatedPDFTool[] = [
-  { label: 'Merge PDF',     to: '/pdf/merge',     description: 'Combine PDFs' },
-  { label: 'Split PDF',     to: '/pdf/split',     description: 'Split into parts' },
-  { label: 'Watermark PDF', to: '/pdf/watermark', description: 'Add watermark' },
-  { label: 'Rotate PDF',    to: '/pdf/rotate',    description: 'Rotate pages' },
-]
 
 const FAQS: FAQItem[] = [
   {
@@ -87,7 +81,6 @@ export const CompressPDF: React.FC = () => {
       <PDFToolLayout
         title="Compress PDF"
         description="Reduce PDF file size with Light, Balanced, or Maximum compression. No quality loss on text."
-        relatedTools={RELATED}
       >
         <div className="flex flex-col gap-6">
           <PDFUploader
@@ -99,8 +92,10 @@ export const CompressPDF: React.FC = () => {
           />
 
           {status === 'error' && procError && (
-            <div className="flex items-center gap-2 px-4 py-3 bg-[#FFF1F2] border border-[#FFE4E6] rounded-[8px] text-sm text-[#DC2626]">
-              <span>⚠</span> {procError}
+            <div className="flex flex-col gap-1 px-4 py-3 bg-[#FFF1F2] border border-[#FFE4E6] rounded-[8px]">
+              <p className="text-sm font-semibold text-[#DC2626]">⚠ Compression failed</p>
+              <p className="text-xs text-[#DC2626]">{procError}</p>
+              <p className="text-xs text-[#94A3B8] mt-1">Compression requires the EcomSathi processing server. Please try again or check your connection.</p>
             </div>
           )}
 

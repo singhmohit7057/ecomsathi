@@ -107,6 +107,7 @@ export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
+  const [rememberMe, setRememberMe] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -121,7 +122,7 @@ export default function LoginPage() {
 
     setLoading(true)
     try {
-      await signIn(email.trim(), password)
+      await signIn(email.trim(), password, rememberMe)
       navigate(redirectTo, { replace: true })
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Sign in failed. Please try again.'
@@ -222,6 +223,18 @@ export default function LoginPage() {
                 required
               />
             </div>
+
+            {/* Remember me */}
+            <label className="flex cursor-pointer items-center gap-2.5">
+              <input
+                type="checkbox"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+                disabled={loading}
+                className="h-5 w-5 shrink-0 cursor-pointer rounded border-[#94A3B8] accent-[#2563EB]"
+              />
+              <span className="text-sm text-[#64748B]">Remember me</span>
+            </label>
 
             <Button
               type="submit"

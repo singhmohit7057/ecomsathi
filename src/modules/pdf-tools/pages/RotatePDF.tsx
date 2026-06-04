@@ -9,14 +9,8 @@ import { usePDFFile } from '../hooks/usePDFFile'
 import { usePDFProcessor } from '../hooks/usePDFProcessor'
 import { rotatePDF } from '../services/pdfApiService'
 import { canonical } from '../utils/pdfUtils'
-import type { FAQItem, RelatedPDFTool, RotationAngle } from '../types'
+import type { FAQItem, RotationAngle } from '../types'
 
-const RELATED: RelatedPDFTool[] = [
-  { label: 'Crop PDF',      to: '/pdf/crop',      description: 'Trim page margins' },
-  { label: 'Merge PDF',     to: '/pdf/merge',     description: 'Combine PDFs' },
-  { label: 'Compress PDF',  to: '/pdf/compress',  description: 'Reduce file size' },
-  { label: 'Watermark PDF', to: '/pdf/watermark', description: 'Add watermark' },
-]
 
 const FAQS: FAQItem[] = [
   {
@@ -86,7 +80,6 @@ export const RotatePDF: React.FC = () => {
       <PDFToolLayout
         title="Rotate PDF"
         description="Rotate all or specific pages 90°, 180°, or 270°. Perfect for fixing upside-down scans."
-        relatedTools={RELATED}
       >
         <div className="flex flex-col gap-6">
           <PDFUploader pdfFile={pdfFile} isLoading={isLoading} error={fileError} onDrop={onDrop} onReset={handleReset} />

@@ -9,17 +9,10 @@ import VideoFAQ from '../components/VideoFAQ'
 import { useVideoFile } from '../hooks/useVideoFile'
 import { useFFmpeg } from '../hooks/useFFmpeg'
 import { compressVideo, toObjectURL } from '../services/ffmpegService'
-import type { FAQItem, RelatedTool, VideoQuality } from '../types'
+import type { FAQItem, VideoQuality } from '../types'
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-const RELATED_TOOLS: RelatedTool[] = [
-  { label: 'Resize Video',        to: '/tools/video/resize',              description: 'Change resolution' },
-  { label: 'Video Converter',     to: '/tools/video/converter',           description: 'Change format' },
-  { label: 'Video to GIF',        to: '/tools/video/to-gif',        description: 'Convert to GIF' },
-  { label: 'Thumbnail Generator', to: '/tools/video/thumbnail-generator', description: 'Extract thumbnail' },
-  { label: 'Frame Extractor',     to: '/tools/video/frame-extractor',     description: 'Extract frames' },
-]
 
 const FAQS: FAQItem[] = [
   {
@@ -103,7 +96,6 @@ export const CompressVideo: React.FC = () => {
       <VideoToolLayout
         title="Compress Video"
         description="Reduce video file size for marketplace uploads, email, and social media."
-        relatedTools={RELATED_TOOLS}
       >
         <div className="flex flex-col gap-6">
           {/* Upload */}

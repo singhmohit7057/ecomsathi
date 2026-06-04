@@ -9,14 +9,8 @@ import { usePDFFile } from '../hooks/usePDFFile'
 import { usePDFProcessor } from '../hooks/usePDFProcessor'
 import { pdfToImages } from '../services/pdfApiService'
 import { canonical } from '../utils/pdfUtils'
-import type { FAQItem, RelatedPDFTool } from '../types'
+import type { FAQItem } from '../types'
 
-const RELATED: RelatedPDFTool[] = [
-  { label: 'Image to PDF',  to: '/pdf/image-to-pdf', description: 'Convert images to PDF' },
-  { label: 'Compress PDF',  to: '/pdf/compress',     description: 'Reduce file size' },
-  { label: 'Merge PDF',     to: '/pdf/merge',        description: 'Combine PDFs' },
-  { label: 'Extract Pages', to: '/pdf/extract-pages', description: 'Extract pages' },
-]
 
 const FAQS: FAQItem[] = [
   {
@@ -82,7 +76,6 @@ export const PDFToImage: React.FC = () => {
       <PDFToolLayout
         title="PDF to Image"
         description="Convert PDF pages to PNG or JPEG images at 72, 150, or 300 DPI. All pages packaged as ZIP."
-        relatedTools={RELATED}
       >
         <div className="flex flex-col gap-6">
           <PDFUploader pdfFile={pdfFile} isLoading={isLoading} error={fileError} onDrop={onDrop} onReset={handleReset} />

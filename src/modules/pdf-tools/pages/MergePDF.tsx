@@ -10,14 +10,8 @@ import { usePDFProcessor } from '../hooks/usePDFProcessor'
 import { mergePDFs } from '../services/pdfApiService'
 import { formatBytes, isPDF } from '../utils/pdfUtils'
 import { canonical } from '../utils/pdfUtils'
-import type { FAQItem, RelatedPDFTool } from '../types'
+import type { FAQItem } from '../types'
 
-const RELATED: RelatedPDFTool[] = [
-  { label: 'Split PDF',       to: '/pdf/split',           description: 'Split into multiple files' },
-  { label: 'Extract Pages',   to: '/pdf/extract-pages',   description: 'Extract specific pages' },
-  { label: 'Rearrange Pages', to: '/pdf/rearrange-pages', description: 'Reorder PDF pages' },
-  { label: 'Compress PDF',    to: '/pdf/compress',        description: 'Reduce file size' },
-]
 
 const FAQS: FAQItem[] = [
   {
@@ -161,7 +155,6 @@ export const MergePDF: React.FC = () => {
       <PDFToolLayout
         title="Merge PDF"
         description="Combine multiple PDF files into one document. Drag to reorder files before merging."
-        relatedTools={RELATED}
       >
         <div className="flex flex-col gap-6">
           {/* Drop zone */}

@@ -18,7 +18,7 @@ interface AuthContextType {
   user: User | null
   session: Session | null
   loading: boolean
-  signIn: (email: string, password: string) => Promise<void>
+  signIn: (email: string, password: string, rememberMe?: boolean) => Promise<void>
   signUp: (email: string, password: string, fullName: string) => Promise<void>
   signOut: () => Promise<void>
   resetPassword: (email: string) => Promise<void>
@@ -104,11 +104,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Actions
   // ----------------------------------------------------------
 
-  const signIn = useCallback(async (email: string, password: string) => {
+  const signIn = useCallback(async (email: string, password: string, rememberMe = true) => {
     const { data, error } = await supabase.auth.signInWithPassword({ email, password })
     if (error) throw new Error(error.message)
     // Eagerly set session so ProtectedRoute sees it before navigate() fires
     if (data.session) setSession(data.session)
+    // If not remembering, remove the persisted session from localStorage
+    // so it clears when the browser tab/window is closed
+    if (!rememberMe) {
+      const key = `sb-${new URL(import.meta.env.VITE_SUPABASE_URL).hostname.split('.')[0]}-auth-token`
+      const raw = localStorage.getItem(key)
+      if (raw) {
+        sessionStorage.setItem(key, raw)
+        localStorage.removeItem(key)
+      }
+    }
   }, [])
 
   const signUp = useCallback(

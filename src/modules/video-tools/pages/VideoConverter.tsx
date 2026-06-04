@@ -9,17 +9,10 @@ import VideoFAQ from '../components/VideoFAQ'
 import { useVideoFile } from '../hooks/useVideoFile'
 import { useFFmpeg } from '../hooks/useFFmpeg'
 import { convertVideo, toObjectURL } from '../services/ffmpegService'
-import type { FAQItem, RelatedTool, VideoFormat, VideoQuality } from '../types'
+import type { FAQItem, VideoFormat, VideoQuality } from '../types'
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-const RELATED_TOOLS: RelatedTool[] = [
-  { label: 'Compress Video',      to: '/tools/video/compress',            description: 'Reduce file size' },
-  { label: 'Resize Video',        to: '/tools/video/resize',              description: 'Change resolution' },
-  { label: 'Video to GIF',        to: '/tools/video/to-gif',        description: 'Convert to GIF' },
-  { label: 'Thumbnail Generator', to: '/tools/video/thumbnail-generator', description: 'Extract thumbnail' },
-  { label: 'Frame Extractor',     to: '/tools/video/frame-extractor',     description: 'Extract frames' },
-]
 
 const FORMAT_DETAILS: Record<VideoFormat, { label: string; note: string; accentClass: string }> = {
   mp4:  { label: 'MP4',  note: 'Most compatible, recommended',   accentClass: 'bg-[#EFF6FF] text-[#2563EB] border-[#BFDBFE]' },
@@ -111,7 +104,6 @@ export const VideoConverter: React.FC = () => {
       <VideoToolLayout
         title="Video Converter"
         description="Convert between MP4, MOV, AVI, WEBM, and MKV formats in your browser."
-        relatedTools={RELATED_TOOLS}
       >
         <div className="flex flex-col gap-6">
           {/* Upload */}

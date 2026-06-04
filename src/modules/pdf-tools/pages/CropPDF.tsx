@@ -9,14 +9,8 @@ import { usePDFFile } from '../hooks/usePDFFile'
 import { usePDFProcessor } from '../hooks/usePDFProcessor'
 import { cropPDF } from '../services/pdfApiService'
 import { canonical } from '../utils/pdfUtils'
-import type { FAQItem, RelatedPDFTool } from '../types'
+import type { FAQItem } from '../types'
 
-const RELATED: RelatedPDFTool[] = [
-  { label: 'Merge PDF',     to: '/pdf/merge',     description: 'Combine PDFs into one' },
-  { label: 'Compress PDF',  to: '/pdf/compress',  description: 'Reduce file size' },
-  { label: 'Rotate PDF',    to: '/pdf/rotate',    description: 'Rotate PDF pages' },
-  { label: 'Watermark PDF', to: '/pdf/watermark', description: 'Add text watermark' },
-]
 
 const FAQS: FAQItem[] = [
   {
@@ -92,7 +86,6 @@ export const CropPDF: React.FC = () => {
       <PDFToolLayout
         title="Crop PDF"
         description="Trim PDF page margins. Set crop values for all or specific pages."
-        relatedTools={RELATED}
       >
         <div className="flex flex-col gap-6">
           <PDFUploader
