@@ -138,6 +138,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signOut = useCallback(async () => {
     const { error } = await supabase.auth.signOut()
     if (error) throw new Error(error.message)
+
+    // Clear any session tokens from both storages so the next login starts clean
+    const supabaseKey = `sb-${new URL(import.meta.env.VITE_SUPABASE_URL).hostname.split('.')[0]}-auth-token`
+    localStorage.removeItem(supabaseKey)
+    sessionStorage.removeItem(supabaseKey)
+
     setUser(null)
     setSession(null)
   }, [])
