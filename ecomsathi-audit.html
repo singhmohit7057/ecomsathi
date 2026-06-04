@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>EcomSathi — Complete Project Audit</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 13px; color: #1a1a1a; background: #fff; }
+
+  .cover {
+    min-height: 100vh; display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 100%);
+    color: #fff; text-align: center; page-break-after: always;
+  }
+  .cover h1 { font-size: 42px; font-weight: 800; letter-spacing: -1px; margin-bottom: 12px; }
+  .cover .sub { font-size: 18px; opacity: 0.85; margin-bottom: 32px; }
+  .cover .meta { font-size: 13px; opacity: 0.65; }
+  .cover .badge {
+    display: inline-block; background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 24px; padding: 6px 18px; margin: 6px 4px; font-size: 13px;
+  }
+
+  .toc { padding: 48px 60px; page-break-after: always; }
+  .toc h2 { font-size: 22px; font-weight: 700; color: #1e3a5f; border-bottom: 3px solid #2563eb; padding-bottom: 10px; margin-bottom: 24px; }
+  .toc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .toc-item { display: flex; justify-content: space-between; padding: 8px 12px; border-radius: 6px; font-size: 13px; }
+  .toc-item:hover { background: #f0f4ff; }
+  .toc-item .num { color: #2563eb; font-weight: 600; font-size: 11px; }
+
+  .section { padding: 40px 60px; page-break-inside: avoid; }
+  .section + .section { border-top: 2px solid #f0f4ff; }
+
+  h2.section-title {
+    font-size: 20px; font-weight: 700; color: #1e3a5f;
+    border-left: 5px solid #2563eb; padding-left: 14px;
+    margin-bottom: 20px; display: flex; align-items: center; gap: 10px;
+  }
+  h2.section-title .icon { font-size: 22px; }
+
+  h3.page-name {
+    font-size: 14px; font-weight: 700; color: #1e40af;
+    background: #eff6ff; border: 1px solid #bfdbfe;
+    padding: 8px 14px; border-radius: 8px; margin: 18px 0 10px;
+    display: flex; align-items: center; gap: 8px; page-break-inside: avoid;
+  }
+  h3.page-name code { font-family: 'Consolas', monospace; font-size: 13px; color: #1d4ed8; }
+
+  .meta-row { display: flex; gap: 24px; margin-bottom: 8px; flex-wrap: wrap; }
+  .meta-pill {
+    display: inline-flex; align-items: center; gap: 5px;
+    background: #f8fafc; border: 1px solid #e2e8f0;
+    border-radius: 20px; padding: 3px 10px; font-size: 12px; color: #475569;
+  }
+  .meta-pill strong { color: #1e293b; }
+
+  .comp-list { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 14px; }
+  .comp-tag {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 11.5px; padding: 3px 10px; border-radius: 4px;
+  }
+  .comp-tag.common { background: #dbeafe; color: #1e40af; border: 1px solid #93c5fd; }
+  .comp-tag.module { background: #d1fae5; color: #065f46; border: 1px solid #6ee7b7; }
+  .comp-tag.section { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
+  .comp-path { font-size: 10px; color: #64748b; margin-left: 2px; }
+
+  table { width: 100%; border-collapse: collapse; margin: 12px 0 20px; font-size: 12px; }
+  th { background: #1e3a5f; color: #fff; padding: 9px 12px; text-align: left; font-weight: 600; }
+  td { padding: 8px 12px; border-bottom: 1px solid #e2e8f0; vertical-align: top; }
+  tr:nth-child(even) td { background: #f8fafc; }
+  code { font-family: 'Consolas', monospace; background: #f1f5f9; padding: 1px 5px; border-radius: 3px; font-size: 11.5px; color: #1d4ed8; }
+  .url { font-family: 'Consolas', monospace; font-size: 11.5px; color: #059669; }
+  .tag-backend { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; border-radius: 4px; padding: 1px 6px; font-size: 10px; font-weight: 600; }
+  .tag-client { background: #d1fae5; color: #065f46; border: 1px solid #6ee7b7; border-radius: 4px; padding: 1px 6px; font-size: 10px; font-weight: 600; }
+  .tag-hybrid { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; border-radius: 4px; padding: 1px 6px; font-size: 10px; font-weight: 600; }
+  .tag-unused { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; border-radius: 4px; padding: 2px 8px; font-size: 11px; font-weight: 600; }
+
+  .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin: 20px 0; }
+  .stat-card { background: linear-gradient(135deg, #eff6ff, #dbeafe); border: 1px solid #bfdbfe; border-radius: 12px; padding: 18px; text-align: center; }
+  .stat-card .num { font-size: 36px; font-weight: 800; color: #1e40af; }
+  .stat-card .label { font-size: 12px; color: #475569; margin-top: 4px; }
+
+  .unused-box { background: #fff5f5; border: 1px solid #fca5a5; border-radius: 10px; padding: 16px 20px; margin: 10px 0; }
+  .unused-box .file { font-family: 'Consolas', monospace; font-size: 12px; color: #dc2626; margin: 4px 0; }
+  .unused-box .reason { font-size: 11px; color: #6b7280; margin-left: 16px; }
+
+  .comp-table-section { margin: 14px 0; }
+  .comp-table-section h4 { font-size: 13px; font-weight: 700; color: #374151; margin-bottom: 8px; padding: 6px 10px; background: #f0fdf4; border-left: 3px solid #22c55e; }
+
+  @media print {
+    body { font-size: 11px; }
+    .cover { min-height: auto; padding: 60px; }
+    .section { padding: 24px 40px; }
+    .toc { padding: 24px 40px; }
+    h2.section-title { font-size: 16px; }
+    .summary-grid { grid-template-columns: repeat(4,1fr); }
+    a { color: inherit; text-decoration: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- COVER PAGE -->
+<div class="cover">
+  <div style="font-size:64px;margin-bottom:20px">🛒</div>
+  <h1>EcomSathi</h1>
+  <p class="sub">Complete Project Audit Report</p>
+  <div style="margin:20px 0">
+    <span class="badge">📄 91 Pages</span>
+    <span class="badge">🧩 78+ Components</span>
+    <span class="badge">🔗 60+ Routes</span>
+    <span class="badge">🗑️ 5 Unused Files</span>
+  </div>
+  <p class="meta">Generated: June 2026 &nbsp;|&nbsp; React + TypeScript + Vite + Supabase</p>
+</div>
+
+<!-- TABLE OF CONTENTS -->
+<div class="toc">
+  <h2>Table of Contents</h2>
+  <div class="toc-grid">
+    <div class="toc-item"><span>1. Project Summary</span><span class="num">→</span></div>
+    <div class="toc-item"><span>2. Layouts</span><span class="num">→</span></div>
+    <div class="toc-item"><span>3. Core Pages (src/pages/)</span><span class="num">→</span></div>
+    <div class="toc-item"><span>4. SKU Tools (8 pages)</span><span class="num">→</span></div>
+    <div class="toc-item"><span>5. PDF Tools (13 pages)</span><span class="num">→</span></div>
+    <div class="toc-item"><span>6. Image Tools (13 pages)</span><span class="num">→</span></div>
+    <div class="toc-item"><span>7. Video Tools (7 pages)</span><span class="num">→</span></div>
+    <div class="toc-item"><span>8. GST Tools (9 pages)</span><span class="num">→</span></div>
+    <div class="toc-item"><span>9. Label Crop (9 pages)</span><span class="num">→</span></div>
+    <div class="toc-item"><span>10. Reconciliation — Premium (6 pages)</span><span class="num">→</span></div>
+    <div class="toc-item"><span>11. Inventory — Premium (7 pages)</span><span class="num">→</span></div>
+    <div class="toc-item"><span>12. Shared Components</span><span class="num">→</span></div>
+    <div class="toc-item"><span>13. Backend vs Client-Side Tools</span><span class="num">→</span></div>
+    <div class="toc-item"><span>14. Unused Files</span><span class="num">→</span></div>
+  </div>
+</div>
+
+<!-- 1. SUMMARY -->
+<div class="section">
+  <h2 class="section-title"><span class="icon">📊</span> 1. Project Summary</h2>
+  <div class="summary-grid">
+    <div class="stat-card"><div class="num">91</div><div class="label">Total Pages</div></div>
+    <div class="stat-card"><div class="num">60+</div><div class="label">URL Routes</div></div>
+    <div class="stat-card"><div class="num">78+</div><div class="label">Components</div></div>
+    <div class="stat-card"><div class="num">5</div><div class="label">Unused Files</div></div>
+  </div>
+  <table>
+    <tr><th>Module</th><th>Pages</th><th>Type</th></tr>
+    <tr><td>Core Pages</td><td>19</td><td>Public + Auth + Dashboard</td></tr>
+    <tr><td>SKU Tools</td><td>8</td><td>Free tools</td></tr>
+    <tr><td>PDF Tools</td><td>13</td><td>Free tools</td></tr>
+    <tr><td>Image Tools</td><td>13</td><td>Free tools (2 need backend)</td></tr>
+    <tr><td>Video Tools</td><td>7</td><td>Free tools — FFmpeg WASM</td></tr>
+    <tr><td>GST Tools</td><td>9</td><td>Free tools — Pure JS</td></tr>
+    <tr><td>Label Crop</td><td>9</td><td>Free tools — Canvas API</td></tr>
+    <tr><td>Reconciliation</td><td>6</td><td>Premium — Supabase</td></tr>
+    <tr><td>Inventory</td><td>7</td><td>Premium — Supabase</td></tr>
+  </table>
+  <p style="margin-top:8px;color:#64748b;font-size:12px">Stack: React 18 + TypeScript + Vite · React Router v6 (lazy-loaded) · TanStack Query · Supabase · Tailwind CSS · lucide-react</p>
+</div>
+
+<!-- 2. LAYOUTS -->
+<div class="section">
+  <h2 class="section-title"><span class="icon">🏗️</span> 2. Layouts</h2>
+  <table>
+    <tr><th>File</th><th>Location</th><th>Used By</th></tr>
+    <tr><td><code>PublicLayout.tsx</code></td><td><code>src/components/layout/</code></td><td>All public pages (Navbar + Footer)</td></tr>
+    <tr><td><code>DashboardLayout.tsx</code></td><td><code>src/components/layout/</code></td><td>Dashboard, Profile, Settings</td></tr>
+    <tr><td><code>ToolsLayout.tsx</code></td><td><code>src/components/layout/</code></td><td>All /tools/* routes (sidebar + breadcrumb)</td></tr>
+  </table>
+</div>
+
+<!-- 3. CORE PAGES -->
+<div class="section">
+  <h2 class="section-title"><span class="icon">📄</span> 3. Core Pages <small style="font-size:13px;font-weight:400;color:#64748b">&nbsp;src/pages/</small></h2>
+
+  <h3 class="page-name"><code>HomePage.tsx</code></h3>
+  <div class="meta-row">
+    <span class="meta-pill"><strong>Title:</strong> One Place for All Your Ecommerce Needs</span>
+    <span class="meta-pill"><strong>URL:</strong> <span class="url">/</span></span>
+  </div>
+  <div class="comp-list">
+    <span class="comp-tag section">NewsletterSection <span class="comp-path">src/components/sections/NewsletterSection.tsx</span></span>
+  </div>
+
+  <h3 class="page-name"><code>AboutPage.tsx</code></h3>
+  <div class="meta-row">
+    <span class="meta-pill"><strong>Title:</strong> We Build Tools Indian Sellers Actually Need</span>
+    <span class="meta-pill"><strong>URL:</strong> <span class="url">/about</span></span>
+  </div>
+  <div class="comp-list"><span style="color:#94a3b8;font-size:12px">No external components — all sections inline</span></div>
+
+  <h3 class="page-name"><code>ContactPage.tsx</code></h3>
+  <div class="meta-row">
+    <span class="meta-pill"><strong>Title:</strong> We'd Love to Hear From You</span>
+    <span class="meta-pill"><strong>URL:</strong> <span class="url">/contact</span></span>
+  </div>
+  <div class="comp-list">
+    <span class="comp-tag section">NewsletterSection <span class="comp-path">src/components/sections/NewsletterSection.tsx</span></span>
+  </div>
+
+  <h3 class="page-name"><code>FAQPage.tsx</code></h3>
+  <div class="meta-row">
+    <span class="meta-pill"><strong>Title:</strong> Frequently Asked Questions</span>
+    <span class="meta-pill"><strong>URL:</strong> <span class="url">/faq</span></span>
+  </div>
+  <div class="comp-list"><span style="color:#94a3b8;font-size:12px">All inline with useState</span></div>
+
+  <h3 class="page-name"><code>PrivacyPage.tsx</code></h3>
+  <div class="meta-row">
+    <span class="meta-pill"><strong>Title:</strong> Privacy Policy</span>
+    <span class="meta-pill"><strong>URL:</strong> <span class="url">/privacy</span></span>
+  </div>
+  <div class="comp-list"><span style="color:#94a3b8;font-size:12px">Inline</span></div>
+
+  <h3 class="page-name"><code>TermsPage.tsx</code></h3>
+  <div class="meta-row">
+    <span class="meta-pill"><strong>Title:</strong> Terms of Service</span>
+    <span class="meta-pill"><strong>URL:</strong> <span class="url">/terms</span></span>
+  </div>
+  <div class="comp-list"><span style="color:#94a3b8;font-size:12px">Inline</span></div>
+
+  <h3 class="page-name"><code>PricingPage.tsx</code></h3>
+  <div class="meta-row">
+    <span class="meta-pill"><strong>Title:</strong> Pricing Plans</span>
+    <span class="meta-pill"><strong>URL:</strong> <span class="url">/pricing</span></span>
+  </div>
+  <div class="comp-list"><span style="color:#94a3b8;font-size:12px">Inline</span></div>
+
+  <h3 class="page-name"><code>SitemapPage.tsx</code></h3>
+  <div class="meta-row">
+    <span class="meta-pill"><strong>Title:</strong> Sitemap</span>
+    <span class="meta-pill"><strong>URL:</strong> <span class="url">/sitemap</span></span>
+  </div>
+  <div class="comp-list"><span style="color:#94a3b8;font-size:12px">Inline</span></div>
+
+  <h3 class="page-name"><code>UnsubscribePage.tsx</code></h3>
+  <div class="meta-row">
+    <span class="meta-pill"><strong>Title:</strong> Unsubscribe</span>
+    <span class="meta-pill"><strong>URL:</strong> <span class="url">/unsubscribe</span></span>
+  </div>
+  <div class="comp-list"><span style="color:#94a3b8;font-size:12px">Inline</span></div>
+
+  <h3 class="page-name"><code>LoginPage.tsx</code></h3>
+  <div class="meta-row">
+    <span class="meta-pill"><strong>Title:</strong> Welcome Back</span>
+    <span class="meta-pill"><strong>URL:</strong> <span class="url">/login</span></span>
+  </div>
+  <div class="comp-list">
+    <span class="comp-tag common">Button <span class="comp-path">src/components/common/Button.tsx</span></span>
+    <span class="comp-tag common">Input <span class="comp-path">src/components/common/Input.tsx</span></span>
+  </div>
+
+  <h3 class="page-name"><code>RegisterPage.tsx</code></h3>
+  <div class="meta-row">
+    <span class="meta-pill"><strong>Title:</strong> Create Account</span>
+    <span class="meta-pill"><strong>URL:</strong> <span class="url">/register</span></span>
+  </div>
+  <div class="comp-list">
+    <span class="comp-tag common">Button</span>
+    <span class="comp-tag common">Input</span>
+  </div>
+
+  <h3 class="page-name"><code>ForgotPasswordPage.tsx</code></h3>
+  <div class="meta-row">
+    <span class="meta-pill"><strong>Title:</strong> Reset Password</span>
+    <span class="meta-pill"><strong>URL:</strong> <span class="url">/forgot-password</span></span>
+  </div>
+  <div class="comp-list">
+    <span class="comp-tag common">Button</span>
+    <span class="comp-tag common">Input</span>
+  </div>
+
+  <h3 class="page-name"><code>ResetPasswordPage.tsx</code></h3>
+  <div class="meta-row">
+    <span class="meta-pill"><strong>Title:</strong> Set New Password</span>
+    <span class="meta-pill"><strong>URL:</strong> <span class="url">/reset-password</span></span>
+  </div>
+  <div class="comp-list">
+    <span class="comp-tag common">Button</span>
+    <span class="comp-tag common">Input</span>
+  </div>
+
+  <h3 class="page-name"><code>DashboardPage.tsx</code></h3>
+  <div class="meta-row">
+    <span class="meta-pill"><strong>Title:</strong> Welcome back, [User]</span>
+    <span class="meta-pill"><strong>URL:</strong> <span class="url">/dashboard</span></span>
+  </div>
+  <div class="comp-list">
+    <span class="comp-tag common">Card <span class="comp-path">src/components/common/Card.tsx</span></span>
+    <span class="comp-tag common">Skeleton <span class="comp-path">src/components/common/Loader.tsx</span></span>
+    <span class="comp-tag common">Button</span>
+    <span class="comp-tag common">Badge <span class="comp-path">src/components/common/Badge.tsx</span></span>
+    <span class="comp-tag section">ToolCard + ALL_TOOLS <span class="comp-path">src/components/sections/ToolsGrid.tsx</span></span>
+  </div>
+
+  <h3 class="page-name"><code>ToolsPage.tsx</code></h3>
+  <div class="meta-row">
+    <span class="meta-pill"><strong>Title:</strong> Free Ecommerce Tools</span>
+    <span class="meta-pill"><strong>URL:</strong> <span class="url">/tools</span></span>
+  </div>
+  <div class="comp-list">
+    <span class="comp-tag section">ALL_TOOLS + CATEGORY_META + ToolCard <span class="comp-path">src/components/sections/ToolsGrid.tsx</span></span>
+  </div>
+
+  <h3 class="page-name"><code>ProfilePage.tsx</code></h3>
+  <div class="meta-row">
+    <span class="meta-pill"><strong>Title:</strong> Your Profile</span>
+    <span class="meta-pill"><strong>URL:</strong> <span class="url">/profile</span></span>
+  </div>
+  <div class="comp-list"><span style="color:#94a3b8;font-size:12px">Inline</span></div>
+
+  <h3 class="page-name"><code>SettingsPage.tsx</code></h3>
+  <div class="meta-row">
+    <span class="meta-pill"><strong>Title:</strong> Account Settings</span>
+    <span class="meta-pill"><strong>URL:</strong> <span class="url">/settings</span></span>
+  </div>
+  <div class="comp-list"><span style="color:#94a3b8;font-size:12px">Inline</span></div>
+
+  <h3 class="page-name"><code>NotFoundPage.tsx</code></h3>
+  <div class="meta-row">
+    <span class="meta-pill"><strong>Title:</strong> 404 – Page Not Found</span>
+    <span class="meta-pill"><strong>URL:</strong> <span class="url">* (catch-all)</span></span>
+  </div>
+  <div class="comp-list"><span style="color:#94a3b8;font-size:12px">Inline</span></div>
+
+  <h3 class="page-name"><code>ToolErrorPage.tsx</code></h3>
+  <div class="meta-row">
+    <span class="meta-pill"><strong>Title:</strong> Tool Error</span>
+    <span class="meta-pill"><strong>URL:</strong> <span class="url">Error boundary for /tools/*</span></span>
+  </div>
+  <div class="comp-list"><span style="color:#94a3b8;font-size:12px">Inline</span></div>
+</div>
+
+<!-- 4. SKU TOOLS -->
+<div class="section">
+  <h2 class="section-title"><span class="icon">🏷️</span> 4. SKU Tools <small style="font-size:13px;font-weight:400;color:#64748b">&nbsp;src/modules/sku-tools/pages/ &nbsp;|&nbsp; 8 pages</small></h2>
+  <p style="margin-bottom:16px;font-size:12px;color:#64748b">Module components: <code>src/modules/sku-tools/components/</code> → SKUToolLayout, BarcodePreview, LabelPreview, LabelTemplateSelector, PatternBuilder, SKUToolCard, SKUFAQ, SKUSidebar, BulkSKUUploader</p>
+  <table>
+    <tr><th>File</th><th>Title</th><th>URL</th><th>Components Used</th></tr>
+    <tr><td><code>SKUHub.tsx</code></td><td>SKU Tools</td><td class="url">/tools/sku</td><td>SEO, SKUToolCard</td></tr>
+    <tr><td><code>SKUGenerator.tsx</code></td><td>SKU Generator</td><td class="url">/tools/sku/generator</td><td>SKUToolLayout, Button, Input, Card</td></tr>
+    <tr><td><code>BulkSKUGenerator.tsx</code></td><td>Bulk SKU Generator</td><td class="url">/tools/sku/bulk-generator</td><td>SKUToolLayout, Button, FileUploader, Card</td></tr>
+    <tr><td><code>VariantSKUGenerator.tsx</code></td><td>Variant SKU Generator</td><td class="url">/tools/sku/variant-generator</td><td>SKUToolLayout, Button, Input, Card</td></tr>
+    <tr><td><code>CustomSKUGenerator.tsx</code></td><td>Custom SKU Generator</td><td class="url">/tools/sku/custom-generator</td><td>SKUToolLayout, Button, Input, Card, PatternBuilder</td></tr>
+    <tr><td><code>BarcodeGeneratorPage.tsx</code></td><td>Barcode Generator</td><td class="url">/tools/sku/barcode</td><td>SKUToolLayout, Button, Input, Card, BarcodePreview</td></tr>
+    <tr><td><code>LabelGeneratorPage.tsx</code></td><td>Label Generator</td><td class="url">/tools/sku/label-generator</td><td>SKUToolLayout, Button, Input, Card, LabelPreview, LabelTemplateSelector</td></tr>
+    <tr><td><code>LabelPrinterPage.tsx</code></td><td>Label Printer</td><td class="url">/tools/sku/label-printer</td><td>SKUToolLayout, Button, Card, Modal</td></tr>
+  </table>
+</div>
+
+<!-- 5. PDF TOOLS -->
+<div class="section">
+  <h2 class="section-title"><span class="icon">📑</span> 5. PDF Tools <small style="font-size:13px;font-weight:400;color:#64748b">&nbsp;src/modules/pdf-tools/pages/ &nbsp;|&nbsp; 13 pages</small></h2>
+  <p style="margin-bottom:16px;font-size:12px;color:#64748b">Module components: <code>src/modules/pdf-tools/components/</code> → PDFToolLayout, PDFUploader, PDFPreview, PDFDownload, PDFBreadcrumb, PDFFAQ, PDFSidebar, PDFToolCard, RelatedPDFTools</p>
+  <table>
+    <tr><th>File</th><th>Title</th><th>URL</th><th>Components Used</th></tr>
+    <tr><td><code>PDFHub.tsx</code></td><td>PDF Tools</td><td class="url">/tools/pdf</td><td>SEO, PDFToolCard</td></tr>
+    <tr><td><code>MergePDF.tsx</code></td><td>Merge PDF</td><td class="url">/tools/pdf/merge</td><td>PDFToolLayout, PDFUploader, PDFPreview, PDFDownload, Button, Loader</td></tr>
+    <tr><td><code>SplitPDF.tsx</code></td><td>Split PDF</td><td class="url">/tools/pdf/split</td><td>PDFToolLayout, PDFUploader, PDFPreview, PDFDownload, Button, Input</td></tr>
+    <tr><td><code>CropPDF.tsx</code></td><td>Crop PDF</td><td class="url">/tools/pdf/crop</td><td>PDFToolLayout, PDFUploader, PDFPreview, PDFDownload, Button</td></tr>
+    <tr><td><code>OCRPDF.tsx</code></td><td>OCR PDF</td><td class="url">/tools/pdf/ocr</td><td>PDFToolLayout, PDFUploader, PDFDownload, Button, Loader, Alert</td></tr>
+    <tr><td><code>CompressPDF.tsx</code></td><td>Compress PDF</td><td class="url">/tools/pdf/compress</td><td>PDFToolLayout, PDFUploader, PDFDownload, Button, Loader</td></tr>
+    <tr><td><code>PasswordRemover.tsx</code></td><td>Remove PDF Password</td><td class="url">/tools/pdf/password</td><td>PDFToolLayout, PDFUploader, PDFDownload, Button, Input</td></tr>
+    <tr><td><code>RotatePDF.tsx</code></td><td>Rotate PDF</td><td class="url">/tools/pdf/rotate</td><td>PDFToolLayout, PDFUploader, PDFPreview, PDFDownload, Button</td></tr>
+    <tr><td><code>ExtractPages.tsx</code></td><td>Extract PDF Pages</td><td class="url">/tools/pdf/extract</td><td>PDFToolLayout, PDFUploader, PDFDownload, Button, Input</td></tr>
+    <tr><td><code>RearrangePages.tsx</code></td><td>Rearrange PDF Pages</td><td class="url">/tools/pdf/rearrange</td><td>PDFToolLayout, PDFUploader, PDFPreview, PDFDownload, Button, Modal</td></tr>
+    <tr><td><code>PDFToImage.tsx</code></td><td>PDF to Images</td><td class="url">/tools/pdf/to-images</td><td>PDFToolLayout, PDFUploader, PDFDownload, Button, Loader</td></tr>
+    <tr><td><code>WatermarkPDF.tsx</code></td><td>Watermark PDF</td><td class="url">/tools/pdf/watermark</td><td>PDFToolLayout, PDFUploader, PDFDownload, Button, Input</td></tr>
+    <tr><td><code>PageNumbersPDF.tsx</code></td><td>Add Page Numbers</td><td class="url">/tools/pdf/page-numbers</td><td>PDFToolLayout, PDFUploader, PDFDownload, Button, Input</td></tr>
+  </table>
+</div>
+
+<!-- 6. IMAGE TOOLS -->
+<div class="section">
+  <h2 class="section-title"><span class="icon">🖼️</span> 6. Image Tools <small style="font-size:13px;font-weight:400;color:#64748b">&nbsp;src/modules/image-tools/ &nbsp;|&nbsp; 13 pages</small></h2>
+  <p style="margin-bottom:16px;font-size:12px;color:#64748b">Module components: <code>src/modules/image-tools/components/</code> → ImageFAQ</p>
+  <table>
+    <tr><th>File</th><th>Title</th><th>URL</th><th>Components</th><th>Type</th></tr>
+    <tr><td><code>index.tsx</code></td><td>Image Tools</td><td class="url">/tools/image</td><td>SEO, ToolCard</td><td><span class="tag-client">CLIENT</span></td></tr>
+    <tr><td><code>BackgroundRemover.tsx</code></td><td>Background Remover</td><td class="url">/tools/image/background-remover</td><td>Button, FileUploader, Card, Loader, Alert</td><td><span class="tag-backend">BACKEND API</span></td></tr>
+    <tr><td><code>CropImage.tsx</code></td><td>Crop Image</td><td class="url">/tools/image/crop</td><td>Button, FileUploader, Card</td><td><span class="tag-client">CLIENT</span></td></tr>
+    <tr><td><code>ResizeImage.tsx</code></td><td>Resize Image</td><td class="url">/tools/image/resize</td><td>Button, FileUploader, Input, Card</td><td><span class="tag-client">CLIENT</span></td></tr>
+    <tr><td><code>CompressImage.tsx</code></td><td>Compress Image</td><td class="url">/tools/image/compress</td><td>Button, FileUploader, Card, Loader</td><td><span class="tag-client">CLIENT</span></td></tr>
+    <tr><td><code>WEBPConverter.tsx</code></td><td>WEBP Converter</td><td class="url">/tools/image/webp</td><td>Button, FileUploader, Card</td><td><span class="tag-client">CLIENT</span></td></tr>
+    <tr><td><code>ImageWatermark.tsx</code></td><td>Image Watermark</td><td class="url">/tools/image/watermark</td><td>Button, FileUploader, Input, Card</td><td><span class="tag-client">CLIENT</span></td></tr>
+    <tr><td><code>ProductOptimizer.tsx</code></td><td>Product Image Optimizer</td><td class="url">/tools/image/product-optimizer</td><td>Button, FileUploader, Card, Loader</td><td><span class="tag-hybrid">HYBRID</span></td></tr>
+    <tr><td><code>WhiteBackground.tsx</code></td><td>White Background</td><td class="url">/tools/image/white-background</td><td>Button, FileUploader, Card, Loader</td><td><span class="tag-backend">BACKEND API</span></td></tr>
+    <tr><td><code>SquareImageCreator.tsx</code></td><td>Square Image Creator</td><td class="url">/tools/image/square</td><td>Button, FileUploader, Card</td><td><span class="tag-client">CLIENT</span></td></tr>
+    <tr><td><code>ImageConverter.tsx</code></td><td>Image Converter</td><td class="url">/tools/image/converter</td><td>Button, FileUploader, Card</td><td><span class="tag-client">CLIENT</span></td></tr>
+    <tr><td><code>EnhanceImage.tsx</code></td><td>Image Enhancer</td><td class="url">/tools/image/enhance</td><td>Button, FileUploader, Card</td><td><span class="tag-client">CLIENT</span></td></tr>
+    <tr><td><code>ImageToPDF.tsx</code></td><td>Image to PDF</td><td class="url">/tools/image/image-to-pdf</td><td>Button, FileUploader, Card, Loader</td><td><span class="tag-backend">BACKEND API</span></td></tr>
+  </table>
+</div>
+
+<!-- 7. VIDEO TOOLS -->
+<div class="section">
+  <h2 class="section-title"><span class="icon">🎬</span> 7. Video Tools <small style="font-size:13px;font-weight:400;color:#64748b">&nbsp;src/modules/video-tools/ &nbsp;|&nbsp; 7 pages</small></h2>
+  <p style="margin-bottom:16px;font-size:12px;color:#64748b">All tools are 100% client-side via <strong>@ffmpeg/ffmpeg (WebAssembly)</strong><br>Module components: <code>src/modules/video-tools/components/</code> → VideoToolLayout, VideoUploader, VideoPreview, VideoDownloader, ProcessingBar, VideoBreadcrumb, VideoFAQ, VideoSidebar, VideoToolCard, RelatedVideoTools</p>
+  <table>
+    <tr><th>File</th><th>Title</th><th>URL</th><th>Components Used</th></tr>
+    <tr><td><code>index.tsx</code></td><td>Video Tools</td><td class="url">/tools/video</td><td>SEO, VideoToolCard</td></tr>
+    <tr><td><code>VideoToGif.tsx</code></td><td>Video to GIF</td><td class="url">/tools/video/to-gif</td><td>VideoToolLayout, VideoUploader, VideoPreview, VideoDownloader, Button, Loader</td></tr>
+    <tr><td><code>FrameExtractor.tsx</code></td><td>Frame Extractor</td><td class="url">/tools/video/frame-extractor</td><td>VideoToolLayout, VideoUploader, VideoPreview, Button, Loader</td></tr>
+    <tr><td><code>CompressVideo.tsx</code></td><td>Compress Video</td><td class="url">/tools/video/compress</td><td>VideoToolLayout, VideoUploader, VideoDownloader, Button, Loader, ProcessingBar</td></tr>
+    <tr><td><code>ResizeVideo.tsx</code></td><td>Resize Video</td><td class="url">/tools/video/resize</td><td>VideoToolLayout, VideoUploader, VideoDownloader, Button, Input, ProcessingBar</td></tr>
+    <tr><td><code>VideoConverter.tsx</code></td><td>Video Converter</td><td class="url">/tools/video/converter</td><td>VideoToolLayout, VideoUploader, VideoDownloader, Button, Loader, ProcessingBar</td></tr>
+    <tr><td><code>ThumbnailGenerator.tsx</code></td><td>Thumbnail Generator</td><td class="url">/tools/video/thumbnail-generator</td><td>VideoToolLayout, VideoUploader, VideoPreview, Button, Loader</td></tr>
+  </table>
+</div>
+
+<!-- 8. GST TOOLS -->
+<div class="section">
+  <h2 class="section-title"><span class="icon">🧾</span> 8. GST Tools <small style="font-size:13px;font-weight:400;color:#64748b">&nbsp;src/modules/gst-tools/ &nbsp;|&nbsp; 9 pages</small></h2>
+  <p style="margin-bottom:16px;font-size:12px;color:#64748b">All tools are 100% client-side — Pure JS calculations + local lookup tables<br>Module components: <code>src/modules/gst-tools/components/</code> → GSTToolLayout, GSTCalculatorForm, GSTSearchForm, GSTResultCard, GSTBreadcrumb, GSTFAQ, GSTSidebar, GSTToolCard, RelatedTools</p>
+  <table>
+    <tr><th>File</th><th>Title</th><th>URL</th><th>Components Used</th></tr>
+    <tr><td><code>index.tsx</code></td><td>GST Tools</td><td class="url">/tools/gst</td><td>SEO, GSTToolCard</td></tr>
+    <tr><td><code>GSTVerification.tsx</code></td><td>GST Verification</td><td class="url">/tools/gst/verify</td><td>GSTToolLayout, GSTSearchForm, GSTResultCard, Button, Input</td></tr>
+    <tr><td><code>GSTCalculator.tsx</code></td><td>GST Calculator</td><td class="url">/tools/gst/calculator</td><td>GSTToolLayout, GSTCalculatorForm, GSTResultCard, Button, Input</td></tr>
+    <tr><td><code>ReverseGSTCalculator.tsx</code></td><td>Reverse GST Calculator</td><td class="url">/tools/gst/reverse</td><td>GSTToolLayout, GSTCalculatorForm, GSTResultCard, Button, Input</td></tr>
+    <tr><td><code>GSTRateFinder.tsx</code></td><td>GST Rate Finder</td><td class="url">/tools/gst/rate-finder</td><td>GSTToolLayout, GSTSearchForm, GSTResultCard, Button, Input</td></tr>
+    <tr><td><code>GSTStateFinder.tsx</code></td><td>GST State Finder</td><td class="url">/tools/gst/state-finder</td><td>GSTToolLayout, GSTSearchForm, GSTResultCard, Button, Input</td></tr>
+    <tr><td><code>PANValidator.tsx</code></td><td>PAN Validator</td><td class="url">/tools/gst/pan-validator</td><td>GSTToolLayout, GSTSearchForm, GSTResultCard, Button, Input</td></tr>
+    <tr><td><code>HSNSearch.tsx</code></td><td>HSN Code Search</td><td class="url">/tools/gst/hsn-search</td><td>GSTToolLayout, GSTSearchForm, GSTResultCard, Button, Input, Table</td></tr>
+    <tr><td><code>SACSearch.tsx</code></td><td>SAC Code Search</td><td class="url">/tools/gst/sac-search</td><td>GSTToolLayout, GSTSearchForm, GSTResultCard, Button, Input, Table</td></tr>
+  </table>
+</div>
+
+<!-- 9. LABEL CROP -->
+<div class="section">
+  <h2 class="section-title"><span class="icon">✂️</span> 9. Label Crop <small style="font-size:13px;font-weight:400;color:#64748b">&nbsp;src/modules/label-crop/pages/ &nbsp;|&nbsp; 9 pages</small></h2>
+  <p style="margin-bottom:16px;font-size:12px;color:#64748b">All tools are 100% client-side via Canvas API<br>Module components: <code>src/modules/label-crop/components/</code> → MarketplacePageLayout, LabelUploader, LabelPreview, LabelDownload, LabelSettings, LabelBreadcrumb, LabelFAQ, MarketplaceCard, MarketplaceLogos, RelatedLabelTools, MarketplaceLabelTool</p>
+  <table>
+    <tr><th>File</th><th>Title</th><th>URL</th><th>Components Used</th></tr>
+    <tr><td><code>LabelCropHub.tsx</code></td><td>Label Crop</td><td class="url">/label-crop</td><td>SEO, MarketplaceCard</td></tr>
+    <tr><td><code>AmazonLabelCrop.tsx</code></td><td>Amazon Label Crop</td><td class="url">/label-crop/amazon</td><td>MarketplacePageLayout, LabelUploader, LabelPreview, LabelDownload, LabelSettings, Button</td></tr>
+    <tr><td><code>FlipkartLabelCrop.tsx</code></td><td>Flipkart Label Crop</td><td class="url">/label-crop/flipkart</td><td>same pattern</td></tr>
+    <tr><td><code>MyntraLabelCrop.tsx</code></td><td>Myntra Label Crop</td><td class="url">/label-crop/myntra</td><td>same pattern</td></tr>
+    <tr><td><code>MeeshoLabelCrop.tsx</code></td><td>Meesho Label Crop</td><td class="url">/label-crop/meesho</td><td>same pattern</td></tr>
+    <tr><td><code>AjioLabelCrop.tsx</code></td><td>AJIO Label Crop</td><td class="url">/label-crop/ajio</td><td>same pattern</td></tr>
+    <tr><td><code>NykaaLabelCrop.tsx</code></td><td>Nykaa Label Crop</td><td class="url">/label-crop/nykaa</td><td>same pattern</td></tr>
+    <tr><td><code>SnapdealLabelCrop.tsx</code></td><td>Snapdeal Label Crop</td><td class="url">/label-crop/snapdeal</td><td>same pattern</td></tr>
+    <tr><td><code>ShopsyLabelCrop.tsx</code></td><td>Shopsy Label Crop</td><td class="url">/label-crop/shopsy</td><td>same pattern</td></tr>
+  </table>
+</div>
+
+<!-- 10. RECONCILIATION -->
+<div class="section">
+  <h2 class="section-title"><span class="icon">🔄</span> 10. Reconciliation — Premium <small style="font-size:13px;font-weight:400;color:#64748b">&nbsp;src/modules/reconciliation/ &nbsp;|&nbsp; 6 pages</small></h2>
+  <table>
+    <tr><th>File</th><th>Title</th><th>URL</th><th>Components Used</th></tr>
+    <tr><td><code>ReconciliationDashboard.tsx</code></td><td>Reconciliation Dashboard</td><td class="url">/reconciliation</td><td>Card, Badge, Button, Table</td></tr>
+    <tr><td><code>ImportWizard.tsx</code></td><td>Import Wizard</td><td class="url">/reconciliation/import</td><td>Button, FileUploader, Card, Loader</td></tr>
+    <tr><td><code>OrdersTable.tsx</code></td><td>Orders</td><td class="url">/reconciliation/orders</td><td>Table, Badge, Button, Pagination</td></tr>
+    <tr><td><code>SettlementsTable.tsx</code></td><td>Settlements</td><td class="url">/reconciliation/settlements</td><td>Table, Badge, Button, Pagination</td></tr>
+    <tr><td><code>ReportView.tsx</code></td><td>Reconciliation Report</td><td class="url">/reconciliation/reports/:id</td><td>Card, Table, Badge, Button</td></tr>
+    <tr><td><code>MissingPayments.tsx</code></td><td>Missing Payments</td><td class="url">/reconciliation/missing</td><td>Table, Alert, Badge, Button</td></tr>
+  </table>
+</div>
+
+<!-- 11. INVENTORY -->
+<div class="section">
+  <h2 class="section-title"><span class="icon">📦</span> 11. Inventory — Premium <small style="font-size:13px;font-weight:400;color:#64748b">&nbsp;src/modules/inventory/ &nbsp;|&nbsp; 7 pages</small></h2>
+  <table>
+    <tr><th>File</th><th>Title</th><th>URL</th><th>Components Used</th></tr>
+    <tr><td><code>InventoryView.tsx</code></td><td>Inventory Overview</td><td class="url">/inventory</td><td>Card, Badge, Table, Button</td></tr>
+    <tr><td><code>ProductMaster.tsx</code></td><td>Products</td><td class="url">/inventory/products</td><td>Table, Button, Modal, Badge</td></tr>
+    <tr><td><code>StockMovements.tsx</code></td><td>Stock Movements</td><td class="url">/inventory/movements</td><td>Table, Badge, Pagination, Button</td></tr>
+    <tr><td><code>Warehouses.tsx</code></td><td>Warehouses</td><td class="url">/inventory/warehouses</td><td>Card, Button, Modal, Table</td></tr>
+    <tr><td><code>PurchaseOrders.tsx</code></td><td>Purchase Orders</td><td class="url">/inventory/purchase-orders</td><td>Table, Badge, Button, Pagination</td></tr>
+    <tr><td><code>LowStockAlerts.tsx</code></td><td>Low Stock Alerts</td><td class="url">/inventory/low-stock</td><td>Table, Alert, Badge, Button</td></tr>
+    <tr><td><code>InventoryReports.tsx</code></td><td>Inventory Reports</td><td class="url">/inventory/reports</td><td>Card, Table, Button, Badge</td></tr>
+  </table>
+</div>
+
+<!-- 12. SHARED COMPONENTS -->
+<div class="section">
+  <h2 class="section-title"><span class="icon">🧩</span> 12. Shared Components</h2>
+
+  <div class="comp-table-section">
+    <h4>src/components/common/ — 17 files</h4>
+    <table>
+      <tr><th>File</th><th>Purpose</th><th>Used By</th></tr>
+      <tr><td><code>Alert.tsx</code></td><td>Info / warning / error alerts</td><td>OCR PDF, Missing Payments, Low Stock, Background Remover</td></tr>
+      <tr><td><code>Analytics.tsx</code></td><td>Google Analytics wrapper</td><td>App.tsx root</td></tr>
+      <tr><td><code>Badge.tsx</code></td><td>Status/label badges</td><td>Dashboard, Reconciliation, Inventory</td></tr>
+      <tr><td><code>Button.tsx</code></td><td>Primary button component</td><td>50+ pages</td></tr>
+      <tr><td><code>Card.tsx</code></td><td>Card wrapper with variants</td><td>45+ pages</td></tr>
+      <tr><td><code>CookieBanner.tsx</code></td><td>Cookie consent banner</td><td>App.tsx root</td></tr>
+      <tr><td><code>FileUploader.tsx</code></td><td>Dropzone file uploader</td><td>40+ tool pages</td></tr>
+      <tr><td><code>Footer.tsx</code></td><td>Site footer</td><td>PublicLayout</td></tr>
+      <tr><td><code>Input.tsx</code></td><td>Form input (forwardRef)</td><td>30+ pages</td></tr>
+      <tr><td><code>Loader.tsx</code></td><td>Spinner + Skeleton</td><td>25+ tool pages</td></tr>
+      <tr><td><code>Modal.tsx</code></td><td>Dialog overlay with portal</td><td>Barcode, Rearrange, Inventory</td></tr>
+      <tr><td><code>Navbar.tsx</code></td><td>Navigation bar</td><td>PublicLayout, DashboardLayout</td></tr>
+      <tr><td><code>Pagination.tsx</code></td><td>Page controls</td><td>Orders, Settlements, Movements, POs</td></tr>
+      <tr><td><code>SchemaMarkup.tsx</code></td><td>JSON-LD schema generators</td><td>SEO pages</td></tr>
+      <tr><td><code>SEO.tsx</code></td><td>Meta tag manager</td><td>All hub pages</td></tr>
+      <tr><td><code>Table.tsx</code></td><td>Data table with sorting</td><td>GST search, Reconciliation, Inventory</td></tr>
+      <tr><td><code>index.ts</code></td><td>Barrel export</td><td>Everywhere</td></tr>
+    </table>
+  </div>
+
+  <div class="comp-table-section">
+    <h4>src/components/sections/ — 3 files</h4>
+    <table>
+      <tr><th>File</th><th>Purpose</th><th>Used By</th></tr>
+      <tr><td><code>HeroSection.tsx</code></td><td>Homepage hero banner</td><td>HomePage</td></tr>
+      <tr><td><code>NewsletterSection.tsx</code></td><td>Newsletter signup form</td><td>HomePage, ContactPage</td></tr>
+      <tr><td><code>ToolsGrid.tsx</code></td><td>ALL_TOOLS data + ToolCard grid + search</td><td>ToolsPage, DashboardPage</td></tr>
+    </table>
+  </div>
+
+  <div class="comp-table-section">
+    <h4>src/components/layout/ — 3 files</h4>
+    <table>
+      <tr><th>File</th><th>Purpose</th><th>Used By</th></tr>
+      <tr><td><code>PublicLayout.tsx</code></td><td>Navbar + Footer wrapper</td><td>All public routes</td></tr>
+      <tr><td><code>DashboardLayout.tsx</code></td><td>Sidebar nav for auth users</td><td>/dashboard, /profile, /settings</td></tr>
+      <tr><td><code>ToolsLayout.tsx</code></td><td>Tool sidebar + breadcrumb</td><td>All /tools/* and /label-crop/* routes</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- 13. BACKEND VS CLIENT -->
+<div class="section">
+  <h2 class="section-title"><span class="icon">⚙️</span> 13. Backend vs Client-Side Tools</h2>
+  <table>
+    <tr><th>#</th><th>Tool</th><th>Module</th><th>Type</th><th>API / Service</th></tr>
+    <tr><td>1</td><td>Background Remover</td><td>Image</td><td><span class="tag-backend">BACKEND API</span></td><td>VITE_PROCESSING_API_URL /api/image/remove-background</td></tr>
+    <tr><td>2</td><td>White Background</td><td>Image</td><td><span class="tag-backend">BACKEND API</span></td><td>VITE_PROCESSING_API_URL /api/image/white-background</td></tr>
+    <tr><td>3</td><td>Image to PDF</td><td>Image</td><td><span class="tag-backend">BACKEND API</span></td><td>pdfApiService — backend PDF generation</td></tr>
+    <tr><td>4</td><td>OCR PDF</td><td>PDF</td><td><span class="tag-backend">BACKEND API</span></td><td>Tesseract OCR (eng/hin/ben/tam/tel/mar/guj/kan/mal)</td></tr>
+    <tr><td>5</td><td>Product Optimizer</td><td>Image</td><td><span class="tag-hybrid">HYBRID</span></td><td>Canvas + optional /api/image/white-background</td></tr>
+    <tr><td>—</td><td>All other 49 tools</td><td>All</td><td><span class="tag-client">CLIENT ONLY</span></td><td>pdf-lib, @ffmpeg/ffmpeg, Canvas API, Pure JS</td></tr>
+  </table>
+</div>
+
+<!-- 14. UNUSED FILES -->
+<div class="section">
+  <h2 class="section-title"><span class="icon">🗑️</span> 14. Unused Files</h2>
+  <p style="margin-bottom:16px;font-size:12px;color:#64748b">Files confirmed to have zero imports pointing to them across the entire src/ directory.</p>
+
+  <div class="unused-box">
+    <div style="font-weight:700;color:#dc2626;margin-bottom:8px">Orphaned Inventory Components (4 files)</div>
+    <div class="file">src/modules/inventory/PODetail.tsx</div>
+    <div class="reason">Not imported by any page or component</div>
+    <div class="file">src/modules/inventory/POForm.tsx</div>
+    <div class="reason">Not imported anywhere — likely planned but not yet wired</div>
+    <div class="file">src/modules/inventory/ProductForm.tsx</div>
+    <div class="reason">Not imported anywhere</div>
+    <div class="file">src/modules/inventory/StockAdjustModal.tsx</div>
+    <div class="reason">Not imported anywhere</div>
+  </div>
+
+  <div class="unused-box">
+    <div style="font-weight:700;color:#dc2626;margin-bottom:8px">Deprecated Label Crop Page (1 file)</div>
+    <div class="file">src/modules/label-crop/LabelCropPage.tsx</div>
+    <div class="reason">Old hub page — replaced by pages/LabelCropHub.tsx</div>
+  </div>
+
+  <div style="margin-top:16px;padding:12px 16px;background:#f0fdf4;border:1px solid #86efac;border-radius:8px;font-size:12px;color:#166534">
+    ✅ Previously unused hooks (useDebounce, useFileUpload, useLocalStorage, useMediaQuery, useProcessingApi, useSupabase) and all deprecated PDF/SKU root-level files have already been deleted.
+  </div>
+
+  <table style="margin-top:20px">
+    <tr><th>Category</th><th>Count</th><th>Status</th></tr>
+    <tr><td>Orphaned Inventory components</td><td>4</td><td><span class="tag-unused">SAFE TO DELETE</span></td></tr>
+    <tr><td>Deprecated Label Crop page</td><td>1</td><td><span class="tag-unused">SAFE TO DELETE</span></td></tr>
+    <tr><td>Deprecated PDF root files</td><td>13</td><td>✅ Already deleted</td></tr>
+    <tr><td>Deprecated SKU root files</td><td>7</td><td>✅ Already deleted</td></tr>
+    <tr><td>Unused hooks</td><td>6</td><td>✅ Already deleted</td></tr>
+    <tr><td><strong>Remaining unused</strong></td><td><strong>5</strong></td><td>—</td></tr>
+  </table>
+</div>
+
+<!-- FOOTER -->
+<div style="padding:30px 60px;background:#1e3a5f;color:rgba(255,255,255,0.7);font-size:11px;text-align:center">
+  EcomSathi Project Audit &nbsp;|&nbsp; Generated June 2026 &nbsp;|&nbsp; 91 Pages · 78+ Components · 60+ Routes
+</div>
+
+</body>
+</html>

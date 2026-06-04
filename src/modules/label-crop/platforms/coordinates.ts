@@ -1,15 +1,46 @@
-// Normalized crop coordinates for each marketplace.
-// All values are fractions of the page dimensions (0–1).
-// Ported and adapted from sku-label-editor/src/components/labelcrop/
+/**
+ * coordinates.ts
+ *
+ * Each marketplace has a unique PDF structure. Rather than one generic
+ * "labelRegion + invoiceRegion" approach, we define a `pageStrategy` that
+ * tells the engine exactly how to process each platform's PDF.
+ *
+ * PageStrategy values:
+ *
+ *  'single_page'    — Label and invoice are regions on EVERY page.
+ *                     Engine applies labelRegion + invoiceRegion to each page.
+ *                     → Flipkart, Shopsy, AJIO, Snapdeal, Nykaa
+ *
+ *  'multi_page'     — PDF has multiple pages; each page is a FULL document.
+ *                     Page 1 = label, Page 2 = invoice, Page 3+ = skip (blank).
+ *                     → Amazon
+ *
+ *  'full_page'      — User uploads a single-purpose PDF (label-only or
+ *                     invoice-only file). Every page = one full label.
+ *                     Myntra ships SEPARATE label + invoice PDFs; the user
+ *                     uploads whichever file they need.
+ *                     → Myntra
+ *
+ *  'dynamic_split'  — Label and invoice share a page but the split point
+ *                     varies because label height depends on address length.
+ *                     Engine auto-detects the horizontal separator row.
+ *                     → Meesho
+ */
+
+// ---------------------------------------------------------------------------
+// Types
+// ---------------------------------------------------------------------------
+
+export type PageStrategy = 'single_page' | 'multi_page' | 'full_page' | 'dynamic_split';
 
 export interface CropRegion {
-  /** Fraction of page width from left edge */
+  /** Fraction of page width from left edge (0–1) */
   x: number;
-  /** Fraction of page height from top edge */
+  /** Fraction of page height from top edge (0–1) */
   y: number;
-  /** Fraction of page width */
+  /** Fraction of page width (0–1) */
   width: number;
-  /** Fraction of page height */
+  /** Fraction of page height (0–1) */
   height: number;
   /** Optional rotation in degrees applied after cropping */
   rotate?: number;
@@ -18,153 +49,197 @@ export interface CropRegion {
 export interface MarketplaceCropConfig {
   marketplace: string;
   slug: string;
-  /** Region containing the shipping label */
-  labelRegion: CropRegion;
-  /** Region containing the invoice — absent for label-only marketplaces */
+
+  /** How the engine processes this marketplace's PDF */
+  pageStrategy: PageStrategy;
+
+  /**
+   * Fixed label crop region (single_page strategy only).
+   * For multi_page / full_page / dynamic_split this is ignored.
+   */
+  labelRegion?: CropRegion;
+
+  /**
+   * Fixed invoice crop region (single_page strategy only).
+   * Absent → marketplace has no invoice on the label PDF.
+   */
   invoiceRegion?: CropRegion;
-  /** Describes how label/invoice/blank areas are distributed on each page */
-  pagePattern: 'label_only' | 'label_invoice' | 'label_invoice_blank' | 'thermal';
+
+  /**
+   * Edge trim fraction (0–0.05) applied when extracting full pages.
+   * Used by multi_page and full_page to remove printer margins.
+   * Default: 0.01
+   */
+  marginTrim: number;
+
+  /**
+   * For dynamic_split — scan range within which the separator is searched.
+   * [minFraction, maxFraction] of page height. Default: [0.20, 0.70]
+   */
+  splitScanRange?: [number, number];
+
+  /** Short guidance text shown in the tool UI */
+  note?: string;
+
   outputSizes: {
-    /** Thermal printer page size in mm */
     thermal: { width: number; height: number };
-    /** A4 packing — how many labels fit on one A4 page */
     a4: { labelsPerPage: number };
   };
 }
 
+// ---------------------------------------------------------------------------
+// Configs
+// ---------------------------------------------------------------------------
+
 export const MARKETPLACE_CONFIGS: Record<string, MarketplaceCropConfig> = {
-  // =====================================================================
+
+  // =========================================================================
   // AMAZON
-  // Each A4 page has: label (top half), blank (bottom-right), invoice (right strip)
-  // Label occupies the top 46% of the full page width.
-  // Invoice is a right-side strip: ~56.5% wide, starting at x=38.5%, top 7%–92%.
-  // =====================================================================
+  // Structure: multi-page PDF.
+  //   • Page 1 → full shipping label
+  //   • Page 2 → full invoice (only when "Include invoice" is on)
+  //   • Page 3+ → blank, skip
+  // =========================================================================
   amazon: {
     marketplace: 'Amazon',
     slug: 'amazon',
-    labelRegion: { x: 0, y: 0, width: 1, height: 0.46 },
-    invoiceRegion: { x: 0.385, y: 0.07, width: 0.565, height: 0.85 },
-    pagePattern: 'label_invoice_blank',
+    pageStrategy: 'multi_page',
+    marginTrim: 0.01,
+    note: 'Amazon order PDFs have the shipping label on page 1 and the invoice on page 2. Pages 3+ (blank) are skipped automatically.',
     outputSizes: {
       thermal: { width: 100, height: 150 },
       a4: { labelsPerPage: 4 },
     },
   },
 
-  // =====================================================================
+  // =========================================================================
   // FLIPKART
-  // Each A4 page: label top-centre, invoice rotated at bottom.
-  // Adapted from flipkartConfig: label at x=0.31, y=0.027, w=0.381, h=0.428
-  // Invoice at x=0.05, y=0.46, w=0.91, h=0.441 (rotate 90°)
-  // EcomSathi uses full-width normalized layout:
-  // =====================================================================
+  // Structure: single-page PDF — every page contains BOTH label and invoice.
+  //   • Label  — centred in the upper portion of each page
+  //   • Invoice — rotated 90° in the lower portion of each page
+  // =========================================================================
   flipkart: {
     marketplace: 'Flipkart',
     slug: 'flipkart',
-    labelRegion: { x: 0.31, y: 0.027, width: 0.381, height: 0.428 },
-    invoiceRegion: { x: 0.05, y: 0.46, width: 0.91, height: 0.441, rotate: 90 },
-    pagePattern: 'label_invoice',
+    pageStrategy: 'single_page',
+    labelRegion:   { x: 0.31,  y: 0.027, width: 0.381, height: 0.428 },
+    invoiceRegion: { x: 0.05,  y: 0.46,  width: 0.91,  height: 0.441, rotate: 90 },
+    marginTrim: 0,
+    note: 'Each Flipkart PDF page contains both the shipping label (top) and the invoice (bottom, rotated). Enable "Include invoice" to extract both.',
     outputSizes: {
       thermal: { width: 100, height: 150 },
       a4: { labelsPerPage: 4 },
     },
   },
 
-  // =====================================================================
+  // =========================================================================
   // MYNTRA
-  // Label PDF and invoice PDF are separate files.
-  // Label: left column, near full page (x=0.003, y=0.002, w=0.93, h=0.99)
-  // Invoice: near full page after trimming margins
-  // =====================================================================
+  // Structure: SEPARATE files — Myntra generates a label PDF and an invoice
+  // PDF independently. Upload whichever file you need; each page of the
+  // uploaded file is treated as one complete label (or invoice).
+  // Do NOT enable "Include invoice" — upload the invoice PDF separately.
+  // =========================================================================
   myntra: {
     marketplace: 'Myntra',
     slug: 'myntra',
-    labelRegion: { x: 0.003, y: 0.002, width: 0.93, height: 0.99 },
-    invoiceRegion: { x: 0.04, y: 0.04, width: 0.92, height: 0.92 },
-    pagePattern: 'label_invoice',
+    pageStrategy: 'full_page',
+    marginTrim: 0.012,
+    note: 'Myntra provides a separate label PDF and a separate invoice PDF. Upload the label PDF here — each page becomes one print-ready label. For invoices, upload the invoice PDF in a separate session.',
     outputSizes: {
       thermal: { width: 100, height: 150 },
       a4: { labelsPerPage: 4 },
     },
   },
 
-  // =====================================================================
+  // =========================================================================
   // MEESHO
-  // Label-only — no separate invoice region.
-  // Label region (dynamic in sku-label-editor but fixed here):
-  // x=0.12, y=0.04, w=0.76, h=0.22
-  // =====================================================================
+  // Structure: single-page PDF — label at top, invoice below, but the
+  // label HEIGHT is dynamic (depends on address / product name length).
+  // The engine auto-detects the horizontal separator row.
+  // =========================================================================
   meesho: {
     marketplace: 'Meesho',
     slug: 'meesho',
-    labelRegion: { x: 0.12, y: 0.04, width: 0.76, height: 0.22 },
-    pagePattern: 'label_only',
+    pageStrategy: 'dynamic_split',
+    marginTrim: 0.01,
+    splitScanRange: [0.18, 0.65],
+    note: 'Meesho labels vary in height depending on the shipping address length. The tool auto-detects the separator line between label and invoice on each page.',
     outputSizes: {
       thermal: { width: 100, height: 150 },
       a4: { labelsPerPage: 4 },
     },
   },
 
-  // =====================================================================
+  // =========================================================================
   // AJIO
-  // Label top half, invoice bottom half (full width)
-  // =====================================================================
+  // Structure: single-page PDF.
+  //   • Label  — top half of every page (0–50%)
+  //   • Invoice — bottom half of every page (50–100%)
+  // =========================================================================
   ajio: {
     marketplace: 'AJIO',
     slug: 'ajio',
-    labelRegion: { x: 0, y: 0, width: 1, height: 0.5 },
+    pageStrategy: 'single_page',
+    labelRegion:   { x: 0, y: 0,   width: 1, height: 0.5 },
     invoiceRegion: { x: 0, y: 0.5, width: 1, height: 0.5 },
-    pagePattern: 'label_invoice',
+    marginTrim: 0,
+    note: 'AJIO PDFs have the shipping label in the top half and the invoice in the bottom half of each page.',
     outputSizes: {
       thermal: { width: 100, height: 150 },
       a4: { labelsPerPage: 4 },
     },
   },
 
-  // =====================================================================
+  // =========================================================================
   // NYKAA
-  // Label only — top portion of each page
-  // Adapted from nykaaConfig: x=0.12, y=0.08, w=0.5, h=0.35
-  // =====================================================================
+  // Structure: single-page PDF, label only — no invoice on the label PDF.
+  //   • Label — upper-left portion of the page
+  // =========================================================================
   nykaa: {
     marketplace: 'Nykaa',
     slug: 'nykaa',
+    pageStrategy: 'single_page',
     labelRegion: { x: 0.12, y: 0.08, width: 0.5, height: 0.35 },
-    pagePattern: 'label_only',
+    marginTrim: 0,
+    note: 'Nykaa label PDFs contain only the shipping label. There is no invoice region on the label PDF.',
     outputSizes: {
       thermal: { width: 100, height: 150 },
       a4: { labelsPerPage: 4 },
     },
   },
 
-  // =====================================================================
+  // =========================================================================
   // SNAPDEAL
-  // Label top half, invoice bottom half (full width)
-  // =====================================================================
+  // Structure: single-page PDF.
+  //   • Label  — top half of every page (0–50%)
+  //   • Invoice — bottom half of every page (50–100%)
+  // =========================================================================
   snapdeal: {
     marketplace: 'Snapdeal',
     slug: 'snapdeal',
-    labelRegion: { x: 0, y: 0, width: 1, height: 0.5 },
+    pageStrategy: 'single_page',
+    labelRegion:   { x: 0, y: 0,   width: 1, height: 0.5 },
     invoiceRegion: { x: 0, y: 0.5, width: 1, height: 0.5 },
-    pagePattern: 'label_invoice',
+    marginTrim: 0,
+    note: 'Snapdeal PDFs have the shipping label in the top half and the invoice in the bottom half of each page.',
     outputSizes: {
       thermal: { width: 100, height: 150 },
       a4: { labelsPerPage: 4 },
     },
   },
 
-  // =====================================================================
+  // =========================================================================
   // SHOPSY (by Flipkart)
-  // Same label format as Flipkart — centred label in top area, invoice rotated at bottom.
-  // Label: x=0.31, y=0.027, w=0.381, h=0.428
-  // Invoice: x=0.05, y=0.46, w=0.91, h=0.441 (rotate 90°)
-  // =====================================================================
+  // Identical PDF structure to Flipkart.
+  // =========================================================================
   shopsy: {
     marketplace: 'Shopsy',
     slug: 'shopsy',
-    labelRegion: { x: 0.31, y: 0.027, width: 0.381, height: 0.428 },
-    invoiceRegion: { x: 0.05, y: 0.46, width: 0.91, height: 0.441, rotate: 90 },
-    pagePattern: 'label_invoice',
+    pageStrategy: 'single_page',
+    labelRegion:   { x: 0.31,  y: 0.027, width: 0.381, height: 0.428 },
+    invoiceRegion: { x: 0.05,  y: 0.46,  width: 0.91,  height: 0.441, rotate: 90 },
+    marginTrim: 0,
+    note: 'Shopsy (by Flipkart) uses the same PDF layout as Flipkart — label at top-centre, invoice rotated at the bottom of each page.',
     outputSizes: {
       thermal: { width: 100, height: 150 },
       a4: { labelsPerPage: 4 },
@@ -172,9 +247,9 @@ export const MARKETPLACE_CONFIGS: Record<string, MarketplaceCropConfig> = {
   },
 };
 
-// -----------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 // Helper: denormalize a CropRegion to pixel coordinates
-// -----------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 export function denormalizeRegion(
   region: CropRegion,
   pageWidth: number,

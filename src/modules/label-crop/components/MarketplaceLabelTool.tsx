@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import {
   CheckCircle2, Loader2, AlertCircle, Layers, FileUp, Scissors,
+  Info, Wand2, FileStack, FileSplit,
 } from 'lucide-react';
 import { Button } from '@/components/common/Button';
 import { SingleUploader, BatchUploader } from './LabelUploader';
@@ -115,8 +116,43 @@ export const MarketplaceLabelTool: React.FC<Props> = ({ slug, marketplaceName, h
     );
   }
 
+  // ── Strategy-aware UI metadata ──────────────────────────────────────────
+  const strategy = config.pageStrategy;
+
+  const STRATEGY_BADGE: Record<typeof strategy, { icon: React.ReactNode; label: string; color: string; bg: string }> = {
+    multi_page:    { icon: <FileStack size={13} />, label: 'Multi-page PDF',   color: '#2563EB', bg: '#EFF6FF' },
+    single_page:   { icon: <FileSplit size={13} />, label: 'Single-page PDF',  color: '#7C3AED', bg: '#F5F3FF' },
+    full_page:     { icon: <FileUp    size={13} />, label: 'Separate PDF files', color: '#0891B2', bg: '#F0F9FF' },
+    dynamic_split: { icon: <Wand2     size={13} />, label: 'Auto-detect split', color: '#D97706', bg: '#FFFBEB' },
+  };
+  const badge = STRATEGY_BADGE[strategy];
+
+  // Myntra: disable invoice toggle (separate file — user uploads independently)
+  const invoiceSupported = strategy !== 'full_page' && hasInvoice;
+
   return (
     <div className="flex flex-col gap-5">
+
+      {/* ── PDF structure info banner ─────────────────────────────────── */}
+      {config.note && (
+        <div
+          className="rounded-[10px] border p-4 flex gap-3"
+          style={{ borderColor: badge.color + '33', backgroundColor: badge.bg }}
+        >
+          <div className="shrink-0 mt-0.5" style={{ color: badge.color }}>
+            <Info size={15} />
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <span
+              className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wide w-fit rounded-full px-2 py-0.5"
+              style={{ backgroundColor: badge.color + '18', color: badge.color }}
+            >
+              {badge.icon} {badge.label}
+            </span>
+            <p className="text-xs text-[#475569] leading-relaxed">{config.note}</p>
+          </div>
+        </div>
+      )}
 
       {/* ── Step 1 : Output settings ─────────────────────────────────── */}
       <div className="rounded-[10px] border border-[#E2E8F0] bg-white shadow-sm overflow-hidden">
@@ -125,7 +161,12 @@ export const MarketplaceLabelTool: React.FC<Props> = ({ slug, marketplaceName, h
           <h2 className="text-sm font-semibold text-[#0F172A]">Output Options</h2>
         </div>
         <div className="p-5">
-          <LabelSettings settings={settings} onChange={setSettings} hasInvoice={hasInvoice} disabled={isProcessing} />
+          <LabelSettings
+            settings={settings}
+            onChange={setSettings}
+            hasInvoice={invoiceSupported}
+            disabled={isProcessing}
+          />
         </div>
       </div>
 
@@ -134,7 +175,9 @@ export const MarketplaceLabelTool: React.FC<Props> = ({ slug, marketplaceName, h
         <div className="flex items-center justify-between px-5 py-3 border-b border-[#F1F5F9] bg-[#F8FAFC]">
           <div className="flex items-center gap-2">
             <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#2563EB] text-white text-[10px] font-bold">2</span>
-            <h2 className="text-sm font-semibold text-[#0F172A]">Upload Files</h2>
+            <h2 className="text-sm font-semibold text-[#0F172A]">
+              {strategy === 'full_page' ? 'Upload Label PDF' : 'Upload Files'}
+            </h2>
           </div>
           {/* Mode toggle */}
           <div className="flex rounded-[6px] border border-[#E2E8F0] overflow-hidden">
@@ -248,17 +291,34 @@ export const MarketplaceLabelTool: React.FC<Props> = ({ slug, marketplaceName, h
         />
       )}
 
-      {/* ── How it works (collapsible info) ──────────────────────────── */}
+      {/* ── How it works ─────────────────────────────────────────────── */}
       <div className="rounded-[10px] border border-[#E2E8F0] bg-[#F8FAFC] p-4">
         <p className="text-xs font-semibold text-[#0F172A] mb-2 flex items-center gap-1.5">
           <CheckCircle2 size={13} className="text-[#16A34A]" /> How it works
         </p>
         <ol className="list-decimal list-inside space-y-1 text-xs text-[#475569]">
-          <li>Select output format (Thermal 4×6 or A4) and file type (PDF or PNG)</li>
-          <li>Toggle "Extract invoices" if needed</li>
-          <li>Upload PDF, PNG or JPG — single or multiple files</li>
-          <li>Click Crop Labels — everything runs in your browser, nothing is uploaded</li>
-          <li>Download individual files or a single ZIP archive</li>
+          {strategy === 'multi_page' && <>
+            <li>Upload your {marketplaceName} order PDF (page 1 = label, page 2 = invoice)</li>
+            <li>Enable "Extract invoices" to also get page 2 as a separate invoice file</li>
+            <li>Pages 3+ (blank) are automatically skipped</li>
+          </>}
+          {strategy === 'single_page' && <>
+            <li>Upload your {marketplaceName} PDF — each page contains both label and invoice</li>
+            <li>The tool crops the label region from every page automatically</li>
+            <li>Enable "Extract invoices" to also crop the invoice region on each page</li>
+          </>}
+          {strategy === 'full_page' && <>
+            <li>Upload your {marketplaceName} <strong>label PDF</strong> — every page becomes one label</li>
+            <li>For invoices, upload your {marketplaceName} <strong>invoice PDF</strong> in a separate session</li>
+            <li>Do not enable "Extract invoices" — {marketplaceName} provides separate PDF files</li>
+          </>}
+          {strategy === 'dynamic_split' && <>
+            <li>Upload your {marketplaceName} PDF — each page has a label (top) and invoice (below)</li>
+            <li>The tool auto-detects the separator line since label height varies per order</li>
+            <li>Enable "Extract invoices" to also save the invoice portion</li>
+          </>}
+          <li>Choose Thermal 4×6 or A4 output and click Crop Labels</li>
+          <li>Download as individual PDF/PNG files or a single ZIP archive</li>
         </ol>
         <p className="text-[11px] text-[#94A3B8] mt-2">Powered by PDF.js + pdf-lib. Files never leave your device.</p>
       </div>

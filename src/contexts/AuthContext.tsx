@@ -84,6 +84,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (!mounted) return
 
       setSession(currentSession)
+      setLoading(false) // always unblock routing immediately
 
       if (currentSession?.user) {
         const profile = await fetchProfile(currentSession.user.id)
@@ -91,10 +92,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       } else {
         setUser(null)
       }
-
-      // On first INITIAL_SESSION the loading flag is already cleared above,
-      // but for subsequent SIGNED_IN / SIGNED_OUT events keep loading false.
-      if (mounted) setLoading(false)
     })
 
     return () => {
