@@ -103,6 +103,7 @@ const CATEGORIES = [
 
 const COMPANY = [
   { label: 'About',         href: '/about'          },
+  { label: 'Contact',       href: '/contact'          },
   { label: 'FAQ',           href: '/faq'            },
   { label: 'Dashboard',     href: '/dashboard'      },
   { label: 'Reconciliation',href: '/reconciliation' },
@@ -249,7 +250,6 @@ export const Footer: React.FC = () => {
               { to: '/privacy', label: 'Privacy' },
               { to: '/terms',   label: 'Terms'   },
               { to: '/sitemap', label: 'Sitemap' },
-              { to: '/contact', label: 'Contact' },
             ].map((item, i, arr) => (
               <React.Fragment key={item.to}>
                 <Link to={item.to} className="text-[#94A3B8] hover:text-[#64748B] transition-colors px-1">
