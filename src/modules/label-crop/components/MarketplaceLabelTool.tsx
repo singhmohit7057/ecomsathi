@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import {
   CheckCircle2, Loader2, AlertCircle, Layers, FileUp, Scissors,
-  Info, Wand2, FileStack, FileSplit,
+  Info, Wand2, FileStack, FileText,
 } from 'lucide-react';
 import { Button } from '@/components/common/Button';
 import { SingleUploader, BatchUploader } from './LabelUploader';
@@ -121,7 +121,7 @@ export const MarketplaceLabelTool: React.FC<Props> = ({ slug, marketplaceName, h
 
   const STRATEGY_BADGE: Record<typeof strategy, { icon: React.ReactNode; label: string; color: string; bg: string }> = {
     multi_page:    { icon: <FileStack size={13} />, label: 'Multi-page PDF',   color: '#2563EB', bg: '#EFF6FF' },
-    single_page:   { icon: <FileSplit size={13} />, label: 'Single-page PDF',  color: '#7C3AED', bg: '#F5F3FF' },
+    single_page:   { icon: <FileText size={13} />, label: 'Single-page PDF',  color: '#7C3AED', bg: '#F5F3FF' },
     full_page:     { icon: <FileUp    size={13} />, label: 'Separate PDF files', color: '#0891B2', bg: '#F0F9FF' },
     dynamic_split: { icon: <Wand2     size={13} />, label: 'Auto-detect split', color: '#D97706', bg: '#FFFBEB' },
   };
