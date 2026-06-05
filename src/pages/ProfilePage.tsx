@@ -10,6 +10,13 @@ import {
   EyeOff,
   CheckCircle2,
   Camera,
+  Crown,
+  Check,
+  X,
+  Minus,
+  ChevronRight,
+  Bell,
+  Plug2,
 } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 import { Card, Button, Input, Modal, Alert, Badge } from '@/components/common'
@@ -17,8 +24,77 @@ import * as authService from '@/services/authService'
 import { uploadFile } from '@/supabase/storage'
 
 // ============================================================
-// Toggle (reuse from Settings)
+// Toggle Switch
 // ============================================================
+
+interface ToggleProps {
+  checked: boolean
+  onChange: (v: boolean) => void
+  label: string
+  description?: string
+}
+
+function Toggle({ checked, onChange, label, description }: ToggleProps) {
+  return (
+    <label className="flex cursor-pointer items-center justify-between gap-3">
+      <div>
+        <p className="text-sm font-medium text-[#0F172A]">{label}</p>
+        {description && <p className="text-xs text-[#64748B]">{description}</p>}
+      </div>
+      <button
+        type="button"
+        role="switch"
+        aria-checked={checked}
+        onClick={() => onChange(!checked)}
+        className={[
+          'relative inline-flex h-5 w-9 shrink-0 rounded-full border-2 border-transparent transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB]/30',
+          checked ? 'bg-[#2563EB]' : 'bg-[#CBD5E1]',
+        ].join(' ')}
+      >
+        <span
+          className={[
+            'pointer-events-none inline-block h-4 w-4 rounded-full bg-white shadow transition-transform',
+            checked ? 'translate-x-4' : 'translate-x-0',
+          ].join(' ')}
+        />
+      </button>
+    </label>
+  )
+}
+
+// ============================================================
+// Plan comparison data
+// ============================================================
+
+interface PlanFeature {
+  label: string
+  free: boolean | string
+  starter: boolean | string
+  pro: boolean | string
+  enterprise: boolean | string
+}
+
+const PLAN_FEATURES: PlanFeature[] = [
+  { label: 'Free Tools Access',          free: true,     starter: true,      pro: true,       enterprise: true },
+  { label: 'Reconciliation (orders/mo)', free: '50',     starter: '500',     pro: 'Unlimited', enterprise: 'Unlimited' },
+  { label: 'Inventory Products',         free: '100',    starter: '2,000',   pro: 'Unlimited', enterprise: 'Unlimited' },
+  { label: 'Team Members',               free: '1',      starter: '3',       pro: '10',       enterprise: 'Unlimited' },
+  { label: 'Priority Support',           free: false,    starter: false,     pro: true,       enterprise: true },
+  { label: 'Marketplace Integrations',   free: false,    starter: false,     pro: true,       enterprise: true },
+  { label: 'API Access',                 free: false,    starter: false,     pro: false,      enterprise: true },
+  { label: 'Dedicated Account Manager',  free: false,    starter: false,     pro: false,      enterprise: true },
+]
+
+function PlanFeatureCell({ value }: { value: boolean | string }) {
+  if (typeof value === 'string') {
+    return <span className="text-sm font-medium text-[#0F172A]">{value}</span>
+  }
+  return value ? (
+    <Check size={16} className="mx-auto text-green-600" />
+  ) : (
+    <Minus size={16} className="mx-auto text-gray-300" />
+  )
+}
 
 // ============================================================
 // ProfilePage
@@ -56,6 +132,60 @@ export default function ProfilePage() {
   // Local preview so UI updates instantly without waiting for profile refetch
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null)
 
+  // ── Notification prefs ─────────────────────────────────────
+  const [notifLowStock, setNotifLowStock] = useState(
+    () => localStorage.getItem('notif_low_stock') !== 'false'
+  )
+  const [notifReconDone, setNotifReconDone] = useState(
+    () => localStorage.getItem('notif_recon_done') !== 'false'
+  )
+  const [notifWeekly, setNotifWeekly] = useState(
+    () => localStorage.getItem('notif_weekly') === 'true'
+  )
+  const [notifSaving, setNotifSaving] = useState(false)
+
+  // ── Toast ──────────────────────────────────────────────────
+  const [toast, setToast] = useState<string | null>(null)
+
+  function showToast(msg: string) {
+    setToast(msg)
+    setTimeout(() => setToast(null), 3000)
+  }
+
+  // ── Delete account modal ───────────────────────────────────
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false)
+
+  // ── GSTIN validation ──────────────────────────────────────
+  const gstinPattern = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/
+  const gstinError = gstin && !gstinPattern.test(gstin) ? 'Invalid GSTIN format' : undefined
+
+  // ── Resolve avatar URL (handle stored filename vs full URL) ──
+  const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string
+  function resolveAvatarUrl(raw: string | null | undefined): string | null {
+    if (!raw) return null
+    if (raw.startsWith('http')) return raw
+    // bare filename like "66ae6e87-...png" — build full public URL
+    return `${SUPABASE_URL}/storage/v1/object/public/uploads/avatars/${raw}`
+  }
+  const resolvedAvatar = avatarPreview ?? resolveAvatarUrl(user?.avatar_url)
+
+  // ── Initials avatar ───────────────────────────────────────
+  const initials = (user?.full_name ?? user?.email ?? '?')
+    .split(' ')
+    .slice(0, 2)
+    .map((s) => s.charAt(0).toUpperCase())
+    .join('')
+
+  // ── Plan helpers ──────────────────────────────────────────
+  const planLabel: Record<string, string> = {
+    free: 'Free',
+    trial: 'Trial',
+    pro: 'Pro',
+    enterprise: 'Enterprise',
+  }
+  const currentPlan = user?.subscription_status ?? 'free'
+
+  // ── Avatar change ─────────────────────────────────────────
   const handleAvatarChange = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file || !user?.id) return
@@ -89,20 +219,6 @@ export default function ProfilePage() {
       if (avatarInputRef.current) avatarInputRef.current.value = ''
     }
   }, [user?.id, updateProfile])
-
-  // ── Delete account modal ───────────────────────────────────
-  const [deleteModalOpen, setDeleteModalOpen] = useState(false)
-
-  // ── GSTIN validation ──────────────────────────────────────
-  const gstinPattern = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/
-  const gstinError = gstin && !gstinPattern.test(gstin) ? 'Invalid GSTIN format' : undefined
-
-  // ── Initials avatar ───────────────────────────────────────
-  const initials = (user?.full_name ?? user?.email ?? '?')
-    .split(' ')
-    .slice(0, 2)
-    .map((s) => s.charAt(0).toUpperCase())
-    .join('')
 
   // ── Save profile ──────────────────────────────────────────
   async function handleProfileSave(e: React.FormEvent) {
@@ -158,17 +274,39 @@ export default function ProfilePage() {
     }
   }
 
+  // ── Save notification preferences ────────────────────────
+  async function handleSavePreferences() {
+    setNotifSaving(true)
+    try {
+      // Persist to localStorage for now (no DB column yet)
+      localStorage.setItem('notif_low_stock', String(notifLowStock))
+      localStorage.setItem('notif_recon_done', String(notifReconDone))
+      localStorage.setItem('notif_weekly', String(notifWeekly))
+      showToast('Notification preferences saved')
+    } finally {
+      setNotifSaving(false)
+    }
+  }
+
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-8">
       {/* ── Page header ─────────────────────────────────────── */}
       <div>
         <h1 className="text-2xl font-bold text-[#0F172A]">Your Profile</h1>
         <p className="mt-0.5 text-sm text-[#64748B]">
-          Manage your personal information, password, and account settings
+          Manage your personal information, password, subscription, and account settings
         </p>
       </div>
 
-      {/* ── Profile card ────────────────────────────────────── */}
+      {/* ── Toast notification ──────────────────────────────── */}
+      {toast && (
+        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2 rounded-[8px] border border-[#E2E8F0] bg-white px-4 py-3 shadow-lg">
+          <CheckCircle2 size={16} className="text-green-500" />
+          <span className="text-sm font-medium text-[#0F172A]">{toast}</span>
+        </div>
+      )}
+
+      {/* ── 1. Personal Information ──────────────────────────── */}
       <Card variant="shadowed" padding="none" className="overflow-hidden">
         {/* Header strip */}
         <div className="border-b border-[#E2E8F0] px-6 py-4">
@@ -180,9 +318,9 @@ export default function ProfilePage() {
             {/* Avatar column */}
             <div className="flex shrink-0 flex-col items-center gap-3">
               <div className="relative">
-                {(avatarPreview ?? user?.avatar_url) ? (
+                {resolvedAvatar ? (
                   <img
-                    src={avatarPreview ?? user!.avatar_url!}
+                    src={resolvedAvatar}
                     alt="Avatar"
                     className="h-20 w-20 rounded-full object-cover"
                   />
@@ -323,7 +461,7 @@ export default function ProfilePage() {
         </div>
       </Card>
 
-      {/* ── Change Password card ─────────────────────────────── */}
+      {/* ── 2. Change Password ───────────────────────────────── */}
       <Card variant="shadowed" padding="none" className="overflow-hidden">
         <div className="border-b border-[#E2E8F0] px-6 py-4">
           <h2 className="text-base font-bold text-[#0F172A]">Change Password</h2>
@@ -440,7 +578,200 @@ export default function ProfilePage() {
         </form>
       </Card>
 
-      {/* ── Danger Zone ─────────────────────────────────────── */}
+      {/* ── 3. Subscription ───────────────────────────────────── */}
+      <Card variant="shadowed" padding="none" className="overflow-hidden">
+        <div className="flex items-center gap-3 border-b border-[#E2E8F0] px-6 py-4">
+          <div className="flex h-8 w-8 items-center justify-center rounded-[6px] bg-[#EFF6FF] text-[#2563EB]">
+            <Crown size={16} />
+          </div>
+          <h2 className="text-base font-bold text-[#0F172A]">Subscription</h2>
+        </div>
+
+        <div className="p-6">
+          {/* Current plan card */}
+          <div className="mb-6 flex flex-col gap-4 rounded-[8px] border border-[#E2E8F0] bg-[#F8FAFC] p-5 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <div className="flex items-center gap-2">
+                <p className="text-lg font-bold text-[#0F172A]">
+                  {planLabel[currentPlan] ?? 'Free'} Plan
+                </p>
+                <Badge
+                  variant={
+                    currentPlan === 'pro'
+                      ? 'primary'
+                      : currentPlan === 'trial'
+                      ? 'warning'
+                      : currentPlan === 'enterprise'
+                      ? 'info'
+                      : 'success'
+                  }
+                  size="sm"
+                >
+                  {currentPlan === 'free' ? 'Active' : currentPlan.charAt(0).toUpperCase() + currentPlan.slice(1)}
+                </Badge>
+              </div>
+              {user?.subscription_expires_at && (
+                <p className="mt-1 text-xs text-[#64748B]">
+                  Expires{' '}
+                  {new Date(user.subscription_expires_at).toLocaleDateString('en-IN', {
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric',
+                  })}
+                </p>
+              )}
+              <ul className="mt-3 flex flex-col gap-1">
+                {PLAN_FEATURES.slice(0, 4).map((f) => {
+                  const val = f[currentPlan as keyof PlanFeature]
+                  return (
+                    <li key={f.label} className="flex items-center gap-2 text-xs text-[#64748B]">
+                      {val === false ? (
+                        <X size={12} className="text-gray-300" />
+                      ) : (
+                        <Check size={12} className="text-green-500" />
+                      )}
+                      {f.label}: <span className="font-medium text-[#0F172A]">
+                        {typeof val === 'boolean' ? (val ? 'Yes' : 'No') : val}
+                      </span>
+                    </li>
+                  )
+                })}
+              </ul>
+            </div>
+            <Button
+              variant="primary"
+              size="sm"
+              rightIcon={<ChevronRight size={14} />}
+              onClick={() => showToast('Payment integration coming soon')}
+            >
+              {currentPlan === 'free' ? 'Upgrade to Pro' : 'Manage Plan'}
+            </Button>
+          </div>
+
+          {/* Plan comparison table */}
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[500px] border-collapse text-sm">
+              <thead>
+                <tr className="border-b border-[#E2E8F0]">
+                  <th className="py-2 pr-4 text-left text-xs font-semibold text-[#64748B]">
+                    Feature
+                  </th>
+                  {['Free', 'Starter', 'Pro', 'Enterprise'].map((plan) => (
+                    <th
+                      key={plan}
+                      className={[
+                        'px-4 py-2 text-center text-xs font-semibold',
+                        plan === 'Pro'
+                          ? 'text-[#2563EB]'
+                          : 'text-[#64748B]',
+                      ].join(' ')}
+                    >
+                      {plan}
+                      {plan === 'Pro' && (
+                        <span className="ml-1 rounded-full bg-[#2563EB] px-1.5 py-0.5 text-[9px] font-bold text-white">
+                          Popular
+                        </span>
+                      )}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {PLAN_FEATURES.map((feature, i) => (
+                  <tr
+                    key={feature.label}
+                    className={i % 2 === 0 ? 'bg-white' : 'bg-[#F8FAFC]'}
+                  >
+                    <td className="py-2.5 pr-4 text-xs text-[#64748B]">{feature.label}</td>
+                    <td className="px-4 py-2.5 text-center">
+                      <PlanFeatureCell value={feature.free} />
+                    </td>
+                    <td className="px-4 py-2.5 text-center">
+                      <PlanFeatureCell value={feature.starter} />
+                    </td>
+                    <td className="px-4 py-2.5 text-center">
+                      <PlanFeatureCell value={feature.pro} />
+                    </td>
+                    <td className="px-4 py-2.5 text-center">
+                      <PlanFeatureCell value={feature.enterprise} />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </Card>
+
+      {/* ── 4. Notification Preferences ─────────────────────── */}
+      <Card variant="shadowed" padding="none" className="overflow-hidden">
+        <div className="flex items-center gap-3 border-b border-[#E2E8F0] px-6 py-4">
+          <div className="flex h-8 w-8 items-center justify-center rounded-[6px] bg-[#EFF6FF] text-[#2563EB]">
+            <Bell size={16} />
+          </div>
+          <h2 className="text-base font-bold text-[#0F172A]">Notification Preferences</h2>
+        </div>
+
+        <div className="flex flex-col gap-4 p-6">
+          <Toggle
+            checked={notifLowStock}
+            onChange={setNotifLowStock}
+            label="Low stock alert emails"
+            description="Get notified when products fall below their threshold"
+          />
+          <Toggle
+            checked={notifReconDone}
+            onChange={setNotifReconDone}
+            label="Reconciliation complete emails"
+            description="Receive a summary when a reconciliation run finishes"
+          />
+          <Toggle
+            checked={notifWeekly}
+            onChange={setNotifWeekly}
+            label="Weekly summary email"
+            description="A weekly digest of inventory and reconciliation activity"
+          />
+
+          <div className="flex justify-end pt-1">
+            <Button
+              variant="primary"
+              size="sm"
+              loading={notifSaving}
+              onClick={handleSavePreferences}
+            >
+              Save Preferences
+            </Button>
+          </div>
+        </div>
+      </Card>
+
+      {/* ── 5. API & Integrations (coming soon) ──────────────── */}
+      <Card variant="shadowed" padding="none" className="overflow-hidden">
+        <div className="flex items-center gap-3 border-b border-[#E2E8F0] px-6 py-4">
+          <div className="flex h-8 w-8 items-center justify-center rounded-[6px] bg-[#EFF6FF] text-[#2563EB]">
+            <Plug2 size={16} />
+          </div>
+          <h2 className="text-base font-bold text-[#0F172A]">API & Integrations</h2>
+        </div>
+
+        <div className="flex flex-col items-center gap-4 px-6 py-12 text-center">
+          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gray-100">
+            <Plug2 size={24} className="text-gray-400" />
+          </div>
+          <div>
+            <p className="text-sm font-bold text-[#0F172A]">
+              Marketplace API integrations coming soon
+            </p>
+            <p className="mt-1 text-xs text-[#64748B]">
+              Direct connections to Amazon, Flipkart, Myntra, Meesho, and more — no manual
+              report uploads required.
+            </p>
+          </div>
+          <Badge variant="warning" size="sm">In development</Badge>
+        </div>
+      </Card>
+
+      {/* ── 6. Danger Zone ──────────────────────────────────── */}
       <Card variant="blush" padding="md" className="border-red-200">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-start gap-3">

@@ -4,7 +4,6 @@ import {
   LayoutDashboard,
   RefreshCw,
   Package,
-  Settings,
   User,
   ChevronDown,
   ChevronRight,
@@ -13,12 +12,11 @@ import {
   Bell,
   ShoppingBag,
   LogOut,
-  ShoppingCart,
-  Store,
   BarChart2,
   Boxes,
   ClipboardList,
   Truck,
+  Store,
 } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 import { clsx } from 'clsx'
@@ -49,10 +47,8 @@ const NAV_ITEMS: NavItem[] = [
     to: '/reconciliation',
     icon: <RefreshCw size={18} />,
     children: [
-      { label: 'Import',       to: '/reconciliation/import',       icon: <ShoppingBag size={16} /> },
-      { label: 'Orders',       to: '/reconciliation/orders',       icon: <ShoppingCart size={16} /> },
-      { label: 'Settlements',  to: '/reconciliation/settlements',  icon: <Store size={16} /> },
-      { label: 'Missing',      to: '/reconciliation/missing',      icon: <BarChart2 size={16} /> },
+      { label: 'Import',  to: '/reconciliation/import', icon: <ShoppingBag size={16} /> },
+      { label: 'Report',  to: '/reconciliation',        icon: <BarChart2 size={16} /> },
     ],
   },
   {
@@ -65,11 +61,6 @@ const NAV_ITEMS: NavItem[] = [
       { label: 'Purchase Orders', to: '/inventory/purchase-orders', icon: <Truck size={16} /> },
       { label: 'Warehouses', to: '/inventory/warehouses', icon: <Store size={16} /> },
     ],
-  },
-  {
-    label: 'Settings',
-    to: '/settings',
-    icon: <Settings size={18} />,
   },
   {
     label: 'Profile',

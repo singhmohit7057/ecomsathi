@@ -59,7 +59,6 @@ const ResetPasswordPage  = lazy(() => import('./pages/ResetPasswordPage'))
 const DashboardPage      = lazy(() => import('./pages/DashboardPage'))
 const ToolsPage          = lazy(() => import('./pages/ToolsPage'))
 const ProfilePage        = lazy(() => import('./pages/ProfilePage'))
-const SettingsPage       = lazy(() => import('./pages/SettingsPage'))
 const NotFoundPage       = lazy(() => import('./pages/NotFoundPage'))
 const ToolErrorPage      = lazy(() => import('./pages/ToolErrorPage'))
 const SitemapPage        = lazy(() => import('./pages/SitemapPage'))
@@ -159,12 +158,6 @@ const ShopsyLabelCrop      = lazy(() => import('./modules/label-crop/pages/Shops
 // ============================================================
 
 const ReconciliationModule    = lazy(() => import('./modules/reconciliation/index'))
-const ReconciliationDashboard = lazy(() => import('./modules/reconciliation/ReconciliationDashboard'))
-const ImportWizard            = lazy(() => import('./modules/reconciliation/ImportWizard'))
-const OrdersTable             = lazy(() => import('./modules/reconciliation/OrdersTable'))
-const SettlementsTable        = lazy(() => import('./modules/reconciliation/SettlementsTable'))
-const ReportView              = lazy(() => import('./modules/reconciliation/ReportView'))
-const MissingPayments         = lazy(() => import('./modules/reconciliation/MissingPayments'))
 
 // ============================================================
 // Lazy imports — Inventory (premium)
@@ -670,21 +663,9 @@ const routes: RouteObject[] = [
 
           // Account
           { path: '/profile',  element: <S><ProfilePage /></S> },
-          { path: '/settings', element: <S><SettingsPage /></S> },
 
-          // Reconciliation module
-          {
-            path: '/reconciliation',
-            element: <S><ReconciliationModule /></S>,
-            children: [
-              { index: true,           element: <S><ReconciliationDashboard /></S> },
-              { path: 'import',        element: <S><ImportWizard /></S> },
-              { path: 'orders',        element: <S><OrdersTable /></S> },
-              { path: 'settlements',   element: <S><SettlementsTable /></S> },
-              { path: 'reports/:id',   element: <S><ReportView /></S> },
-              { path: 'missing',       element: <S><MissingPayments /></S> },
-            ],
-          },
+          // Reconciliation module — handles all sub-views internally via URL
+          { path: '/reconciliation/*', element: <S><ReconciliationModule /></S> },
 
           // Inventory module
           {

@@ -12,43 +12,23 @@ import {
   RefreshCw,
   Plus,
   Calendar,
+  Trash2,
 } from 'lucide-react'
 import { Button, Badge } from '@/components/common'
+import { supabase } from '@/supabase/client'
 import * as reconService from '@/services/reconciliationService'
 import type { ReconciliationReportData } from '@/services/reconciliationService'
+import PlatformStatsSection from './PlatformStatsSection'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 type MarketplaceTab = 'all' | 'amazon' | 'flipkart' | 'myntra' | 'meesho'
-
-interface StatsCardProps {
-  label: string
-  value: string | number
-  icon: React.ReactNode
-  color: string
-  subtext?: string
-}
 
 interface DashboardProps {
   orgId: string
   onNewImport: () => void
   onViewReport: (reportId: string) => void
 }
-
-// ─── Stats Card ───────────────────────────────────────────────────────────────
-
-const StatsCard: React.FC<StatsCardProps> = ({ label, value, icon, color, subtext }) => (
-  <div className="bg-white border border-[#E2E8F0] rounded-xl p-5 shadow-[#1E293B_2px_2px_0px_0px]">
-    <div className="flex items-start justify-between">
-      <div>
-        <p className="text-sm text-[#64748B] font-medium">{label}</p>
-        <p className="text-2xl font-bold text-[#0F172A] mt-1">{value}</p>
-        {subtext && <p className="text-xs text-[#94A3B8] mt-1">{subtext}</p>}
-      </div>
-      <div className={`p-2.5 rounded-lg ${color}`}>{icon}</div>
-    </div>
-  </div>
-)
 
 // ─── Monthly Bar Chart (CSS only) ─────────────────────────────────────────────
 
@@ -118,10 +98,22 @@ const ReconciliationDashboard: React.FC<DashboardProps> = ({
     d.setMonth(d.getMonth() - 3)
     return d.toISOString().split('T')[0]
   })
-  const [dateTo] = useState(() => new Date().toISOString().split('T')[0])
+  const [dateTo, setDateTo] = useState(() => new Date().toISOString().split('T')[0])
   const [reports, setReports] = useState<Awaited<ReturnType<typeof reconService.getReports>>>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+
+  const [quickStats, setQuickStats] = useState({
+    total: 0,
+    delivered: 0,
+    cancelled: 0,
+    returned: 0,
+    revenue: 0,
+    fees: 0,
+  })
+  const [statsLoading, setStatsLoading] = useState(true)
+
+  const [clearing, setClearing] = useState(false)
 
   const fetchReports = useCallback(async () => {
     try {
@@ -136,9 +128,74 @@ const ReconciliationDashboard: React.FC<DashboardProps> = ({
     }
   }, [orgId])
 
+  const clearAllData = useCallback(async () => {
+    if (!window.confirm('This will delete ALL imported orders, settlements and reports for your account. This cannot be undone. Continue?')) return
+    setClearing(true)
+    try {
+      await Promise.all([
+        supabase.from('orders').delete().eq('org_id', orgId),
+        supabase.from('settlements').delete().eq('org_id', orgId),
+        supabase.from('reconciliation_reports').delete().eq('org_id', orgId),
+      ])
+      setReports([])
+      setQuickStats({ total: 0, delivered: 0, cancelled: 0, returned: 0, revenue: 0, fees: 0 })
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Clear failed')
+    } finally {
+      setClearing(false)
+    }
+  }, [orgId])
+
   useEffect(() => {
     void fetchReports()
   }, [fetchReports])
+
+  // ── Quick stats — filtered by activeTab + date range ─────────────────────
+  useEffect(() => {
+    if (!orgId) return
+    void (async () => {
+      setStatsLoading(true)
+      try {
+        let query = supabase
+          .from('orders')
+          .select('status, total_amount, marketplace_fee, raw_data')
+          .eq('org_id', orgId)
+          .gte('order_date', dateFrom)
+          .lte('order_date', dateTo)
+
+        const { data } = await query
+
+        if (data) {
+          const rows =
+            activeTab === 'all'
+              ? data
+              : data.filter(
+                  (row) => (row.raw_data as any)?._marketplace === activeTab,
+                )
+
+          const total = rows.length
+          const isReturn = (s: string | null) => {
+            const v = (s ?? '').toLowerCase()
+            return v === 'return' || v === 'returned' || v === 'return_requested' || v.startsWith('return_') || v.startsWith('return ') || v === 'rto' || v.includes('rto')
+          }
+          const isCancel = (s: string | null) => {
+            const v = (s ?? '').toLowerCase()
+            return v === 'cancelled' || v === 'canceled' || v === 'failed' || v === 'f' || v.includes('cancel')
+          }
+          const delivered = rows.filter(
+            (r) => !isReturn(r.status) && !isCancel(r.status)
+          ).length
+          const cancelled = rows.filter((r) => isCancel(r.status)).length
+          const returned = rows.filter((r) => isReturn(r.status)).length
+          const revenue = rows.reduce((s, r) => s + (r.total_amount ?? 0), 0)
+          const fees = rows.reduce((s, r) => s + (r.marketplace_fee ?? 0), 0)
+          setQuickStats({ total, delivered, cancelled, returned, revenue, fees })
+        }
+      } catch { /* silent */ } finally {
+        setStatsLoading(false)
+      }
+    })()
+  }, [orgId, activeTab, dateFrom, dateTo])
 
   // ── Aggregate stats from reports ──────────────────────────────────────────
   const filteredReports = reports.filter((r) => {
@@ -220,6 +277,15 @@ const ReconciliationDashboard: React.FC<DashboardProps> = ({
           >
             <RefreshCw size={16} />
           </button>
+          <button
+            onClick={() => void clearAllData()}
+            disabled={clearing}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#FCA5A5] text-[#DC2626] bg-white hover:bg-[#FEF2F2] text-sm font-medium transition-colors disabled:opacity-50"
+            title="Clear all imported data"
+          >
+            <Trash2 size={14} />
+            {clearing ? 'Clearing…' : 'Clear Data'}
+          </button>
           <Button onClick={onNewImport} leftIcon={<Plus size={16} />}>
             New Import
           </Button>
@@ -258,44 +324,39 @@ const ReconciliationDashboard: React.FC<DashboardProps> = ({
           <input
             type="date"
             value={dateTo}
-            readOnly
-            className="text-sm border border-[#E2E8F0] rounded-lg px-3 py-1.5 text-[#94A3B8] bg-[#F8FAFC]"
+            onChange={(e) => setDateTo(e.target.value)}
+            className="text-sm border border-[#E2E8F0] rounded-lg px-3 py-1.5 text-[#0F172A] focus:outline-none focus:ring-2 focus:ring-[#2563EB]"
           />
         </div>
       </div>
 
-      {/* ── Stats Cards ── */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatsCard
-          label="Total Orders"
-          value={totalOrders.toLocaleString('en-IN')}
-          icon={<BarChart3 size={20} className="text-[#2563EB]" />}
-          color="bg-[#EFF6FF]"
-        />
-        <StatsCard
-          label="Matched Orders"
-          value={matchedOrders.toLocaleString('en-IN')}
-          icon={<CheckCircle2 size={20} className="text-[#16A34A]" />}
-          color="bg-[#F0FDF4]"
-          subtext={
-            totalOrders > 0
-              ? `${Math.round((matchedOrders / totalOrders) * 100)}% match rate`
-              : undefined
-          }
-        />
-        <StatsCard
-          label="Unmatched"
-          value={unmatchedOrders.toLocaleString('en-IN')}
-          icon={<XCircle size={20} className="text-[#DC2626]" />}
-          color="bg-[#FEF2F2]"
-        />
-        <StatsCard
-          label="Discrepancy"
-          value={`₹${discrepancyAmount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
-          icon={<TrendingDown size={20} className="text-[#D97706]" />}
-          color="bg-[#FFFBEB]"
-          subtext="Total amount mismatch"
-        />
+      {/* ── Quick Stats ── */}
+      <div className="space-y-2">
+        <p className="text-xs font-semibold text-[#64748B] uppercase tracking-wider">
+          {activeTab === 'all'
+            ? 'All Platforms'
+            : activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}{' '}
+          — Order Summary
+        </p>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+          {[
+            { label: 'Total Orders',   value: quickStats.total,      color: 'text-[#2563EB]',  bg: 'bg-[#EFF6FF]' },
+            { label: 'Delivered',      value: quickStats.delivered,  color: 'text-[#16A34A]',  bg: 'bg-[#F0FDF4]' },
+            { label: 'Cancelled',      value: quickStats.cancelled,  color: 'text-[#DC2626]',  bg: 'bg-[#FEF2F2]' },
+            { label: 'Returned / RTO', value: quickStats.returned,   color: 'text-[#D97706]',  bg: 'bg-[#FFFBEB]' },
+            { label: 'Total Revenue',  value: `₹${quickStats.revenue.toLocaleString('en-IN', { maximumFractionDigits: 0 })}`, color: 'text-[#0F172A]', bg: 'bg-[#F8FAFC]' },
+            { label: 'Fees Deducted',  value: `₹${quickStats.fees.toLocaleString('en-IN', { maximumFractionDigits: 0 })}`,    color: 'text-[#7C3AED]', bg: 'bg-[#FDF4FF]' },
+          ].map((s) => (
+            <div key={s.label} className={`rounded-xl border border-[#E2E8F0] p-4 ${s.bg}`}>
+              {statsLoading ? (
+                <div className="h-7 w-16 bg-[#E2E8F0] rounded animate-pulse mb-1" />
+              ) : (
+                <p className={`text-xl font-bold ${s.color}`}>{s.value}</p>
+              )}
+              <p className="text-xs text-[#64748B] mt-0.5 font-medium">{s.label}</p>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* ── Chart + Recent Reports ── */}
@@ -400,6 +461,13 @@ const ReconciliationDashboard: React.FC<DashboardProps> = ({
           )}
         </div>
       </div>
+
+      {/* ── Platform Stats ── */}
+      <PlatformStatsSection
+        orgId={orgId}
+        dateFrom={dateFrom}
+        dateTo={dateTo}
+      />
     </div>
   )
 }
